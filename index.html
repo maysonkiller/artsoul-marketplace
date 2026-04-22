@@ -33,6 +33,32 @@
             transition: all 0.3s ease;
         }
 
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            h2 {
+                font-size: 1.25rem !important;
+            }
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            /* Make buttons easier to tap */
+            button, a {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            /* Improve text readability */
+            p, span, div {
+                -webkit-text-size-adjust: 100%;
+            }
+        }
+
         /* Neon effects */
         .neon-glow {
             text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
@@ -365,13 +391,22 @@
                                             >
                                                 <div className={`aspect-square flex items-center justify-center relative overflow-hidden ${isClassic ? 'bg-gradient-to-br from-gray-100 to-gray-200' : 'bg-gradient-to-br from-purple-900/50 via-pink-900/30 to-cyan-900/50'}`}>
                                                     {artwork.image ? (
-                                                        <img src={artwork.image} alt={artwork.title} className="w-full h-full object-cover" />
+                                                        artwork.type === 'Video' ? (
+                                                            <video src={artwork.image} controls className="w-full h-full object-cover" />
+                                                        ) : artwork.type === 'Music' ? (
+                                                            <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                                                                <div className={`text-6xl mb-4 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>🎵</div>
+                                                                <audio src={artwork.image} controls className="w-full" />
+                                                            </div>
+                                                        ) : (
+                                                            <img src={artwork.image} alt={artwork.title} className="w-full h-full object-cover" />
+                                                        )
                                                     ) : (
                                                         <>
                                                             {!isClassic && <div className="absolute inset-0 shimmer opacity-20"></div>}
                                                             <div className="text-center p-4 relative z-10 animate-float">
                                                                 <div className={`text-5xl mb-2 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>
-                                                                    {artwork.type === 'Video' ? '🎬' : artwork.type === 'GIF' ? '🎞️' : '🖼️'}
+                                                                    {artwork.type === 'Video' ? '🎬' : artwork.type === 'Music' ? '🎵' : artwork.type === 'GIF' ? '🎞️' : '🖼️'}
                                                                 </div>
                                                                 <div className={`text-sm font-medium ${isClassic ? 'text-gray-500' : 'text-purple-300'}`}>
                                                                     {artwork.type}

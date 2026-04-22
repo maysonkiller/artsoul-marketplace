@@ -63,7 +63,7 @@
         ];
 
         function ProfilePage() {
-            const [theme, setTheme] = useState('brutal');
+            const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'classic');
             const [profile, setProfile] = useState(null);
             const [editMode, setEditMode] = useState(false);
             const [selectedGallery, setSelectedGallery] = useState('nft');
@@ -133,12 +133,31 @@
                 const file = e.target.files[0];
                 if (!file || !uploadingFor) return;
 
-                // Redirect to upload page with pre-selected type
-                localStorage.setItem('uploadContext', JSON.stringify({
-                    fileType: uploadingFor.fileType,
-                    galleryType: uploadingFor.galleryType,
-                }));
-                window.location.href = `upload.html?type=${uploadingFor.fileType}`;
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const newArtwork = {
+                        id: Date.now(),
+                        title: file.name.split('.')[0],
+                        artist: profile.name || 'Anonymous',
+                        type: uploadingFor.fileType,
+                        description: 'Uploaded from profile',
+                        currentBid: 0,
+                        bids: [],
+                        image: event.target.result,
+                        uploadedBy: 'user'
+                    };
+
+                    // Save to localStorage
+                    const existingArtworks = JSON.parse(localStorage.getItem('artworks') || '[]');
+                    existingArtworks.push(newArtwork);
+                    localStorage.setItem('artworks', JSON.stringify(existingArtworks));
+
+                    // Update profile gallery count
+                    alert(`✅ Artwork "${newArtwork.title}" added to your ${uploadingFor.label}!`);
+                    setUploadingFor(null);
+                };
+                reader.readAsDataURL(file);
             };
 
             if (!profile) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
