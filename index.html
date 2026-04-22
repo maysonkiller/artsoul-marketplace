@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArtSoul - Decentralized Art Marketplace</title>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://maysonkiller.github.io/artsoul-marketplace/">
+    <meta property="og:title" content="ArtSoul - Decentralized Art Marketplace">
+    <meta property="og:description" content="Revolutionary platform for decentralized art where value is determined by the community through transparent auctions">
+    <meta property="og:image" content="https://maysonkiller.github.io/artsoul-marketplace/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://maysonkiller.github.io/artsoul-marketplace/">
+    <meta property="twitter:title" content="ArtSoul - Decentralized Art Marketplace">
+    <meta property="twitter:description" content="Revolutionary platform for decentralized art where value is determined by the community through transparent auctions">
+    <meta property="twitter:image" content="https://maysonkiller.github.io/artsoul-marketplace/og-image.png">
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -559,6 +574,50 @@
                                         <p className={`text-sm ${isClassic ? 'text-gray-700' : 'text-purple-300'}`}>
                                             {selectedArtwork.description}
                                         </p>
+                                    </div>
+
+                                    {/* Share Buttons */}
+                                    <div className="mb-6">
+                                        <p className={`text-xs font-semibold mb-2 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                            Share this artwork
+                                        </p>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    const url = window.location.href;
+                                                    const text = `Check out "${selectedArtwork.title}" by ${selectedArtwork.artist} on ArtSoul!`;
+                                                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                                                }}
+                                                className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transform hover:scale-105 ${
+                                                    isClassic ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-800 text-white hover:bg-gray-700 border border-cyan-500/30'
+                                                }`}
+                                            >
+                                                𝕏 Share
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const url = window.location.href;
+                                                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                                                }}
+                                                className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transform hover:scale-105 ${
+                                                    isClassic ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-600 text-white hover:bg-blue-700'
+                                                }`}
+                                            >
+                                                f Share
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const url = window.location.href;
+                                                    const text = `Check out "${selectedArtwork.title}" by ${selectedArtwork.artist} on ArtSoul!`;
+                                                    window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+                                                }}
+                                                className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transform hover:scale-105 ${
+                                                    isClassic ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-500 text-white hover:bg-blue-600'
+                                                }`}
+                                            >
+                                                ✈ Share
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div className={`rounded-lg p-4 mb-6 ${isClassic ? 'bg-gray-50' : 'bg-gray-800/50'}`}>
