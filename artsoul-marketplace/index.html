@@ -202,6 +202,15 @@
                 ? 'bg-gray-100 text-gray-900'
                 : 'bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-purple-100';
 
+            // Loading state
+            if (!selectedArtwork) {
+                return (
+                    <div className={`min-h-screen ${bgClass} flex items-center justify-center`}>
+                        <div className="text-2xl">Loading...</div>
+                    </div>
+                );
+            }
+
             return (
                 <div className={`min-h-screen ${bgClass} transition-all duration-500`}>
                     {/* Header */}
