@@ -68,6 +68,9 @@
             const [editMode, setEditMode] = useState(false);
             const [selectedGallery, setSelectedGallery] = useState('nft');
             const [uploadingFor, setUploadingFor] = useState(null);
+            const [uploadFormOpen, setUploadFormOpen] = useState(false);
+            const [uploadedFile, setUploadedFile] = useState(null);
+            const [artworkForm, setArtworkForm] = useState({ title: '', description: '', currentBid: 0 });
             const [viewerOpen, setViewerOpen] = useState(false);
             const [viewerArtwork, setViewerArtwork] = useState(null);
             const [zoom, setZoom] = useState(1);
@@ -131,7 +134,7 @@
 
             // Handle quick upload for specific gallery
             const handleQuickUpload = (galleryType, fileType) => {
-                setUploadingFor({ galleryType, fileType });
+                setUploadingFor({ galleryType, fileType, label: GALLERY_TYPES.find(g => g.id === galleryType)?.label });
                 fileInputRef.current.click();
             };
 
@@ -143,28 +146,51 @@
                 // Create preview
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    const newArtwork = {
-                        id: Date.now(),
+                    setUploadedFile({
+                        file: file,
+                        preview: event.target.result,
+                        name: file.name.split('.')[0]
+                    });
+                    setArtworkForm({
                         title: file.name.split('.')[0],
-                        artist: profile.name || 'Anonymous',
-                        type: uploadingFor.fileType,
-                        description: 'Uploaded from profile',
-                        currentBid: 0,
-                        bids: [],
-                        image: event.target.result,
-                        uploadedBy: 'user'
-                    };
-
-                    // Save to localStorage
-                    const existingArtworks = JSON.parse(localStorage.getItem('artworks') || '[]');
-                    existingArtworks.push(newArtwork);
-                    localStorage.setItem('artworks', JSON.stringify(existingArtworks));
-
-                    // Update profile gallery count
-                    alert(`✅ Artwork "${newArtwork.title}" added to your ${uploadingFor.label}!`);
-                    setUploadingFor(null);
+                        description: '',
+                        currentBid: 0
+                    });
+                    setUploadFormOpen(true);
                 };
                 reader.readAsDataURL(file);
+            };
+
+            // Save artwork from form
+            const saveArtwork = () => {
+                if (!uploadedFile || !uploadingFor) return;
+
+                const newArtwork = {
+                    id: Date.now(),
+                    title: artworkForm.title || uploadedFile.name,
+                    artist: profile.name || 'Anonymous',
+                    type: uploadingFor.fileType,
+                    description: artworkForm.description || 'No description',
+                    currentBid: parseFloat(artworkForm.currentBid) || 0,
+                    bids: [],
+                    image: uploadedFile.preview,
+                    uploadedBy: 'user'
+                };
+
+                // Save to localStorage
+                const existingArtworks = JSON.parse(localStorage.getItem('artworks') || '[]');
+                existingArtworks.push(newArtwork);
+                localStorage.setItem('artworks', JSON.stringify(existingArtworks));
+
+                // Close form and open viewer
+                setUploadFormOpen(false);
+                setUploadingFor(null);
+                setUploadedFile(null);
+                setArtworkForm({ title: '', description: '', currentBid: 0 });
+
+                // Open artwork viewer
+                setViewerArtwork(newArtwork);
+                setViewerOpen(true);
             };
 
             if (!profile) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
@@ -318,10 +344,11 @@
                                             <p className={`text-lg mb-4 ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
                                                 {profile.bio || 'No bio yet'}
                                             </p>
-                                            <div className="flex gap-4">
+                                            <div className="flex gap-4 items-center">
                                                 {profile.socials?.x && (
-                                                    <a href={`https://x.com/${profile.socials.x}`} target="_blank" className="block">
-                                                        <img src={`https://unavatar.io/twitter/${profile.socials.x}`} alt="X Avatar" className="w-12 h-12 rounded-full hover:scale-110 transition-transform" />
+                                                    <a href={`https://x.com/${profile.socials.x}`} target="_blank" className={`flex items-center gap-3 px-4 py-2 rounded-lg ${isClassic ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800/50 hover:bg-gray-700/50'} transition-all`}>
+                                                        <img src={`https://unavatar.io/twitter/${profile.socials.x}`} alt="X Avatar" className="w-10 h-10 rounded-full" />
+                                                        <span className={`font-medium ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>@{profile.socials.x}</span>
                                                     </a>
                                                 )}
                                                 {profile.socials.instagram && (
@@ -445,11 +472,26 @@
                                             setZoom(1);
                                         }}
                                         className={`aspect-square rounded-lg overflow-hidden cursor-pointer gallery-item ${
-                                            isClassic ? 'bg-gray-50 shadow-md' : 'bg-gray-800/50 backdrop-blur-sm'
+                                            isClassic ? 'bg-gray-50 shadow-md hover:shadow-xl' : 'bg-gray-800/50 backdrop-blur-sm hover:shadow-cyan-500/50'
                                         }`}
                                     >
-                                        {artwork.preview ? (
-                                            <img src={artwork.preview} alt={artwork.title} className="w-full h-full object-cover" />
+                                        {artwork.image ? (
+                                            artwork.type === 'Music' ? (
+                                                <div className={`w-full h-full flex items-center justify-center ${
+                                                    isClassic ? 'bg-gray-200' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
+                                                }`}>
+                                                    <div className="text-center p-4">
+                                                        <div className={`text-6xl mb-2 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>🎵</div>
+                                                        <div className={`text-sm font-bold ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                                            {artwork.title}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : artwork.type === 'Video' ? (
+                                                <video src={artwork.image} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <img src={artwork.image} alt={artwork.title} className="w-full h-full object-cover" />
+                                            )
                                         ) : (
                                             <div className={`w-full h-full flex items-center justify-center ${
                                                 isClassic ? 'bg-gray-200' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
@@ -503,6 +545,99 @@
                         onChange={handleFileUpload}
                     />
 
+                    {/* Upload Form Modal */}
+                    {uploadFormOpen && uploadedFile && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" onClick={() => setUploadFormOpen(false)}>
+                            <div className={`relative max-w-2xl w-full rounded-xl p-8 ${isClassic ? 'bg-white' : 'bg-gray-900 border border-cyan-500/30'}`} onClick={(e) => e.stopPropagation()}>
+                                <button onClick={() => setUploadFormOpen(false)} className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">✕</button>
+
+                                <h2 className={`text-3xl font-bold mb-6 ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>
+                                    Upload Artwork Details
+                                </h2>
+
+                                {/* Preview */}
+                                <div className="mb-6">
+                                    {uploadingFor?.fileType === 'Music' ? (
+                                        <div className={`p-8 rounded-lg text-center ${isClassic ? 'bg-gray-100' : 'bg-gray-800/50'}`}>
+                                            <div className="text-6xl mb-4">🎵</div>
+                                            <audio src={uploadedFile.preview} controls className="w-full" />
+                                        </div>
+                                    ) : uploadingFor?.fileType === 'Video' ? (
+                                        <video src={uploadedFile.preview} controls className="w-full rounded-lg" />
+                                    ) : (
+                                        <img src={uploadedFile.preview} alt="Preview" className="w-full rounded-lg" />
+                                    )}
+                                </div>
+
+                                {/* Form */}
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className={`block text-sm font-bold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                            Title
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={artworkForm.title}
+                                            onChange={(e) => setArtworkForm({...artworkForm, title: e.target.value})}
+                                            placeholder="Artwork title"
+                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                isClassic
+                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                            } outline-none focus:ring-2 focus:ring-cyan-400`}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className={`block text-sm font-bold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                            Description
+                                        </label>
+                                        <textarea
+                                            value={artworkForm.description}
+                                            onChange={(e) => setArtworkForm({...artworkForm, description: e.target.value})}
+                                            placeholder="Describe your artwork..."
+                                            rows={4}
+                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                isClassic
+                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                            } outline-none focus:ring-2 focus:ring-cyan-400`}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className={`block text-sm font-bold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                            Starting Bid (ETH)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            value={artworkForm.currentBid}
+                                            onChange={(e) => setArtworkForm({...artworkForm, currentBid: e.target.value})}
+                                            placeholder="0.00"
+                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                isClassic
+                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                            } outline-none focus:ring-2 focus:ring-cyan-400`}
+                                        />
+                                    </div>
+
+                                    <button
+                                        onClick={saveArtwork}
+                                        className={`w-full py-4 rounded-lg font-bold text-lg transform hover:scale-105 transition-all ${
+                                            isClassic
+                                                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
+                                                : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl'
+                                        }`}
+                                    >
+                                        Save & View Artwork
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Footer */}
                     <footer className="mt-16 pb-8 text-center">
                         <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
@@ -516,10 +651,10 @@
                             <div className="relative max-w-6xl w-full max-h-screen overflow-auto" onClick={(e) => e.stopPropagation()}>
                                 <button onClick={() => setViewerOpen(false)} className="absolute top-4 right-4 z-10 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">✕ Close</button>
                                 <div className={`rounded-xl p-6 ${isClassic ? 'bg-white' : 'bg-gray-900'}`}>
-                                    {(viewerArtwork.type === 'Image' || viewerArtwork.type === 'NFT' || viewerArtwork.type === 'GIF') && viewerArtwork.preview && (
+                                    {(viewerArtwork.type === 'Image' || viewerArtwork.type === 'NFT' || viewerArtwork.type === 'GIF' || viewerArtwork.type === 'Digital Art') && viewerArtwork.image && (
                                         <div className="space-y-4">
                                             <div className="overflow-auto max-h-[70vh]">
-                                                <img src={viewerArtwork.preview} alt={viewerArtwork.title} style={{transform: `scale(${zoom})`}} className="w-full transition-transform" />
+                                                <img src={viewerArtwork.image} alt={viewerArtwork.title} style={{transform: `scale(${zoom})`}} className="w-full transition-transform" />
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <button onClick={() => setZoom(Math.max(0.5, zoom - 0.25))} className="px-4 py-2 bg-blue-600 text-white rounded">-</button>
@@ -527,11 +662,17 @@
                                                 <button onClick={() => setZoom(Math.min(3, zoom + 0.25))} className="px-4 py-2 bg-blue-600 text-white rounded">+</button>
                                                 <button onClick={() => setZoom(1)} className="px-4 py-2 bg-gray-600 text-white rounded">Reset</button>
                                             </div>
+                                            <div className="text-white">
+                                                <h2 className="text-3xl font-bold mb-2">{viewerArtwork.title}</h2>
+                                                <p className="text-gray-400 mb-2">by {viewerArtwork.artist}</p>
+                                                <p className="text-gray-300">{viewerArtwork.description}</p>
+                                                <p className="text-cyan-400 font-bold mt-4">Floor: {viewerArtwork.currentBid} ETH</p>
+                                            </div>
                                         </div>
                                     )}
-                                    {viewerArtwork.type === 'Video' && viewerArtwork.preview && (
+                                    {viewerArtwork.type === 'Video' && viewerArtwork.image && (
                                         <div className="space-y-4">
-                                            <video src={viewerArtwork.preview} controls className="w-full max-h-[70vh]" />
+                                            <video src={viewerArtwork.image} controls className="w-full max-h-[70vh]" />
                                             <div className="space-y-2">
                                                 <div className="flex items-center gap-4">
                                                     <label className="text-white">Volume:</label>
@@ -546,16 +687,22 @@
                                                     <button onClick={() => { const v = document.querySelector('video'); if (v) v.playbackRate = 2; }} className="px-3 py-1 bg-gray-600 text-white rounded">2x</button>
                                                 </div>
                                             </div>
+                                            <div className="text-white">
+                                                <h2 className="text-3xl font-bold mb-2">{viewerArtwork.title}</h2>
+                                                <p className="text-gray-400 mb-2">by {viewerArtwork.artist}</p>
+                                                <p className="text-gray-300">{viewerArtwork.description}</p>
+                                                <p className="text-cyan-400 font-bold mt-4">Floor: {viewerArtwork.currentBid} ETH</p>
+                                            </div>
                                         </div>
                                     )}
-                                    {viewerArtwork.type === 'Music' && viewerArtwork.preview && (
+                                    {viewerArtwork.type === 'Music' && viewerArtwork.image && (
                                         <div className="space-y-4">
                                             <div className={`p-8 rounded-lg ${isClassic ? 'bg-gray-100' : 'bg-gray-800'}`}>
                                                 <div className="text-center mb-6">
                                                     <div className="text-6xl mb-4">🎵</div>
                                                     <h3 className={`text-2xl font-bold ${isClassic ? 'text-gray-900' : 'text-white'}`}>{viewerArtwork.title}</h3>
                                                 </div>
-                                                <audio src={viewerArtwork.preview} controls className="w-full mb-4" />
+                                                <audio src={viewerArtwork.image} controls className="w-full mb-4" />
                                                 <div className="space-y-3">
                                                     <div className="flex items-center gap-4">
                                                         <label className={`${isClassic ? 'text-gray-900' : 'text-white'}`}>Volume:</label>
@@ -571,8 +718,17 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className={`${isClassic ? 'text-gray-900' : 'text-white'}`}>
+                                                <p className="text-gray-400 mb-2">by {viewerArtwork.artist}</p>
+                                                <p className={`${isClassic ? 'text-gray-700' : 'text-gray-300'}`}>{viewerArtwork.description}</p>
+                                                <p className="text-cyan-400 font-bold mt-4">Floor: {viewerArtwork.currentBid} ETH</p>
+                                            </div>
                                         </div>
                                     )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                                     <div className={`mt-6 p-4 rounded-lg ${isClassic ? 'bg-gray-100' : 'bg-gray-800'}`}>
                                         <h2 className={`text-2xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>{viewerArtwork.title}</h2>
                                         <p className={`text-sm mb-2 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>by {viewerArtwork.artist || 'Unknown'}</p>
