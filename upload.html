@@ -134,6 +134,7 @@
             const [formData, setFormData] = useState({});
             const [dragOver, setDragOver] = useState(false);
             const [uploading, setUploading] = useState(false);
+            const [uploadProgress, setUploadProgress] = useState(0);
 
             const isClassic = theme === 'classic';
 
@@ -184,9 +185,13 @@
             const handleSubmit = async (e) => {
                 e.preventDefault();
                 setUploading(true);
+                setUploadProgress(0);
 
-                // Simulate upload
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Simulate upload with progress
+                for (let i = 0; i <= 100; i += 10) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    setUploadProgress(i);
+                }
 
                 // Save to localStorage (for prototype)
                 const artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
@@ -197,6 +202,8 @@
                     fileName: file.name,
                     fileSize: file.size,
                     preview: preview,
+                    image: preview,
+                    artist: formData.artist || 'Anonymous',
                     uploadedAt: new Date().toISOString(),
                     currentBid: parseFloat(formData.artistEstimate) || 0,
                     bids: [],
@@ -205,6 +212,7 @@
                 localStorage.setItem('artworks', JSON.stringify(artworks));
 
                 setUploading(false);
+                setUploadProgress(0);
                 alert('Artwork uploaded successfully! Redirecting to gallery...');
                 window.location.href = 'index.html';
             };
@@ -426,6 +434,22 @@
                                             ))}
                                         </div>
                                     </div>
+
+                                    {/* Upload Progress */}
+                                    {uploading && (
+                                        <div className="mb-4">
+                                            <div className="flex justify-between mb-2">
+                                                <span className={`text-sm ${isClassic ? 'text-gray-700' : 'text-gray-300'}`}>Uploading...</span>
+                                                <span className={`text-sm ${isClassic ? 'text-gray-700' : 'text-gray-300'}`}>{uploadProgress}%</span>
+                                            </div>
+                                            <div className={`w-full h-2 rounded-full overflow-hidden ${isClassic ? 'bg-gray-200' : 'bg-gray-700'}`}>
+                                                <div
+                                                    className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-300"
+                                                    style={{width: `${uploadProgress}%`}}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Submit Button */}
                                     <button
