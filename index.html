@@ -132,7 +132,7 @@
         const { useState, useEffect } = React;
 
         const mockArtworks = [
-            { id: 1, title: 'Soul Flame', artist: 'Maysonkiller', type: 'NFT', description: 'A burning representation of the digital soul', currentBid: 0.5, bids: [0.3, 0.4, 0.5] },
+            { id: 1, title: 'Soul Flame', artist: 'Maysonkiller', type: 'NFT', description: 'A burning representation of the digital soul', currentBid: 0.5, bids: [0.3, 0.4, 0.5], image: 'artwork-sample.jpg' },
             { id: 2, title: 'Neon Dreams', artist: 'CryptoArtist', type: 'Digital Art', description: 'Futuristic cityscape in neon colors', currentBid: 1.2, bids: [0.8, 1.0, 1.2] },
             { id: 3, title: 'Silent Choir', artist: 'Maysonkiller', type: 'Video', description: 'An audiovisual journey through silence', currentBid: 0.8, bids: [0.5, 0.7, 0.8] },
             { id: 4, title: 'Cosmic Melancholy', artist: 'StarGazer', type: 'GIF', description: 'Animated loop of cosmic emotions', currentBid: 0.3, bids: [0.1, 0.2, 0.3] },
@@ -141,7 +141,7 @@
         ];
 
         function App() {
-            const [theme, setTheme] = useState('brutal');
+            const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'classic');
             const [walletConnected, setWalletConnected] = useState(false);
             const [filter, setFilter] = useState('all');
             const [bidAmount, setBidAmount] = useState('');
@@ -149,8 +149,13 @@
             const [allArtworks, setAllArtworks] = useState([]);
             const [selectedArtwork, setSelectedArtwork] = useState(null);
 
-            const isBrutal = theme === 'brutal';
+            const isClassic = theme === 'classic';
             const filters = ['all', 'NFT', 'Digital Art', 'Video', 'GIF', 'Physical Art', 'Image', 'Music'];
+
+            // Save theme to localStorage
+            useEffect(() => {
+                localStorage.setItem('theme', theme);
+            }, [theme]);
 
             // Load artworks from localStorage + mock data
             useEffect(() => {
@@ -198,7 +203,7 @@
                 setBidAmount('');
             };
 
-            const bgClass = isBrutal
+            const bgClass = isClassic
                 ? 'bg-gray-100 text-gray-900'
                 : 'bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-purple-100';
 
@@ -214,26 +219,26 @@
             return (
                 <div className={`min-h-screen ${bgClass} transition-all duration-500`}>
                     {/* Header */}
-                    <header className={`sticky top-0 z-50 backdrop-blur-md ${isBrutal ? 'bg-white/90 border-b border-gray-300' : 'bg-black/50 border-b border-cyan-500/30'}`}>
+                    <header className={`sticky top-0 z-50 backdrop-blur-md ${isClassic ? 'bg-white/90 border-b border-gray-300' : 'bg-black/50 border-b border-cyan-500/30'}`}>
                         <div className="container mx-auto px-4 py-4">
                             <div className="flex items-center justify-between flex-wrap gap-4">
                                 <div className="flex items-center gap-4">
-                                    <h1 className={`text-3xl font-bold ${isBrutal ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                    <h1 className={`text-3xl font-bold ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
                                         ArtSoul
                                     </h1>
-                                    <span className={`text-sm ${isBrutal ? 'text-gray-600' : 'text-purple-300'}`}>
+                                    <span className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
                                         Decentralized Art Marketplace
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <div className={`flex gap-2 p-1 rounded-lg ${isBrutal ? 'bg-gray-200' : 'bg-gray-800/50'}`}>
+                                    <div className={`flex gap-2 p-1 rounded-lg ${isClassic ? 'bg-gray-200' : 'bg-gray-800/50'}`}>
                                         <button
-                                            onClick={() => setTheme('brutal')}
+                                            onClick={() => setTheme('classic')}
                                             className={`px-4 py-2 rounded-md font-medium transform hover:scale-105 ${
-                                                theme === 'brutal'
+                                                theme === 'classic'
                                                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                                                    : isBrutal ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
+                                                    : isClassic ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
                                             }`}
                                         >
                                             Brutal
@@ -243,22 +248,22 @@
                                             className={`px-4 py-2 rounded-md font-medium transform hover:scale-105 ${
                                                 theme === 'future'
                                                     ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg neon-border'
-                                                    : isBrutal ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
+                                                    : isClassic ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
                                             }`}
                                         >
                                             Future
                                         </button>
                                     </div>
 
-                                    <div className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-lg ${isBrutal ? 'bg-gray-100 text-gray-700' : 'bg-gray-800/50 text-cyan-300'}`}>
-                                        <div className={`w-2 h-2 rounded-full ${isBrutal ? 'bg-green-500' : 'bg-cyan-400 animate-pulse'}`} />
+                                    <div className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-lg ${isClassic ? 'bg-gray-100 text-gray-700' : 'bg-gray-800/50 text-cyan-300'}`}>
+                                        <div className={`w-2 h-2 rounded-full ${isClassic ? 'bg-green-500' : 'bg-cyan-400 animate-pulse'}`} />
                                         <span className="text-sm">Multi-chain</span>
                                     </div>
 
                                     <a
                                         href="docs.html"
                                         className={`px-6 py-2 rounded-lg font-medium transform hover:scale-105 ${
-                                            isBrutal
+                                            isClassic
                                                 ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-500/50'
                                                 : 'bg-gradient-to-r from-green-500 to-cyan-500 text-white hover:shadow-2xl neon-border'
                                         }`}
@@ -269,7 +274,7 @@
                                     <a
                                         href="profile.html"
                                         className={`px-6 py-2 rounded-lg font-medium transform hover:scale-105 ${
-                                            isBrutal
+                                            isClassic
                                                 ? 'bg-gray-600 text-white hover:bg-gray-700 shadow-lg shadow-gray-500/50'
                                                 : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-2xl neon-border'
                                         }`}
@@ -280,7 +285,7 @@
                                     <a
                                         href="upload.html"
                                         className={`px-6 py-2 rounded-lg font-medium transform hover:scale-105 ${
-                                            isBrutal
+                                            isClassic
                                                 ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg shadow-purple-500/50'
                                                 : 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:shadow-2xl neon-border'
                                         }`}
@@ -292,10 +297,10 @@
                                         onClick={handleConnectWallet}
                                         className={`px-6 py-2 rounded-lg font-medium transform hover:scale-105 ${
                                             walletConnected
-                                                ? isBrutal
+                                                ? isClassic
                                                     ? 'bg-green-600 text-white shadow-lg shadow-green-500/50'
                                                     : 'bg-gradient-to-r from-green-500 to-cyan-500 text-white neon-border'
-                                                : isBrutal
+                                                : isClassic
                                                     ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50'
                                                     : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl neon-border'
                                         }`}
@@ -312,12 +317,12 @@
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Gallery */}
                             <div className="lg:col-span-2">
-                                <div className={`rounded-xl p-6 ${isBrutal ? 'bg-white shadow-lg border border-gray-200' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30 neon-border'}`}>
+                                <div className={`rounded-xl p-6 ${isClassic ? 'bg-white shadow-lg border border-gray-200' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30 neon-border'}`}>
                                     <div className="flex items-center justify-between mb-6">
-                                        <h2 className={`text-2xl font-bold ${isBrutal ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                        <h2 className={`text-2xl font-bold ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
                                             Gallery
                                         </h2>
-                                        <span className={`text-sm ${isBrutal ? 'text-gray-600' : 'text-purple-300'}`}>
+                                        <span className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
                                             {filteredArtworks.length} artworks
                                         </span>
                                     </div>
@@ -329,10 +334,10 @@
                                                 onClick={() => setFilter(f)}
                                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                                                     filter === f
-                                                        ? isBrutal
+                                                        ? isClassic
                                                             ? 'bg-blue-600 text-white'
                                                             : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
-                                                        : isBrutal
+                                                        : isClassic
                                                             ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                             : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
                                                 }`}
@@ -350,38 +355,44 @@
                                                 style={{animationDelay: `${index * 0.1}s`}}
                                                 className={`cursor-pointer rounded-lg overflow-hidden card-hover animate-fadeIn ${
                                                     selectedArtwork?.id === artwork.id
-                                                        ? isBrutal
+                                                        ? isClassic
                                                             ? 'ring-4 ring-blue-600 shadow-xl scale-105'
                                                             : 'ring-4 ring-cyan-400 shadow-2xl neon-border scale-105'
-                                                        : isBrutal
+                                                        : isClassic
                                                             ? 'hover:shadow-xl hover:shadow-blue-200'
                                                             : 'hover:shadow-cyan-500/50 hover:shadow-2xl'
-                                                } ${isBrutal ? 'bg-white shadow-md' : 'bg-gray-800/50 backdrop-blur-sm'}`}
+                                                } ${isClassic ? 'bg-white shadow-md' : 'bg-gray-800/50 backdrop-blur-sm'}`}
                                             >
-                                                <div className={`aspect-square flex items-center justify-center relative overflow-hidden ${isBrutal ? 'bg-gradient-to-br from-gray-100 to-gray-200' : 'bg-gradient-to-br from-purple-900/50 via-pink-900/30 to-cyan-900/50'}`}>
-                                                    {!isBrutal && <div className="absolute inset-0 shimmer opacity-20"></div>}
-                                                    <div className="text-center p-4 relative z-10 animate-float">
-                                                        <div className={`text-5xl mb-2 ${isBrutal ? 'text-gray-400' : 'text-cyan-400'}`}>
-                                                            {artwork.type === 'Video' ? '🎬' : artwork.type === 'GIF' ? '🎞️' : '🖼️'}
-                                                        </div>
-                                                        <div className={`text-sm font-medium ${isBrutal ? 'text-gray-500' : 'text-purple-300'}`}>
-                                                            {artwork.type}
-                                                        </div>
-                                                    </div>
+                                                <div className={`aspect-square flex items-center justify-center relative overflow-hidden ${isClassic ? 'bg-gradient-to-br from-gray-100 to-gray-200' : 'bg-gradient-to-br from-purple-900/50 via-pink-900/30 to-cyan-900/50'}`}>
+                                                    {artwork.image ? (
+                                                        <img src={artwork.image} alt={artwork.title} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <>
+                                                            {!isClassic && <div className="absolute inset-0 shimmer opacity-20"></div>}
+                                                            <div className="text-center p-4 relative z-10 animate-float">
+                                                                <div className={`text-5xl mb-2 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>
+                                                                    {artwork.type === 'Video' ? '🎬' : artwork.type === 'GIF' ? '🎞️' : '🖼️'}
+                                                                </div>
+                                                                <div className={`text-sm font-medium ${isClassic ? 'text-gray-500' : 'text-purple-300'}`}>
+                                                                    {artwork.type}
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    )}
                                                 </div>
 
                                                 <div className="p-4">
-                                                    <h3 className={`font-bold text-lg mb-1 ${isBrutal ? 'text-gray-900' : 'text-cyan-300'}`}>
+                                                    <h3 className={`font-bold text-lg mb-1 ${isClassic ? 'text-gray-900' : 'text-cyan-300'}`}>
                                                         {artwork.title}
                                                     </h3>
-                                                    <p className={`text-sm mb-2 ${isBrutal ? 'text-gray-600' : 'text-gray-400'}`}>
+                                                    <p className={`text-sm mb-2 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                                         by {artwork.artist}
                                                     </p>
                                                     <div className="flex items-center justify-between">
-                                                        <span className={`text-xs ${isBrutal ? 'text-gray-500' : 'text-purple-300'}`}>
+                                                        <span className={`text-xs ${isClassic ? 'text-gray-500' : 'text-purple-300'}`}>
                                                             Floor: {artwork.currentBid} ETH
                                                         </span>
-                                                        <span className={`text-xs ${isBrutal ? 'text-blue-600' : 'text-cyan-400'}`}>
+                                                        <span className={`text-xs ${isClassic ? 'text-blue-600' : 'text-cyan-400'}`}>
                                                             {artwork.bids.length} bids
                                                         </span>
                                                     </div>
@@ -394,54 +405,54 @@
 
                             {/* Auction Panel */}
                             <div className="lg:col-span-1">
-                                <div className={`rounded-xl p-6 sticky top-24 ${isBrutal ? 'bg-white shadow-lg border border-gray-200' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30 neon-border'}`}>
+                                <div className={`rounded-xl p-6 sticky top-24 ${isClassic ? 'bg-white shadow-lg border border-gray-200' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30 neon-border'}`}>
                                     <div className="mb-6">
-                                        <h2 className={`text-2xl font-bold mb-2 ${isBrutal ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                        <h2 className={`text-2xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
                                             {selectedArtwork.title}
                                         </h2>
-                                        <p className={`text-sm mb-4 ${isBrutal ? 'text-gray-600' : 'text-gray-400'}`}>
+                                        <p className={`text-sm mb-4 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                             by {selectedArtwork.artist}
                                         </p>
-                                        <p className={`text-sm ${isBrutal ? 'text-gray-700' : 'text-purple-300'}`}>
+                                        <p className={`text-sm ${isClassic ? 'text-gray-700' : 'text-purple-300'}`}>
                                             {selectedArtwork.description}
                                         </p>
                                     </div>
 
-                                    <div className={`rounded-lg p-4 mb-6 ${isBrutal ? 'bg-gray-50' : 'bg-gray-800/50'}`}>
-                                        <div className={`text-xs mb-2 ${isBrutal ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    <div className={`rounded-lg p-4 mb-6 ${isClassic ? 'bg-gray-50' : 'bg-gray-800/50'}`}>
+                                        <div className={`text-xs mb-2 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                             Auction ends in
                                         </div>
-                                        <div className={`text-2xl font-bold ${isBrutal ? 'text-blue-600' : 'text-cyan-400'}`}>
+                                        <div className={`text-2xl font-bold ${isClassic ? 'text-blue-600' : 'text-cyan-400'}`}>
                                             {formatTime(timeLeft)}
                                         </div>
                                     </div>
 
-                                    <div className={`rounded-lg p-4 mb-6 ${isBrutal ? 'bg-blue-50' : 'bg-gradient-to-br from-purple-900/30 to-cyan-900/30'}`}>
-                                        <div className={`text-xs mb-2 ${isBrutal ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    <div className={`rounded-lg p-4 mb-6 ${isClassic ? 'bg-blue-50' : 'bg-gradient-to-br from-purple-900/30 to-cyan-900/30'}`}>
+                                        <div className={`text-xs mb-2 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                             Current Floor Price
                                         </div>
-                                        <div className={`text-3xl font-bold ${isBrutal ? 'text-blue-600' : 'text-cyan-400 neon-glow'}`}>
+                                        <div className={`text-3xl font-bold ${isClassic ? 'text-blue-600' : 'text-cyan-400 neon-glow'}`}>
                                             {selectedArtwork.currentBid} ETH
                                         </div>
-                                        <div className={`text-xs mt-2 ${isBrutal ? 'text-gray-500' : 'text-purple-300'}`}>
+                                        <div className={`text-xs mt-2 ${isClassic ? 'text-gray-500' : 'text-purple-300'}`}>
                                             {selectedArtwork.bids.length} community bids
                                         </div>
                                     </div>
 
                                     <div className="mb-6">
-                                        <h3 className={`text-sm font-semibold mb-3 ${isBrutal ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                        <h3 className={`text-sm font-semibold mb-3 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
                                             Recent Bids
                                         </h3>
                                         <div className="space-y-2">
                                             {selectedArtwork.bids.slice().reverse().map((bid, index) => (
                                                 <div
                                                     key={index}
-                                                    className={`flex items-center justify-between p-2 rounded ${isBrutal ? 'bg-gray-50' : 'bg-gray-800/30'}`}
+                                                    className={`flex items-center justify-between p-2 rounded ${isClassic ? 'bg-gray-50' : 'bg-gray-800/30'}`}
                                                 >
-                                                    <span className={`text-sm ${isBrutal ? 'text-gray-600' : 'text-gray-400'}`}>
+                                                    <span className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                                         0x{Math.random().toString(36).substring(2, 8)}...
                                                     </span>
-                                                    <span className={`text-sm font-semibold ${isBrutal ? 'text-blue-600' : 'text-cyan-400'}`}>
+                                                    <span className={`text-sm font-semibold ${isClassic ? 'text-blue-600' : 'text-cyan-400'}`}>
                                                         {bid} ETH
                                                     </span>
                                                 </div>
@@ -450,7 +461,7 @@
                                     </div>
 
                                     <div>
-                                        <label className={`block text-sm font-semibold mb-2 ${isBrutal ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                        <label className={`block text-sm font-semibold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
                                             Place Your Bid
                                         </label>
                                         <input
@@ -460,7 +471,7 @@
                                             onChange={(e) => setBidAmount(e.target.value)}
                                             placeholder={`Min: ${selectedArtwork.currentBid + 0.1} ETH`}
                                             className={`w-full px-4 py-3 rounded-lg mb-4 ${
-                                                isBrutal
+                                                isClassic
                                                     ? 'bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-600'
                                                     : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100 focus:ring-2 focus:ring-cyan-400'
                                             } outline-none transition-all`}
@@ -470,10 +481,10 @@
                                             disabled={!walletConnected}
                                             className={`w-full py-3 rounded-lg font-bold transform hover:scale-105 ${
                                                 walletConnected
-                                                    ? isBrutal
+                                                    ? isClassic
                                                         ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50'
                                                         : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl neon-border hover:from-cyan-400 hover:to-purple-400'
-                                                    : isBrutal
+                                                    : isClassic
                                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                         : 'bg-gray-700 text-gray-500 cursor-not-allowed'
                                             }`}
@@ -482,7 +493,7 @@
                                         </button>
                                     </div>
 
-                                    <div className={`mt-6 p-4 rounded-lg text-xs ${isBrutal ? 'bg-gray-50 text-gray-600' : 'bg-gray-800/30 text-gray-400'}`}>
+                                    <div className={`mt-6 p-4 rounded-lg text-xs ${isClassic ? 'bg-gray-50 text-gray-600' : 'bg-gray-800/30 text-gray-400'}`}>
                                         <p className="mb-2">
                                             ℹ️ This is a price discovery auction. Your bid helps set the floor price.
                                         </p>
@@ -523,10 +534,10 @@
 
                     {/* Footer */}
                     <footer className="mt-16 pb-8 text-center">
-                        <p className={`text-sm ${isBrutal ? 'text-gray-600' : 'text-purple-300'}`}>
-                            ArtSoul Marketplace - Built by <a href="https://twitter.com/maysonkiller23" target="_blank" className={isBrutal ? 'text-blue-600 hover:underline' : 'text-cyan-400 hover:underline'}>@maysonkiller23</a>
+                        <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
+                            ArtSoul Marketplace - Built by <a href="https://twitter.com/maysonkiller23" target="_blank" className={isClassic ? 'text-blue-600 hover:underline' : 'text-cyan-400 hover:underline'}>@maysonkiller23</a>
                         </p>
-                        <p className={`text-xs mt-2 ${isBrutal ? 'text-gray-500' : 'text-gray-500'}`}>
+                        <p className={`text-xs mt-2 ${isClassic ? 'text-gray-500' : 'text-gray-500'}`}>
                             Multi-chain decentralized art auction platform
                         </p>
                     </footer>

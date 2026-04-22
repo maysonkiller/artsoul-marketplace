@@ -127,7 +127,7 @@
         };
 
         function UploadPage() {
-            const [theme, setTheme] = useState('brutal');
+            const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'classic');
             const [file, setFile] = useState(null);
             const [fileType, setFileType] = useState(null);
             const [preview, setPreview] = useState(null);
@@ -135,7 +135,12 @@
             const [dragOver, setDragOver] = useState(false);
             const [uploading, setUploading] = useState(false);
 
-            const isBrutal = theme === 'brutal';
+            const isClassic = theme === 'classic';
+
+            // Save theme to localStorage
+            useEffect(() => {
+                localStorage.setItem('theme', theme);
+            }, [theme]);
 
             // Handle file selection
             const handleFileSelect = (selectedFile) => {
@@ -206,33 +211,33 @@
 
             const formFields = fileType ? getFormFields(fileType) : {};
 
-            const bgClass = isBrutal
+            const bgClass = isClassic
                 ? 'bg-gray-100 text-gray-900'
                 : 'bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-purple-100';
 
             return (
                 <div className={`min-h-screen ${bgClass} transition-all duration-500`}>
                     {/* Header */}
-                    <header className={`sticky top-0 z-50 backdrop-blur-md ${isBrutal ? 'bg-white/90 border-b border-gray-300' : 'bg-black/50 border-b border-cyan-500/30'}`}>
+                    <header className={`sticky top-0 z-50 backdrop-blur-md ${isClassic ? 'bg-white/90 border-b border-gray-300' : 'bg-black/50 border-b border-cyan-500/30'}`}>
                         <div className="container mx-auto px-4 py-4">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <a href="index.html" className={`text-2xl font-bold ${isBrutal ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                    <a href="index.html" className={`text-2xl font-bold ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
                                         ArtSoul
                                     </a>
-                                    <span className={`text-sm ${isBrutal ? 'text-gray-600' : 'text-purple-300'}`}>
+                                    <span className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
                                         Upload Artwork
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <div className={`flex gap-2 p-1 rounded-lg ${isBrutal ? 'bg-gray-200' : 'bg-gray-800/50'}`}>
+                                    <div className={`flex gap-2 p-1 rounded-lg ${isClassic ? 'bg-gray-200' : 'bg-gray-800/50'}`}>
                                         <button
-                                            onClick={() => setTheme('brutal')}
+                                            onClick={() => setTheme('classic')}
                                             className={`px-4 py-2 rounded-md font-medium transform hover:scale-105 ${
-                                                theme === 'brutal'
+                                                theme === 'classic'
                                                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                                                    : isBrutal ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
+                                                    : isClassic ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
                                             }`}
                                         >
                                             Brutal
@@ -242,7 +247,7 @@
                                             className={`px-4 py-2 rounded-md font-medium transform hover:scale-105 ${
                                                 theme === 'future'
                                                     ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg neon-border'
-                                                    : isBrutal ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
+                                                    : isClassic ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
                                             }`}
                                         >
                                             Future
@@ -252,7 +257,7 @@
                                     <a
                                         href="index.html"
                                         className={`px-6 py-2 rounded-lg font-medium transform hover:scale-105 ${
-                                            isBrutal
+                                            isClassic
                                                 ? 'bg-gray-600 text-white hover:bg-gray-700'
                                                 : 'bg-gray-700 text-white hover:bg-gray-600'
                                         }`}
@@ -267,10 +272,10 @@
                     {/* Main Content */}
                     <main className="container mx-auto px-4 py-8">
                         <div className="max-w-4xl mx-auto">
-                            <h1 className={`text-4xl font-bold mb-2 animate-fadeIn ${isBrutal ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                            <h1 className={`text-4xl font-bold mb-2 animate-fadeIn ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
                                 Upload Your Artwork
                             </h1>
-                            <p className={`text-lg mb-8 animate-fadeIn ${isBrutal ? 'text-gray-600' : 'text-purple-300'}`}>
+                            <p className={`text-lg mb-8 animate-fadeIn ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
                                 Share your art with the world. Community will discover its true value.
                             </p>
 
@@ -279,10 +284,10 @@
                                 <div
                                     className={`drop-zone rounded-xl p-12 text-center animate-fadeIn ${
                                         dragOver
-                                            ? isBrutal
+                                            ? isClassic
                                                 ? 'border-blue-600 bg-blue-50'
                                                 : 'border-cyan-400 bg-cyan-900/20 neon-border'
-                                            : isBrutal
+                                            : isClassic
                                                 ? 'border-gray-300 bg-white'
                                                 : 'border-cyan-500/30 bg-gray-900/50'
                                     }`}
@@ -290,13 +295,13 @@
                                     onDragLeave={handleDragLeave}
                                     onDrop={handleDrop}
                                 >
-                                    <div className={`text-6xl mb-4 ${isBrutal ? 'text-gray-400' : 'text-cyan-400'}`}>
+                                    <div className={`text-6xl mb-4 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>
                                         📤
                                     </div>
-                                    <h3 className={`text-2xl font-bold mb-2 ${isBrutal ? 'text-gray-900' : 'text-cyan-300'}`}>
+                                    <h3 className={`text-2xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-300'}`}>
                                         Drag & Drop Your File
                                     </h3>
-                                    <p className={`mb-6 ${isBrutal ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    <p className={`mb-6 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                         or click to browse
                                     </p>
                                     <input
@@ -309,21 +314,21 @@
                                     <label
                                         htmlFor="fileInput"
                                         className={`inline-block px-8 py-3 rounded-lg font-bold cursor-pointer transform hover:scale-105 ${
-                                            isBrutal
+                                            isClassic
                                                 ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50'
                                                 : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl neon-border'
                                         }`}
                                     >
                                         Choose File
                                     </label>
-                                    <p className={`mt-4 text-sm ${isBrutal ? 'text-gray-500' : 'text-gray-500'}`}>
+                                    <p className={`mt-4 text-sm ${isClassic ? 'text-gray-500' : 'text-gray-500'}`}>
                                         Supported: Images, Videos, GIFs, Music (Max 100MB)
                                     </p>
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-6 animate-fadeIn">
                                     {/* File Preview */}
-                                    <div className={`rounded-xl p-6 ${isBrutal ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
+                                    <div className={`rounded-xl p-6 ${isClassic ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
                                         <div className="flex items-start gap-6">
                                             <div className="flex-shrink-0">
                                                 {fileType === 'Image' || fileType === 'GIF' ? (
@@ -331,9 +336,9 @@
                                                 ) : fileType === 'Video' ? (
                                                     <video src={preview} controls className="file-preview rounded-lg" />
                                                 ) : fileType === 'Music' ? (
-                                                    <div className={`w-64 h-64 rounded-lg flex items-center justify-center ${isBrutal ? 'bg-gray-100' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'}`}>
+                                                    <div className={`w-64 h-64 rounded-lg flex items-center justify-center ${isClassic ? 'bg-gray-100' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'}`}>
                                                         <div className="text-center">
-                                                            <div className={`text-6xl mb-4 ${isBrutal ? 'text-gray-400' : 'text-cyan-400'}`}>🎵</div>
+                                                            <div className={`text-6xl mb-4 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>🎵</div>
                                                             <audio src={preview} controls className="w-full" />
                                                         </div>
                                                     </div>
@@ -342,14 +347,14 @@
 
                                             <div className="flex-1">
                                                 <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-3 ${
-                                                    isBrutal ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-300'
+                                                    isClassic ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-300'
                                                 }`}>
                                                     {fileType}
                                                 </div>
-                                                <h3 className={`text-xl font-bold mb-2 ${isBrutal ? 'text-gray-900' : 'text-cyan-300'}`}>
+                                                <h3 className={`text-xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-300'}`}>
                                                     {file.name}
                                                 </h3>
-                                                <p className={`text-sm ${isBrutal ? 'text-gray-600' : 'text-gray-400'}`}>
+                                                <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                                     Size: {(file.size / 1024 / 1024).toFixed(2)} MB
                                                 </p>
                                                 <button
@@ -361,7 +366,7 @@
                                                         setFormData({});
                                                     }}
                                                     className={`mt-4 px-4 py-2 rounded-lg text-sm font-medium ${
-                                                        isBrutal
+                                                        isClassic
                                                             ? 'bg-red-100 text-red-700 hover:bg-red-200'
                                                             : 'bg-red-900/50 text-red-300 hover:bg-red-900/70'
                                                     }`}
@@ -373,15 +378,15 @@
                                     </div>
 
                                     {/* Dynamic Form Fields */}
-                                    <div className={`rounded-xl p-6 ${isBrutal ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
-                                        <h3 className={`text-2xl font-bold mb-6 ${isBrutal ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                    <div className={`rounded-xl p-6 ${isClassic ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
+                                        <h3 className={`text-2xl font-bold mb-6 ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
                                             Artwork Details
                                         </h3>
 
                                         <div className="space-y-4">
                                             {Object.entries(formFields).map(([key, field]) => (
                                                 <div key={key} className="animate-slideIn">
-                                                    <label className={`block text-sm font-semibold mb-2 ${isBrutal ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                                    <label className={`block text-sm font-semibold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
                                                         {field.label} {field.required && <span className="text-red-500">*</span>}
                                                     </label>
                                                     {field.multiline ? (
@@ -392,7 +397,7 @@
                                                             required={field.required}
                                                             rows={4}
                                                             className={`w-full px-4 py-3 rounded-lg ${
-                                                                isBrutal
+                                                                isClassic
                                                                     ? 'bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-600'
                                                                     : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100 focus:ring-2 focus:ring-cyan-400'
                                                             } outline-none transition-all`}
@@ -406,14 +411,14 @@
                                                             required={field.required}
                                                             step={field.type === 'number' ? '0.01' : undefined}
                                                             className={`w-full px-4 py-3 rounded-lg ${
-                                                                isBrutal
+                                                                isClassic
                                                                     ? 'bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-600'
                                                                     : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100 focus:ring-2 focus:ring-cyan-400'
                                                             } outline-none transition-all`}
                                                         />
                                                     )}
                                                     {field.info && (
-                                                        <p className={`mt-1 text-xs ${isBrutal ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                        <p className={`mt-1 text-xs ${isClassic ? 'text-gray-500' : 'text-gray-400'}`}>
                                                             ℹ️ {field.info}
                                                         </p>
                                                     )}
@@ -429,7 +434,7 @@
                                         className={`w-full py-4 rounded-lg font-bold text-lg transform hover:scale-105 ${
                                             uploading
                                                 ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                                                : isBrutal
+                                                : isClassic
                                                     ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50'
                                                     : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl neon-border'
                                         }`}
@@ -443,8 +448,8 @@
 
                     {/* Footer */}
                     <footer className="mt-16 pb-8 text-center">
-                        <p className={`text-sm ${isBrutal ? 'text-gray-600' : 'text-purple-300'}`}>
-                            ArtSoul Marketplace - Built by <a href="https://twitter.com/maysonkiller23" target="_blank" className={isBrutal ? 'text-blue-600 hover:underline' : 'text-cyan-400 hover:underline'}>@maysonkiller23</a>
+                        <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
+                            ArtSoul Marketplace - Built by <a href="https://twitter.com/maysonkiller23" target="_blank" className={isClassic ? 'text-blue-600 hover:underline' : 'text-cyan-400 hover:underline'}>@maysonkiller23</a>
                         </p>
                     </footer>
                 </div>
