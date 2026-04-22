@@ -174,6 +174,11 @@
             const [timeLeft, setTimeLeft] = useState(3 * 24 * 60 * 60);
             const [allArtworks, setAllArtworks] = useState([]);
             const [selectedArtwork, setSelectedArtwork] = useState(null);
+            const [viewerOpen, setViewerOpen] = useState(false);
+            const [viewerArtwork, setViewerArtwork] = useState(null);
+            const [zoom, setZoom] = useState(1);
+            const [volume, setVolume] = useState(1);
+            const [playbackRate, setPlaybackRate] = useState(1);
 
             const isClassic = theme === 'classic';
             const filters = ['all', 'NFT', 'Digital Art', 'Video', 'GIF', 'Physical Art', 'Image', 'Music'];
@@ -377,7 +382,12 @@
                                         {filteredArtworks.map((artwork, index) => (
                                             <div
                                                 key={artwork.id}
-                                                onClick={() => setSelectedArtwork(artwork)}
+                                                onClick={() => {
+                                                    setSelectedArtwork(artwork);
+                                                    setViewerArtwork(artwork);
+                                                    setViewerOpen(true);
+                                                    setZoom(1);
+                                                }}
                                                 style={{animationDelay: `${index * 0.1}s`}}
                                                 className={`cursor-pointer rounded-lg overflow-hidden card-hover animate-fadeIn ${
                                                     selectedArtwork?.id === artwork.id
@@ -576,6 +586,138 @@
                             Multi-chain decentralized art auction platform
                         </p>
                     </footer>
+
+                    {/* Artwork Viewer Modal */}
+                    {viewerOpen && viewerArtwork && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" onClick={() => setViewerOpen(false)}>
+                            <div className="relative max-w-6xl w-full max-h-screen overflow-auto" onClick={(e) => e.stopPropagation()}>
+                                {/* Close Button */}
+                                <button
+                                    onClick={() => setViewerOpen(false)}
+                                    className="absolute top-4 right-4 z-10 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                                >
+                                    ✕ Close
+                                </button>
+
+                                {/* Content */}
+                                <div className={`rounded-xl p-6 ${isClassic ? 'bg-white' : 'bg-gray-900'}`}>
+                                    {/* Image Viewer */}
+                                    {(viewerArtwork.type === 'Image' || viewerArtwork.type === 'NFT' || viewerArtwork.type === 'GIF') && viewerArtwork.image && (
+                                        <div className="space-y-4">
+                                            <div className="overflow-auto max-h-[70vh]">
+                                                <img
+                                                    src={viewerArtwork.image}
+                                                    alt={viewerArtwork.title}
+                                                    style={{transform: `scale(${zoom})`}}
+                                                    className="w-full transition-transform"
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <button onClick={() => setZoom(Math.max(0.5, zoom - 0.25))} className="px-4 py-2 bg-blue-600 text-white rounded">-</button>
+                                                <span className="text-white">Zoom: {zoom.toFixed(2)}x</span>
+                                                <button onClick={() => setZoom(Math.min(3, zoom + 0.25))} className="px-4 py-2 bg-blue-600 text-white rounded">+</button>
+                                                <button onClick={() => setZoom(1)} className="px-4 py-2 bg-gray-600 text-white rounded">Reset</button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Video Player */}
+                                    {viewerArtwork.type === 'Video' && viewerArtwork.image && (
+                                        <div className="space-y-4">
+                                            <video
+                                                src={viewerArtwork.image}
+                                                controls
+                                                className="w-full max-h-[70vh]"
+                                                onVolumeChange={(e) => setVolume(e.target.volume)}
+                                                onRateChange={(e) => setPlaybackRate(e.target.playbackRate)}
+                                            />
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-4">
+                                                    <label className="text-white">Volume:</label>
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="1"
+                                                        step="0.1"
+                                                        value={volume}
+                                                        onChange={(e) => {
+                                                            setVolume(e.target.value);
+                                                            document.querySelector('video').volume = e.target.value;
+                                                        }}
+                                                        className="flex-1"
+                                                    />
+                                                    <span className="text-white">{Math.round(volume * 100)}%</span>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <label className="text-white">Speed:</label>
+                                                    <button onClick={() => { document.querySelector('video').playbackRate = 0.5; setPlaybackRate(0.5); }} className="px-3 py-1 bg-gray-600 text-white rounded">0.5x</button>
+                                                    <button onClick={() => { document.querySelector('video').playbackRate = 1; setPlaybackRate(1); }} className="px-3 py-1 bg-gray-600 text-white rounded">1x</button>
+                                                    <button onClick={() => { document.querySelector('video').playbackRate = 1.5; setPlaybackRate(1.5); }} className="px-3 py-1 bg-gray-600 text-white rounded">1.5x</button>
+                                                    <button onClick={() => { document.querySelector('video').playbackRate = 2; setPlaybackRate(2); }} className="px-3 py-1 bg-gray-600 text-white rounded">2x</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Audio Player */}
+                                    {viewerArtwork.type === 'Music' && viewerArtwork.image && (
+                                        <div className="space-y-4">
+                                            <div className={`p-8 rounded-lg ${isClassic ? 'bg-gray-100' : 'bg-gray-800'}`}>
+                                                <div className="text-center mb-6">
+                                                    <div className="text-6xl mb-4">🎵</div>
+                                                    <h3 className={`text-2xl font-bold ${isClassic ? 'text-gray-900' : 'text-white'}`}>{viewerArtwork.title}</h3>
+                                                </div>
+                                                <audio
+                                                    src={viewerArtwork.image}
+                                                    controls
+                                                    className="w-full mb-4"
+                                                    onVolumeChange={(e) => setVolume(e.target.volume)}
+                                                    onRateChange={(e) => setPlaybackRate(e.target.playbackRate)}
+                                                />
+                                                <div className="space-y-3">
+                                                    <div className="flex items-center gap-4">
+                                                        <label className={`${isClassic ? 'text-gray-900' : 'text-white'}`}>Volume:</label>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="1"
+                                                            step="0.1"
+                                                            value={volume}
+                                                            onChange={(e) => {
+                                                                setVolume(e.target.value);
+                                                                const audio = document.querySelector('audio');
+                                                                if (audio) audio.volume = e.target.value;
+                                                            }}
+                                                            className="flex-1"
+                                                        />
+                                                        <span className={`${isClassic ? 'text-gray-900' : 'text-white'}`}>{Math.round(volume * 100)}%</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <label className={`${isClassic ? 'text-gray-900' : 'text-white'}`}>Speed:</label>
+                                                        <button onClick={() => { const audio = document.querySelector('audio'); if (audio) { audio.playbackRate = 0.5; setPlaybackRate(0.5); }}} className="px-3 py-1 bg-blue-600 text-white rounded">0.5x</button>
+                                                        <button onClick={() => { const audio = document.querySelector('audio'); if (audio) { audio.playbackRate = 1; setPlaybackRate(1); }}} className="px-3 py-1 bg-blue-600 text-white rounded">1x</button>
+                                                        <button onClick={() => { const audio = document.querySelector('audio'); if (audio) { audio.playbackRate = 1.5; setPlaybackRate(1.5); }}} className="px-3 py-1 bg-blue-600 text-white rounded">1.5x</button>
+                                                        <button onClick={() => { const audio = document.querySelector('audio'); if (audio) { audio.playbackRate = 2; setPlaybackRate(2); }}} className="px-3 py-1 bg-blue-600 text-white rounded">2x</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Artwork Info */}
+                                    <div className={`mt-6 p-4 rounded-lg ${isClassic ? 'bg-gray-100' : 'bg-gray-800'}`}>
+                                        <h2 className={`text-2xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>{viewerArtwork.title}</h2>
+                                        <p className={`text-sm mb-2 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>by {viewerArtwork.artist}</p>
+                                        <p className={`${isClassic ? 'text-gray-700' : 'text-gray-300'}`}>{viewerArtwork.description}</p>
+                                        <div className="mt-4 flex gap-4">
+                                            <span className={`px-3 py-1 rounded ${isClassic ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-300'}`}>{viewerArtwork.type}</span>
+                                            <span className={`px-3 py-1 rounded ${isClassic ? 'bg-green-100 text-green-700' : 'bg-green-900/50 text-green-300'}`}>Current Bid: {viewerArtwork.currentBid} ETH</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
