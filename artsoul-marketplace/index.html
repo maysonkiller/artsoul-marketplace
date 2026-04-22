@@ -33,6 +33,42 @@
             transition: all 0.3s ease;
         }
 
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            h2 {
+                font-size: 1.25rem !important;
+            }
+            .container {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            /* Make buttons easier to tap */
+            button, a {
+                min-height: 44px !important;
+                min-width: 44px !important;
+                padding: 0.75rem !important;
+            }
+            /* Improve text readability */
+            p, span, div {
+                -webkit-text-size-adjust: 100%;
+            }
+            /* Stack elements vertically */
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+            /* Larger touch targets */
+            input, select, textarea {
+                font-size: 16px !important;
+                padding: 0.75rem !important;
+            }
+        }
+
         /* Neon effects */
         .neon-glow {
             text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
@@ -132,7 +168,7 @@
         const { useState, useEffect } = React;
 
         const mockArtworks = [
-            { id: 1, title: 'Soul Flame', artist: 'Maysonkiller', type: 'NFT', description: 'A burning representation of the digital soul', currentBid: 0.5, bids: [0.3, 0.4, 0.5] },
+            { id: 1, title: 'Soul Flame', artist: 'Maysonkiller', type: 'NFT', description: 'A burning representation of the digital soul', currentBid: 0.5, bids: [0.3, 0.4, 0.5], image: 'artwork-sample.jpg' },
             { id: 2, title: 'Neon Dreams', artist: 'CryptoArtist', type: 'Digital Art', description: 'Futuristic cityscape in neon colors', currentBid: 1.2, bids: [0.8, 1.0, 1.2] },
             { id: 3, title: 'Silent Choir', artist: 'Maysonkiller', type: 'Video', description: 'An audiovisual journey through silence', currentBid: 0.8, bids: [0.5, 0.7, 0.8] },
             { id: 4, title: 'Cosmic Melancholy', artist: 'StarGazer', type: 'GIF', description: 'Animated loop of cosmic emotions', currentBid: 0.3, bids: [0.1, 0.2, 0.3] },
@@ -364,15 +400,30 @@
                                                 } ${isClassic ? 'bg-white shadow-md' : 'bg-gray-800/50 backdrop-blur-sm'}`}
                                             >
                                                 <div className={`aspect-square flex items-center justify-center relative overflow-hidden ${isClassic ? 'bg-gradient-to-br from-gray-100 to-gray-200' : 'bg-gradient-to-br from-purple-900/50 via-pink-900/30 to-cyan-900/50'}`}>
-                                                    {!isClassic && <div className="absolute inset-0 shimmer opacity-20"></div>}
-                                                    <div className="text-center p-4 relative z-10 animate-float">
-                                                        <div className={`text-5xl mb-2 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>
-                                                            {artwork.type === 'Video' ? '🎬' : artwork.type === 'GIF' ? '🎞️' : '🖼️'}
-                                                        </div>
-                                                        <div className={`text-sm font-medium ${isClassic ? 'text-gray-500' : 'text-purple-300'}`}>
-                                                            {artwork.type}
-                                                        </div>
-                                                    </div>
+                                                    {artwork.image ? (
+                                                        artwork.type === 'Video' ? (
+                                                            <video src={artwork.image} controls className="w-full h-full object-cover" />
+                                                        ) : artwork.type === 'Music' ? (
+                                                            <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                                                                <div className={`text-6xl mb-4 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>🎵</div>
+                                                                <audio src={artwork.image} controls className="w-full" />
+                                                            </div>
+                                                        ) : (
+                                                            <img src={artwork.image} alt={artwork.title} className="w-full h-full object-cover" />
+                                                        )
+                                                    ) : (
+                                                        <>
+                                                            {!isClassic && <div className="absolute inset-0 shimmer opacity-20"></div>}
+                                                            <div className="text-center p-4 relative z-10 animate-float">
+                                                                <div className={`text-5xl mb-2 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>
+                                                                    {artwork.type === 'Video' ? '🎬' : artwork.type === 'Music' ? '🎵' : artwork.type === 'GIF' ? '🎞️' : '🖼️'}
+                                                                </div>
+                                                                <div className={`text-sm font-medium ${isClassic ? 'text-gray-500' : 'text-purple-300'}`}>
+                                                                    {artwork.type}
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    )}
                                                 </div>
 
                                                 <div className="p-4">
