@@ -379,7 +379,24 @@
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {filteredArtworks.map((artwork, index) => (
+                                        {filteredArtworks.length === 0 ? (
+                                            <div className="col-span-2 text-center py-12">
+                                                <p className={`text-xl mb-4 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                                    No {filter === 'all' ? '' : filter} artworks yet
+                                                </p>
+                                                <a
+                                                    href={`upload.html?type=${filter === 'all' ? 'Image' : filter}`}
+                                                    className={`inline-block px-6 py-3 rounded-lg font-bold ${
+                                                        isClassic
+                                                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                                            : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl'
+                                                    }`}
+                                                >
+                                                    Upload {filter === 'all' ? 'Artwork' : filter}
+                                                </a>
+                                            </div>
+                                        ) : (
+                                            filteredArtworks.map((artwork, index) => (
                                             <div
                                                 key={artwork.id}
                                                 onClick={() => {
@@ -443,7 +460,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        ))}
+                                        ))
+                                        )}
                                     </div>
                                 </div>
                             </div>
