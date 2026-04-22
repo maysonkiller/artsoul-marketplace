@@ -371,14 +371,14 @@
 
                                 <div className="flex items-center gap-3 flex-wrap">
                                     <a
-                                        href="docs.html"
+                                        href="upload.html"
                                         className={`px-4 py-2 rounded-lg font-medium transform hover:scale-105 flex items-center gap-2 ${
                                             isClassic
-                                                ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg classic-hover'
-                                                : 'bg-gradient-to-r from-green-500 to-cyan-500 text-white hover:shadow-2xl hover-lift'
+                                                ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg classic-hover'
+                                                : 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:shadow-2xl hover-lift'
                                         }`}
                                     >
-                                        {isClassic ? '📚' : '⚡'} Docs
+                                        {isClassic ? '📤' : '💫'} Upload
                                     </a>
 
                                     <a
@@ -390,17 +390,6 @@
                                         }`}
                                     >
                                         {isClassic ? '👤' : '🎭'} Profile
-                                    </a>
-
-                                    <a
-                                        href="upload.html"
-                                        className={`px-4 py-2 rounded-lg font-medium transform hover:scale-105 flex items-center gap-2 ${
-                                            isClassic
-                                                ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg classic-hover'
-                                                : 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:shadow-2xl hover-lift'
-                                        }`}
-                                    >
-                                        {isClassic ? '📤' : '💫'} Upload
                                     </a>
 
                                     <button
@@ -688,6 +677,18 @@
 
                     {/* Footer */}
                     <footer className="mt-16 pb-8 text-center">
+                        <div className="mb-4">
+                            <a
+                                href="docs.html"
+                                className={`inline-block px-6 py-3 rounded-lg font-medium transform hover:scale-105 ${
+                                    isClassic
+                                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg'
+                                        : 'bg-gradient-to-r from-green-500 to-cyan-500 text-white hover:shadow-2xl'
+                                }`}
+                            >
+                                {isClassic ? '📚' : '⚡'} Documentation
+                            </a>
+                        </div>
                         <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
                             ArtSoul Marketplace - Built by <a href="https://twitter.com/maysonkiller23" target="_blank" className={isClassic ? 'text-blue-600 hover:underline' : 'text-cyan-400 hover:underline'}>@maysonkiller23</a>
                         </p>
