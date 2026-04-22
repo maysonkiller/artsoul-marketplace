@@ -193,9 +193,9 @@
                                 <div className="flex items-center gap-4">
                                     <div className={`flex gap-2 p-1 rounded-lg ${isClassic ? 'bg-gray-200' : 'bg-gray-800/50'}`}>
                                         <button
-                                            onClick={() => setTheme('brutal')}
+                                            onClick={() => setTheme('classic')}
                                             className={`px-4 py-2 rounded-md font-medium transform hover:scale-105 ${
-                                                theme === 'brutal'
+                                                theme === 'classic'
                                                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
                                                     : isClassic ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
                                             }`}
@@ -320,10 +320,8 @@
                                             </p>
                                             <div className="flex gap-4">
                                                 {profile.socials?.x && (
-                                                    <a href={`https://x.com/${profile.socials.x}`} target="_blank" className={`flex items-center gap-2 px-4 py-2 rounded-lg ${isClassic ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-300'}`}>
-                                                        <img src={`https://unavatar.io/twitter/${profile.socials.x}`} alt="X Avatar" className="w-6 h-6 rounded-full" />
-                                                        <span className="text-xl">𝕏</span>
-                                                        <span>@{profile.socials.x}</span>
+                                                    <a href={`https://x.com/${profile.socials.x}`} target="_blank" className="block">
+                                                        <img src={`https://unavatar.io/twitter/${profile.socials.x}`} alt="X Avatar" className="w-12 h-12 rounded-full hover:scale-110 transition-transform" />
                                                     </a>
                                                 )}
                                                 {profile.socials.instagram && (
