@@ -124,6 +124,8 @@
             const saveProfile = () => {
                 localStorage.setItem('userProfile', JSON.stringify(profile));
                 setEditMode(false);
+                // Force re-render to update X display
+                setProfile({...profile});
                 alert('Profile saved!');
             };
 
