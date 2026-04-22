@@ -319,9 +319,11 @@
                                                 {profile.bio || 'No bio yet'}
                                             </p>
                                             <div className="flex gap-4">
-                                                {profile.socials.x && (
-                                                    <a href={`https://x.com/${profile.socials.x}`} target="_blank" className={`px-4 py-2 rounded-lg ${isClassic ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-300'}`}>
-                                                        𝕏 X
+                                                {profile.socials?.x && (
+                                                    <a href={`https://x.com/${profile.socials.x}`} target="_blank" className={`flex items-center gap-2 px-4 py-2 rounded-lg ${isClassic ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-300'}`}>
+                                                        <img src={`https://unavatar.io/twitter/${profile.socials.x}`} alt="X Avatar" className="w-6 h-6 rounded-full" />
+                                                        <span className="text-xl">𝕏</span>
+                                                        <span>@{profile.socials.x}</span>
                                                     </a>
                                                 )}
                                                 {profile.socials.instagram && (
