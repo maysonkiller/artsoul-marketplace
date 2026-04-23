@@ -241,6 +241,12 @@
             const [walletBalance, setWalletBalance] = useState('0.00');
             const [selectedNetwork, setSelectedNetwork] = useState('ethereum');
             const [walletModalOpen, setWalletModalOpen] = useState(false);
+            const [customNetworks, setCustomNetworks] = useState(() => {
+                const saved = localStorage.getItem('customNetworks');
+                return saved ? JSON.parse(saved) : [];
+            });
+            const [addNetworkModalOpen, setAddNetworkModalOpen] = useState(false);
+            const [newNetwork, setNewNetwork] = useState({ name: '', chainId: '', rpcUrl: '', symbol: '' });
             const [filter, setFilter] = useState('all');
             const [bidAmount, setBidAmount] = useState('');
             const [timeLeft, setTimeLeft] = useState(3 * 24 * 60 * 60);
@@ -388,11 +394,40 @@
 
             const switchNetwork = async (network) => {
                 const networks = {
-                    ethereum: { chainId: '0x1', name: 'Ethereum Mainnet' },
-                    polygon: { chainId: '0x89', name: 'Polygon' },
-                    bsc: { chainId: '0x38', name: 'BSC' },
+                    ethereum: { chainId: '0x1', name: 'Ethereum Mainnet', rpcUrl: 'https://mainnet.infura.io/v3/' },
+                    polygon: { chainId: '0x89', name: 'Polygon', rpcUrl: 'https://polygon-rpc.com' },
+                    bsc: { chainId: '0x38', name: 'BSC', rpcUrl: 'https://bsc-dataseed.binance.org' },
+                    arbitrum: { chainId: '0xa4b1', name: 'Arbitrum', rpcUrl: 'https://arb1.arbitrum.io/rpc' },
+                    optimism: { chainId: '0xa', name: 'Optimism', rpcUrl: 'https://mainnet.optimism.io' },
+                    avalanche: { chainId: '0xa86a', name: 'Avalanche', rpcUrl: 'https://api.avax.network/ext/bc/C/rpc' },
                     solana: { name: 'Solana' }
                 };
+
+                // Check if it's a custom network
+                const customNet = customNetworks.find(n => n.name.toLowerCase() === network.toLowerCase());
+                if (customNet) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: customNet.chainId,
+                                chainName: customNet.name,
+                                rpcUrls: [customNet.rpcUrl],
+                                nativeCurrency: {
+                                    name: customNet.symbol,
+                                    symbol: customNet.symbol,
+                                    decimals: 18
+                                }
+                            }]
+                        });
+                        setSelectedNetwork(customNet.name);
+                        return;
+                    } catch (error) {
+                        console.error('Error adding custom network:', error);
+                        alert(`Failed to add ${customNet.name}`);
+                        return;
+                    }
+                }
 
                 if (network === 'solana') {
                     setSelectedNetwork('solana');
@@ -409,9 +444,41 @@
                         setSelectedNetwork(network);
                     }
                 } catch (error) {
-                    console.error('Error switching network:', error);
-                    alert(`Failed to switch to ${networks[network].name}`);
+                    // If network doesn't exist, try to add it
+                    if (error.code === 4902) {
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: networks[network].chainId,
+                                    chainName: networks[network].name,
+                                    rpcUrls: [networks[network].rpcUrl]
+                                }]
+                            });
+                            setSelectedNetwork(network);
+                        } catch (addError) {
+                            console.error('Error adding network:', addError);
+                            alert(`Failed to add ${networks[network].name}`);
+                        }
+                    } else {
+                        console.error('Error switching network:', error);
+                        alert(`Failed to switch to ${networks[network].name}`);
+                    }
                 }
+            };
+
+            const addCustomNetwork = () => {
+                if (!newNetwork.name || !newNetwork.chainId || !newNetwork.rpcUrl || !newNetwork.symbol) {
+                    alert('Please fill all fields');
+                    return;
+                }
+
+                const updated = [...customNetworks, newNetwork];
+                setCustomNetworks(updated);
+                localStorage.setItem('customNetworks', JSON.stringify(updated));
+                setNewNetwork({ name: '', chainId: '', rpcUrl: '', symbol: '' });
+                setAddNetworkModalOpen(false);
+                alert(`Network ${newNetwork.name} added successfully!`);
             };
 
             // Load wallet connection on mount
@@ -932,31 +999,151 @@
                                 </div>
 
                                 {/* Network Selector */}
-                                {walletConnected && (
-                                    <div className="mt-6 pt-6 border-t border-gray-700">
-                                        <p className={`text-sm font-semibold mb-3 ${isClassic ? 'text-gray-700' : 'text-gray-400'}`}>
-                                            Select Network
-                                        </p>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {['ethereum', 'polygon', 'bsc', 'solana'].map(network => (
-                                                <button
-                                                    key={network}
-                                                    onClick={() => switchNetwork(network)}
-                                                    className={`py-2 px-4 rounded-lg text-sm font-medium transform hover:scale-105 ${
-                                                        selectedNetwork === network
-                                                            ? isClassic ? 'bg-blue-600 text-white' : 'bg-cyan-500 text-white'
-                                                            : isClassic ? 'bg-gray-100 text-gray-700' : 'bg-gray-800 text-gray-300'
-                                                    }`}
-                                                >
-                                                    {network.charAt(0).toUpperCase() + network.slice(1)}
-                                                </button>
-                                            ))}
-                                        </div>
+                                <div className="mt-6 pt-6 border-t border-gray-700">
+                                    <p className={`text-sm font-semibold mb-3 ${isClassic ? 'text-gray-700' : 'text-gray-400'}`}>
+                                        Select Network
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        {['ethereum', 'polygon', 'bsc', 'arbitrum', 'optimism', 'avalanche', 'solana'].map(network => (
+                                            <button
+                                                key={network}
+                                                onClick={() => switchNetwork(network)}
+                                                className={`py-2 px-4 rounded-lg text-sm font-medium transform hover:scale-105 ${
+                                                    selectedNetwork === network
+                                                        ? isClassic ? 'bg-blue-600 text-white' : 'bg-cyan-500 text-white'
+                                                        : isClassic ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                                                }`}
+                                            >
+                                                {network.charAt(0).toUpperCase() + network.slice(1)}
+                                            </button>
+                                        ))}
+                                        {customNetworks.map(network => (
+                                            <button
+                                                key={network.name}
+                                                onClick={() => switchNetwork(network.name)}
+                                                className={`py-2 px-4 rounded-lg text-sm font-medium transform hover:scale-105 ${
+                                                    selectedNetwork === network.name
+                                                        ? isClassic ? 'bg-purple-600 text-white' : 'bg-purple-500 text-white'
+                                                        : isClassic ? 'bg-purple-50 text-purple-700 hover:bg-purple-100' : 'bg-purple-900/30 text-purple-300 hover:bg-purple-800/50'
+                                                }`}
+                                            >
+                                                {network.name}
+                                            </button>
+                                        ))}
                                     </div>
-                                )}
+                                    <button
+                                        onClick={() => setAddNetworkModalOpen(true)}
+                                        className={`w-full py-2 px-4 rounded-lg text-sm font-medium transform hover:scale-105 border-2 border-dashed ${
+                                            isClassic ? 'border-gray-300 text-gray-600 hover:bg-gray-50' : 'border-cyan-500/30 text-cyan-400 hover:bg-gray-800/50'
+                                        }`}
+                                    >
+                                        + Add Custom Network
+                                    </button>
+                                </div>
 
                                 <p className={`text-xs text-center mt-6 ${isClassic ? 'text-gray-500' : 'text-gray-500'}`}>
                                     🔒 Secure connection with Web3 protocols
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Add Custom Network Modal */}
+                    {addNetworkModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-4" onClick={() => setAddNetworkModalOpen(false)}>
+                            <div className={`relative max-w-md w-full rounded-xl p-8 ${isClassic ? 'bg-white' : 'bg-gray-900 border border-cyan-500/30'}`} onClick={(e) => e.stopPropagation()}>
+                                <button onClick={() => setAddNetworkModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+
+                                <h2 className={`text-2xl font-bold mb-2 text-center ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>
+                                    Add Custom Network
+                                </h2>
+                                <p className={`text-center mb-6 text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    Add any EVM-compatible network
+                                </p>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                            Network Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newNetwork.name}
+                                            onChange={(e) => setNewNetwork({...newNetwork, name: e.target.value})}
+                                            placeholder="e.g., Base, Xion"
+                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                isClassic
+                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                            } outline-none focus:ring-2 focus:ring-cyan-400`}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                            Chain ID (hex)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newNetwork.chainId}
+                                            onChange={(e) => setNewNetwork({...newNetwork, chainId: e.target.value})}
+                                            placeholder="e.g., 0x2105"
+                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                isClassic
+                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                            } outline-none focus:ring-2 focus:ring-cyan-400`}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                            RPC URL
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newNetwork.rpcUrl}
+                                            onChange={(e) => setNewNetwork({...newNetwork, rpcUrl: e.target.value})}
+                                            placeholder="https://..."
+                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                isClassic
+                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                            } outline-none focus:ring-2 focus:ring-cyan-400`}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                            Currency Symbol
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newNetwork.symbol}
+                                            onChange={(e) => setNewNetwork({...newNetwork, symbol: e.target.value})}
+                                            placeholder="e.g., ETH, XION"
+                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                isClassic
+                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                            } outline-none focus:ring-2 focus:ring-cyan-400`}
+                                        />
+                                    </div>
+
+                                    <button
+                                        onClick={addCustomNetwork}
+                                        className={`w-full py-4 rounded-lg font-bold text-lg transform hover:scale-105 transition-all ${
+                                            isClassic
+                                                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                                : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl'
+                                        }`}
+                                    >
+                                        Add Network
+                                    </button>
+                                </div>
+
+                                <p className={`text-xs text-center mt-4 ${isClassic ? 'text-gray-500' : 'text-gray-500'}`}>
+                                    ⚠️ Only add networks you trust
                                 </p>
                             </div>
                         </div>
