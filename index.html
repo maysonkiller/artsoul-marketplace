@@ -15,73 +15,191 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        * { font-family: 'Inter', sans-serif; }
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        /* Classic Mode - Expensive Minimalism */
         body.classic {
             background: #010101;
             color: #a9ddd3;
         }
 
+        /* Future Mode - 2030 Alien Interface */
         body.future {
-            background: linear-gradient(135deg, #010101 0%, #0a3a3a 50%, #010101 100%);
-            color: #a9ddd3;
+            background: #000000;
+            color: #00f5ff;
+            position: relative;
         }
 
-        .classic-border {
+        body.future::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(90deg, transparent 0%, rgba(0, 245, 255, 0.03) 50%, transparent 100%),
+                linear-gradient(0deg, transparent 0%, rgba(0, 245, 255, 0.03) 50%, transparent 100%);
+            background-size: 100px 100px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 100px 100px, 100px 100px; }
+        }
+
+        /* Mode Transition Effect */
+        body.transitioning {
+            animation: modeTransition 0.6s ease-out;
+        }
+
+        @keyframes modeTransition {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(2) saturate(2); }
+            100% { filter: brightness(1); }
+        }
+
+        /* Success Wave Effect */
+        @keyframes successWave {
+            0% {
+                transform: translateX(-100%) skewX(-15deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(200%) skewX(-15deg);
+                opacity: 0;
+            }
+        }
+
+        .success-wave {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.5), transparent);
+            pointer-events: none;
+            z-index: 9999;
+            animation: successWave 1s ease-out;
+        }
+
+        /* Lightning Effect */
+        @keyframes lightning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes microLightning {
+            0%, 100% {
+                box-shadow: 0 0 20px #00f5ff, 0 0 40px #00f5ff, 0 0 60px #00f5ff;
+            }
+            50% {
+                box-shadow: 0 0 30px #00f5ff, 0 0 60px #00f5ff, 0 0 90px #00f5ff;
+            }
+        }
+
+        /* Buttons */
+        .btn-classic {
+            background: #a9ddd3;
+            color: #010101;
+            border: 1px solid #a9ddd3;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-classic:hover {
+            background: transparent;
+            color: #a9ddd3;
+            transform: translateY(-2px);
+        }
+
+        /* Future Button - Asymmetric Alien Shape */
+        .btn-future {
+            position: relative;
+            background: linear-gradient(135deg, #00f5ff 0%, #00d4ff 100%);
+            color: #000000;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-future:hover {
+            animation: microLightning 0.3s ease-in-out infinite;
+            transform: translateY(-3px) scale(1.05);
+            filter: brightness(1.3);
+        }
+
+        .btn-future:active {
+            animation: lightning 0.1s ease-out;
+        }
+
+        /* Art Cards */
+        .art-card {
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .classic .art-card {
+            background: rgba(169, 221, 211, 0.03);
             border: 1px solid #a9ddd3;
         }
 
-        .future-btn:hover {
-            box-shadow: 0 0 15px #a9ddd3, 0 0 30px #00ffff;
-            filter: drop-shadow(0 0 5px #a9ddd3);
-            animation: lightning 0.1s infinite;
+        .classic .art-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(169, 221, 211, 0.3);
+            border-color: #a9ddd3;
         }
 
-        @keyframes lightning {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
+        .future .art-card {
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid #00f5ff;
+            backdrop-filter: blur(10px);
         }
 
-        @keyframes hologramAppear {
-            from {
-                opacity: 0;
-                transform: translateY(-10px) scale(0.95);
-                filter: blur(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
-            }
+        .future .art-card:hover {
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 0 30px #00f5ff, 0 0 60px #00f5ff;
+            border-color: #00f5ff;
+            transform: translateY(-10px);
         }
 
-        .hologram-tooltip {
-            animation: hologramAppear 0.4s ease-out;
+        @keyframes float {
+            0%, 100% { transform: translateY(-10px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Gallery Grid - Compact */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-height: 80vh;
+        }
+
+        /* Glassmorphism */
+        .glass {
             backdrop-filter: blur(20px);
-            box-shadow: 0 0 30px rgba(169, 221, 211, 0.5), inset 0 0 20px rgba(169, 221, 211, 0.1);
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid rgba(0, 245, 255, 0.2);
         }
 
+        /* Icon Abstract */
         .icon-abstract {
             stroke-width: 0.75px;
             transition: all 0.3s ease;
         }
 
-        .art-card {
-            background: rgba(169, 221, 211, 0.05);
-            border: 1px solid #a9ddd3;
-            transition: all 0.3s ease;
-        }
-
-        .art-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(169, 221, 211, 0.3);
-        }
-
-        .future .art-card:hover {
-            box-shadow: 0 0 20px #a9ddd3, 0 0 40px #00ffff;
-        }
-
+        /* Tooltips */
         .tooltip-wrapper {
             position: relative;
             display: inline-block;
@@ -98,6 +216,9 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
         }
 
         .tooltip-wrapper:hover .tooltip-content {
@@ -108,41 +229,113 @@
             background: #010101;
             color: #a9ddd3;
             border: 1px solid #a9ddd3;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
         }
 
         .future .tooltip-content {
-            background: rgba(1, 1, 1, 0.9);
-            color: #a9ddd3;
-            border: 1px solid #a9ddd3;
-            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.9);
+            color: #00f5ff;
+            border: 1px solid #00f5ff;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+
+        .classic header {
+            background: rgba(1, 1, 1, 0.95);
+            border-bottom: 1px solid #a9ddd3;
+        }
+
+        .future header {
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid #00f5ff;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.25rem;
             border-radius: 0.5rem;
+        }
+
+        .classic .theme-toggle {
+            background: rgba(169, 221, 211, 0.1);
+        }
+
+        .future .theme-toggle {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+        }
+
+        .theme-btn {
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 0.375rem;
             font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-btn.active-classic {
+            background: #a9ddd3;
+            color: #010101;
+        }
+
+        .theme-btn.active-future {
+            background: linear-gradient(to right, #00f5ff, #00d4ff);
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+        }
+
+        .theme-btn:not(.active-classic):not(.active-future) {
+            background: transparent;
+            color: inherit;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body class="classic">
     <!-- Header -->
-    <header class="sticky top-0 z-50 backdrop-blur-md" style="background: rgba(1, 1, 1, 0.9); border-bottom: 1px solid #a9ddd3;">
+    <header>
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between flex-wrap gap-4">
                 <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-2xl font-light tracking-wide" style="color: #a9ddd3;">ArtSoul</a>
+                    <a href="index.html" class="text-2xl font-light tracking-wide">ArtSoul</a>
 
-                    <div class="flex gap-1 p-1 rounded-lg" style="background: rgba(169, 221, 211, 0.1);">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="px-3 py-1 rounded text-xs font-medium transition-all" style="background: #a9ddd3; color: #010101;">
+                    <div class="theme-toggle">
+                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
                             Classic
                         </button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="px-3 py-1 rounded text-xs font-medium transition-all" style="color: #a9ddd3;">
+                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
                             Future
                         </button>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3" id="navButtons">
-                    <button onclick="connectWallet()" class="px-6 py-2 rounded-lg font-medium transition-all" style="background: #a9ddd3; color: #010101;">
+                    <button onclick="connectWallet()" class="btn-classic">
                         Get Started
                     </button>
                 </div>
@@ -151,82 +344,82 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-12">
+    <main class="container mx-auto px-4 py-8 relative z-10">
         <!-- Hero Section -->
-        <div class="text-center mb-16">
-            <h1 class="text-5xl font-light mb-4" style="color: #a9ddd3;">Decentralized Art Marketplace</h1>
-            <p class="text-xl font-light opacity-80">Where community determines value</p>
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-light mb-3">Decentralized Art Marketplace</h1>
+            <p class="text-lg font-light opacity-80">Where community determines value</p>
         </div>
 
-        <!-- Gallery Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <!-- Gallery Grid - Compact 6 Cards -->
+        <div class="gallery-grid mb-12">
             <!-- Art Card 1 -->
-            <div class="art-card rounded-xl overflow-hidden">
+            <div class="art-card rounded-xl overflow-hidden" onclick="viewArt(1)">
                 <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
                 <div class="p-4">
-                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Abstract Dreams</h3>
+                    <h3 class="text-lg font-medium mb-1">Abstract Dreams</h3>
                     <p class="text-sm opacity-70 mb-3">by @artist_one</p>
-                    <button onclick="viewArt(1)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                    <button class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
                         View
                     </button>
                 </div>
             </div>
 
             <!-- Art Card 2 -->
-            <div class="art-card rounded-xl overflow-hidden">
+            <div class="art-card rounded-xl overflow-hidden" onclick="viewArt(2)">
                 <div class="aspect-square bg-gradient-to-br from-pink-900 to-orange-900"></div>
                 <div class="p-4">
-                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Digital Sunset</h3>
+                    <h3 class="text-lg font-medium mb-1">Digital Sunset</h3>
                     <p class="text-sm opacity-70 mb-3">by @creator_two</p>
-                    <button onclick="viewArt(2)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                    <button class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
                         View
                     </button>
                 </div>
             </div>
 
             <!-- Art Card 3 -->
-            <div class="art-card rounded-xl overflow-hidden">
+            <div class="art-card rounded-xl overflow-hidden" onclick="viewArt(3)">
                 <div class="aspect-square bg-gradient-to-br from-green-900 to-teal-900"></div>
                 <div class="p-4">
-                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Cyber Nature</h3>
+                    <h3 class="text-lg font-medium mb-1">Cyber Nature</h3>
                     <p class="text-sm opacity-70 mb-3">by @nature_artist</p>
-                    <button onclick="viewArt(3)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                    <button class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
                         View
                     </button>
                 </div>
             </div>
 
             <!-- Art Card 4 -->
-            <div class="art-card rounded-xl overflow-hidden">
+            <div class="art-card rounded-xl overflow-hidden" onclick="viewArt(4)">
                 <div class="aspect-square bg-gradient-to-br from-red-900 to-purple-900"></div>
                 <div class="p-4">
-                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Neon Nights</h3>
+                    <h3 class="text-lg font-medium mb-1">Neon Nights</h3>
                     <p class="text-sm opacity-70 mb-3">by @neon_creator</p>
-                    <button onclick="viewArt(4)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                    <button class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
                         View
                     </button>
                 </div>
             </div>
 
             <!-- Art Card 5 -->
-            <div class="art-card rounded-xl overflow-hidden">
+            <div class="art-card rounded-xl overflow-hidden" onclick="viewArt(5)">
                 <div class="aspect-square bg-gradient-to-br from-indigo-900 to-cyan-900"></div>
                 <div class="p-4">
-                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Ocean Depths</h3>
+                    <h3 class="text-lg font-medium mb-1">Ocean Depths</h3>
                     <p class="text-sm opacity-70 mb-3">by @ocean_artist</p>
-                    <button onclick="viewArt(5)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                    <button class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
                         View
                     </button>
                 </div>
             </div>
 
             <!-- Art Card 6 -->
-            <div class="art-card rounded-xl overflow-hidden">
+            <div class="art-card rounded-xl overflow-hidden" onclick="viewArt(6)">
                 <div class="aspect-square bg-gradient-to-br from-yellow-900 to-red-900"></div>
                 <div class="p-4">
-                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Fire & Gold</h3>
+                    <h3 class="text-lg font-medium mb-1">Fire & Gold</h3>
                     <p class="text-sm opacity-70 mb-3">by @gold_master</p>
-                    <button onclick="viewArt(6)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                    <button class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
                         View
                     </button>
                 </div>
@@ -234,42 +427,42 @@
         </div>
 
         <!-- About Section -->
-        <div class="max-w-4xl mx-auto mt-24 p-8 rounded-xl" style="background: rgba(169, 221, 211, 0.05); border: 1px solid #a9ddd3;">
-            <h2 class="text-3xl font-light mb-8 text-center" style="color: #a9ddd3;">About</h2>
+        <div class="max-w-4xl mx-auto mt-16 p-8 rounded-xl" style="background: rgba(169, 221, 211, 0.03); border: 1px solid currentColor;">
+            <h2 class="text-3xl font-light mb-8 text-center">About</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 <div class="text-center">
-                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: #a9ddd3;">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: currentColor;">
                         <circle cx="12" cy="12" r="3" stroke="currentColor" class="icon-abstract" />
                         <path d="M12 3L12 9M12 15L12 21M3 12L9 12M15 12L21 12" stroke="currentColor" class="icon-abstract" />
                     </svg>
-                    <h3 class="font-medium mb-2" style="color: #a9ddd3;">Multi-Chain</h3>
+                    <h3 class="font-medium mb-2">Multi-Chain</h3>
                     <p class="text-sm opacity-70">8 networks including Rialo Playground</p>
                 </div>
 
                 <div class="text-center">
-                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: #a9ddd3;">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: currentColor;">
                         <path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21" stroke="currentColor" class="icon-abstract" />
                     </svg>
-                    <h3 class="font-medium mb-2" style="color: #a9ddd3;">Open Gallery</h3>
+                    <h3 class="font-medium mb-2">Open Gallery</h3>
                     <p class="text-sm opacity-70">Browse art without authentication</p>
                 </div>
 
                 <div class="text-center">
-                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: #a9ddd3;">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: currentColor;">
                         <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12" stroke="currentColor" class="icon-abstract" />
                     </svg>
-                    <h3 class="font-medium mb-2" style="color: #a9ddd3;">Social Auth</h3>
+                    <h3 class="font-medium mb-2">Social Auth</h3>
                     <p class="text-sm opacity-70">Google, X, Apple, Discord, Wallets</p>
                 </div>
             </div>
 
             <!-- Roadmap -->
             <div class="mt-12">
-                <h3 class="text-2xl font-light mb-6 text-center" style="color: #a9ddd3;">Roadmap</h3>
+                <h3 class="text-2xl font-light mb-6 text-center">Roadmap</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                     <div>
-                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">Q2 2026</h4>
+                        <h4 class="font-medium mb-2">Q2 2026</h4>
                         <ul class="space-y-1 opacity-70">
                             <li>MVP platform</li>
                             <li>Basic UI/UX</li>
@@ -278,7 +471,7 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">Q3 2026</h4>
+                        <h4 class="font-medium mb-2">Q3 2026</h4>
                         <ul class="space-y-1 opacity-70">
                             <li>Web3 integration</li>
                             <li>Smart contracts</li>
@@ -287,7 +480,7 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">Q4 2026</h4>
+                        <h4 class="font-medium mb-2">Q4 2026</h4>
                         <ul class="space-y-1 opacity-70">
                             <li>Social features</li>
                             <li>Music player</li>
@@ -296,7 +489,7 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">2027</h4>
+                        <h4 class="font-medium mb-2">2027</h4>
                         <ul class="space-y-1 opacity-70">
                             <li>DAO launch</li>
                             <li>Governance</li>
@@ -309,17 +502,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-8 text-center">
+    <footer class="py-8 text-center relative z-10">
         <div class="tooltip-wrapper inline-block">
             <a href="docs.html" class="inline-block p-2">
-                <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
+                <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
                     <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-abstract" />
                 </svg>
             </a>
             <div class="tooltip-content">Documentation</div>
         </div>
         <p class="text-xs mt-4 opacity-70">
-            Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline" style="color: #a9ddd3;">@maysonkiller23</a>
+            Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline">@maysonkiller23</a>
         </p>
     </footer>
 
@@ -409,15 +602,21 @@
                 },
                 themeMode: 'dark',
                 themeVariables: {
-                    '--w3m-accent': '#a9ddd3'
+                    '--w3m-accent': '#00f5ff'
                 }
             })
 
-            window.connectWallet = () => modal.open()
+            window.web3Modal = modal
+
+            window.connectWallet = () => {
+                modal.open()
+            }
 
             modal.subscribeState((state) => {
                 console.log('Wallet state:', state)
-                updateNavButtons(state)
+                if (state?.address) {
+                    handleSuccessfulLogin(state)
+                }
             })
 
             console.log('✅ AppKit initialized')
@@ -426,24 +625,29 @@
             window.connectWallet = () => alert('Wallet connection unavailable. Please refresh.')
         }
 
-        function updateNavButtons(state) {
-            const navButtons = document.getElementById('navButtons')
+        function handleSuccessfulLogin(state) {
             const theme = document.body.classList.contains('future') ? 'future' : 'classic'
-            const btnClass = theme === 'future' ? 'future-btn' : ''
+
+            // Success wave effect in Future mode
+            if (theme === 'future') {
+                const wave = document.createElement('div')
+                wave.className = 'success-wave'
+                document.body.appendChild(wave)
+                setTimeout(() => wave.remove(), 1000)
+            }
+
+            updateNavButtons(state, theme)
+        }
+
+        function updateNavButtons(state, theme) {
+            const navButtons = document.getElementById('navButtons')
+            const btnClass = theme === 'future' ? 'btn-future' : 'btn-classic'
 
             if (state?.address) {
                 navButtons.innerHTML = `
                     <div class="tooltip-wrapper">
-                        <a href="gallery.html" class="p-2 inline-block">
-                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
-                                <path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21" stroke="currentColor" class="icon-abstract" />
-                            </svg>
-                        </a>
-                        <div class="tooltip-content">Gallery</div>
-                    </div>
-                    <div class="tooltip-wrapper">
                         <a href="upload.html" class="p-2 inline-block">
-                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
                                 <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-abstract" />
                             </svg>
                         </a>
@@ -451,14 +655,14 @@
                     </div>
                     <div class="tooltip-wrapper">
                         <a href="profile.html" class="p-2 inline-block">
-                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
                                 <circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-abstract" />
                                 <path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-abstract" />
                             </svg>
                         </a>
                         <div class="tooltip-content">Profile</div>
                     </div>
-                    <button onclick="window.connectWallet()" class="px-4 py-2 rounded-lg text-sm font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                    <button onclick="window.web3Modal.disconnect()" class="${btnClass}" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
                         ${state.address.slice(0, 6)}...${state.address.slice(-4)}
                     </button>
                 `
@@ -469,32 +673,29 @@
     <!-- Theme & View Functions -->
     <script>
         function setTheme(theme) {
+            // Add transition effect
+            document.body.classList.add('transitioning')
+            setTimeout(() => document.body.classList.remove('transitioning'), 600)
+
             document.body.className = theme
             localStorage.setItem('theme', theme)
 
             const classicBtn = document.getElementById('classicBtn')
             const futureBtn = document.getElementById('futureBtn')
 
+            classicBtn.classList.remove('active-classic', 'active-future')
+            futureBtn.classList.remove('active-classic', 'active-future')
+
             if (theme === 'classic') {
-                classicBtn.style.background = '#a9ddd3'
-                classicBtn.style.color = '#010101'
-                futureBtn.style.background = 'transparent'
-                futureBtn.style.color = '#a9ddd3'
-
-                const mainBtn = document.querySelector('#navButtons button')
-                if (mainBtn && mainBtn.textContent.includes('Link')) {
-                    mainBtn.textContent = 'Get Started'
-                }
+                classicBtn.classList.add('active-classic')
             } else {
-                futureBtn.style.background = 'linear-gradient(to right, #a9ddd3, #00ffff)'
-                futureBtn.style.color = '#010101'
-                classicBtn.style.background = 'transparent'
-                classicBtn.style.color = '#a9ddd3'
+                futureBtn.classList.add('active-future')
+            }
 
-                const mainBtn = document.querySelector('#navButtons button')
-                if (mainBtn && mainBtn.textContent.includes('Started')) {
-                    mainBtn.textContent = 'Initialize Link'
-                }
+            // Update main button
+            const mainBtn = document.querySelector('#navButtons button')
+            if (mainBtn && mainBtn.textContent === 'Get Started') {
+                mainBtn.className = theme === 'future' ? 'btn-future' : 'btn-classic'
             }
         }
 
