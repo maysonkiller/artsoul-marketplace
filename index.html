@@ -5,53 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArtSoul - Decentralized Art Marketplace</title>
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://maysonkiller.github.io/artsoul-marketplace/">
     <meta property="og:title" content="ArtSoul - Decentralized Art Marketplace">
-    <meta property="og:description" content="Revolutionary platform for decentralized art where value is determined by the community through transparent auctions">
+    <meta property="og:description" content="Revolutionary platform for decentralized art where value is determined by the community">
     <meta property="og:image" content="https://maysonkiller.github.io/artsoul-marketplace/og-image.png">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://maysonkiller.github.io/artsoul-marketplace/">
-    <meta property="twitter:title" content="ArtSoul - Decentralized Art Marketplace">
-    <meta property="twitter:description" content="Revolutionary platform for decentralized art where value is determined by the community through transparent auctions">
-    <meta property="twitter:image" content="https://maysonkiller.github.io/artsoul-marketplace/og-image.png">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            transition: all 0.5s ease;
-        }
+        * { font-family: 'Inter', sans-serif; }
 
         body.classic {
-            background: #f9fafb;
-            color: #111827;
+            background: #010101;
+            color: #a9ddd3;
         }
 
         body.future {
-            background: linear-gradient(135deg, #1f2937 0%, #134e4a 50%, #1f2937 100%);
-            color: #a5f3fc;
+            background: linear-gradient(135deg, #010101 0%, #0a3a3a 50%, #010101 100%);
+            color: #a9ddd3;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .classic-border {
+            border: 1px solid #a9ddd3;
+        }
+
+        .future-btn:hover {
+            box-shadow: 0 0 15px #a9ddd3, 0 0 30px #00ffff;
+            filter: drop-shadow(0 0 5px #a9ddd3);
+            animation: lightning 0.1s infinite;
         }
 
         @keyframes lightning {
-            0%, 100% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
         }
 
         @keyframes hologramAppear {
@@ -67,162 +56,38 @@
             }
         }
 
-        .animate-fadeIn { animation: fadeIn 0.8s ease-out; }
+        .hologram-tooltip {
+            animation: hologramAppear 0.4s ease-out;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 30px rgba(169, 221, 211, 0.5), inset 0 0 20px rgba(169, 221, 211, 0.1);
+        }
 
         .icon-abstract {
             stroke-width: 0.75px;
             transition: all 0.3s ease;
         }
 
-        .hologram-tooltip {
-            animation: hologramAppear 0.4s ease-out;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.5), inset 0 0 20px rgba(6, 182, 212, 0.1);
+        .art-card {
+            background: rgba(169, 221, 211, 0.05);
+            border: 1px solid #a9ddd3;
+            transition: all 0.3s ease;
         }
 
-        .classic-tooltip {
-            animation: fadeIn 0.3s ease-out;
+        .art-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(169, 221, 211, 0.3);
         }
 
-        .btn-lightning:active::after {
-            content: '';
-            position: absolute;
-            inset: -20px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%);
-            animation: lightning 0.3s ease-out;
-            pointer-events: none;
+        .future .art-card:hover {
+            box-shadow: 0 0 20px #a9ddd3, 0 0 40px #00ffff;
         }
 
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            backdrop-filter: blur(12px);
-        }
-
-        .classic header {
-            background: rgba(255, 255, 255, 0.9);
-            border-bottom: 1px solid #a9ddd3;
-        }
-
-        .future header {
-            background: rgba(0, 0, 0, 0.5);
-            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 0;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 300;
-            letter-spacing: 0.05em;
-            text-decoration: none;
-        }
-
-        .classic .logo { color: #111827; }
-        .future .logo { color: #06b6d4; }
-
-        .theme-toggle {
-            display: flex;
-            gap: 0.25rem;
-            padding: 0.25rem;
-            border-radius: 0.5rem;
-        }
-
-        .classic .theme-toggle { background: #f3f4f6; }
-        .future .theme-toggle { background: rgba(31, 41, 55, 0.5); }
-
-        .theme-btn {
-            padding: 0.25rem 0.75rem;
-            border: none;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .theme-btn.active.classic-btn {
-            background: white;
-            color: #111827;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-btn.active.future-btn {
-            background: linear-gradient(to right, #06b6d4, #14b8a6);
-            color: white;
-            box-shadow: 0 4px 6px rgba(6, 182, 212, 0.3);
-        }
-
-        .theme-btn:not(.active) {
-            background: transparent;
-            color: #6b7280;
-        }
-
-        .nav-buttons {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 0.5rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
+        .tooltip-wrapper {
+            position: relative;
             display: inline-block;
         }
 
-        .btn-primary.classic {
-            background: #010101;
-            color: white;
-        }
-
-        .btn-primary.classic:hover {
-            background: #374151;
-        }
-
-        .btn-primary.future {
-            background: linear-gradient(to right, #06b6d4, #14b8a6);
-            color: white;
-            position: relative;
-        }
-
-        .btn-primary.future:hover {
-            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.4);
-        }
-
-        .icon-btn {
-            padding: 0.5rem;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            border-radius: 0.5rem;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .classic .icon-btn:hover { background: #f3f4f6; }
-        .future .icon-btn:hover { background: rgba(31, 41, 55, 0.8); }
-
-        .tooltip {
+        .tooltip-content {
             position: absolute;
             top: 100%;
             left: 50%;
@@ -231,615 +96,420 @@
             white-space: nowrap;
             z-index: 100;
             pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .classic .tooltip {
-            font-size: 0.75rem;
-            color: #374151;
-            background: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.375rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
+        .tooltip-wrapper:hover .tooltip-content {
+            opacity: 1;
         }
 
-        .future .tooltip {
-            font-size: 0.75rem;
-            color: #67e8f9;
-            background: rgba(17, 24, 39, 0.8);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(6, 182, 212, 0.5);
-        }
-
-        .address-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .classic .address-btn {
-            background: #f3f4f6;
-            color: #374151;
-        }
-
-        .classic .address-btn:hover {
-            background: #e5e7eb;
-        }
-
-        .future .address-btn {
-            background: rgba(31, 41, 55, 0.8);
-            color: #06b6d4;
-        }
-
-        .future .address-btn:hover {
-            background: rgba(55, 65, 81, 0.8);
-        }
-
-        main {
-            padding: 6rem 1rem;
-        }
-
-        .hero {
-            max-width: 64rem;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3.75rem;
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-        }
-
-        .classic .hero h1 { color: #111827; }
-        .future .hero h1 { color: #06b6d4; }
-
-        .hero p {
-            font-size: 1.25rem;
-            font-weight: 300;
-            margin-bottom: 3rem;
-        }
-
-        .classic .hero p { color: #4b5563; }
-        .future .hero p { color: #5eead4; }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 4rem;
-        }
-
-        .feature-card {
-            padding: 2rem;
-            border-radius: 0.75rem;
-            transition: all 0.3s;
-        }
-
-        .classic .feature-card {
-            background: white;
-            border: 1px solid #a9ddd3;
-        }
-
-        .classic .feature-card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .future .feature-card {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-        }
-
-        .future .feature-card:hover {
-            border-color: rgba(6, 182, 212, 0.5);
-        }
-
-        .feature-card svg {
-            margin: 0 auto 1rem;
-        }
-
-        .classic .feature-card svg { color: #111827; }
-        .future .feature-card svg { color: #06b6d4; }
-
-        .feature-card h3 {
-            font-size: 1.125rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .classic .feature-card h3 { color: #111827; }
-        .future .feature-card h3 { color: #06b6d4; }
-
-        .feature-card p {
-            font-size: 0.875rem;
-            font-weight: 300;
-        }
-
-        .classic .feature-card p { color: #4b5563; }
-        .future .feature-card p { color: #9ca3af; }
-
-        .roadmap {
-            margin-top: 6rem;
-            padding: 2rem;
-            border-radius: 0.75rem;
-        }
-
-        .classic .roadmap {
-            background: white;
-            border: 1px solid #a9ddd3;
-        }
-
-        .future .roadmap {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-        }
-
-        .roadmap h2 {
-            font-size: 2rem;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .classic .roadmap h2 { color: #111827; }
-        .future .roadmap h2 { color: #06b6d4; }
-
-        .roadmap-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            text-align: left;
-        }
-
-        .roadmap-item h3 {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .classic .roadmap-item h3 { color: #111827; }
-        .future .roadmap-item h3 { color: #5eead4; }
-
-        .roadmap-item ul {
-            list-style: none;
-            font-size: 0.875rem;
-            font-weight: 300;
-        }
-
-        .roadmap-item li {
-            margin-bottom: 0.25rem;
-        }
-
-        .classic .roadmap-item li { color: #4b5563; }
-        .future .roadmap-item li { color: #9ca3af; }
-
-        footer {
-            padding: 2rem 1rem;
-            text-align: center;
-        }
-
-        footer a {
-            text-decoration: none;
-        }
-
-        .classic footer a { color: #4b5563; }
-        .future footer a { color: #06b6d4; }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        footer p {
-            font-size: 0.75rem;
-            font-weight: 300;
-            margin-top: 1rem;
-        }
-
-        .classic footer p { color: #6b7280; }
-        .future footer p { color: #5eead4; }
-
-        .modal {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(4px);
-            padding: 1rem;
-        }
-
-        .modal-content {
-            max-width: 28rem;
-            width: 100%;
-            border-radius: 0.75rem;
-            padding: 2rem;
-        }
-
-        .classic .modal-content {
-            background: white;
-        }
-
-        .future .modal-content {
-            background: #111827;
-            border: 1px solid rgba(239, 68, 68, 0.5);
-        }
-
-        .modal h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .classic .modal h2 { color: #111827; }
-        .future .modal h2 { color: #f87171; }
-
-        .modal-info {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .classic .modal-info { background: #f9fafb; }
-        .future .modal-info { background: rgba(31, 41, 55, 0.5); }
-
-        .modal-info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .modal-info-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .modal-btn {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-bottom: 0.75rem;
-        }
-
-        .modal-btn-primary.classic {
+        .classic .tooltip-content {
             background: #010101;
-            color: white;
+            color: #a9ddd3;
+            border: 1px solid #a9ddd3;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
         }
 
-        .modal-btn-primary.future {
-            background: linear-gradient(to right, #06b6d4, #14b8a6);
-            color: white;
-        }
-
-        .modal-btn-secondary {
-            font-weight: 500;
-        }
-
-        .classic .modal-btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-        }
-
-        .future .modal-btn-secondary {
-            background: rgba(31, 41, 55, 0.8);
-            color: #06b6d4;
-        }
-
-        .modal-btn-cancel {
-            padding: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 400;
-        }
-
-        .classic .modal-btn-cancel {
-            color: #4b5563;
-            background: transparent;
-        }
-
-        .classic .modal-btn-cancel:hover {
-            background: #f9fafb;
-        }
-
-        .future .modal-btn-cancel {
-            color: #9ca3af;
-            background: transparent;
-        }
-
-        .future .modal-btn-cancel:hover {
-            background: rgba(31, 41, 55, 0.5);
-        }
-
-        .hidden { display: none; }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1rem; }
-            .header-content { justify-content: center; }
+        .future .tooltip-content {
+            background: rgba(1, 1, 1, 0.9);
+            color: #a9ddd3;
+            border: 1px solid #a9ddd3;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
         }
     </style>
 </head>
 <body class="classic">
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <a href="index.html" class="logo">ArtSoul</a>
-                    <div class="theme-toggle">
-                        <button class="theme-btn classic-btn active" onclick="setTheme('classic')">Classic</button>
-                        <button class="theme-btn future-btn" onclick="setTheme('future')">Future</button>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-md" style="background: rgba(1, 1, 1, 0.9); border-bottom: 1px solid #a9ddd3;">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="text-2xl font-light tracking-wide" style="color: #a9ddd3;">ArtSoul</a>
+
+                    <div class="flex gap-1 p-1 rounded-lg" style="background: rgba(169, 221, 211, 0.1);">
+                        <button onclick="setTheme('classic')" id="classicBtn" class="px-3 py-1 rounded text-xs font-medium transition-all" style="background: #a9ddd3; color: #010101;">
+                            Classic
+                        </button>
+                        <button onclick="setTheme('future')" id="futureBtn" class="px-3 py-1 rounded text-xs font-medium transition-all" style="color: #a9ddd3;">
+                            Future
+                        </button>
                     </div>
                 </div>
 
-                <div class="nav-buttons" id="navButtons">
-                    <button class="btn btn-primary classic" onclick="handleConnect()">Get Started</button>
+                <div class="flex items-center gap-3" id="navButtons">
+                    <button onclick="connectWallet()" class="px-6 py-2 rounded-lg font-medium transition-all" style="background: #a9ddd3; color: #010101;">
+                        Get Started
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <main>
-        <div class="container">
-            <div class="hero animate-fadeIn">
-                <h1>Decentralized Art Marketplace</h1>
-                <p>Where community determines value</p>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Hero Section -->
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-light mb-4" style="color: #a9ddd3;">Decentralized Art Marketplace</h1>
+            <p class="text-xl font-light opacity-80">Where community determines value</p>
+        </div>
 
-                <div class="features">
-                    <div class="feature-card">
-                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                            <circle cx="12" cy="12" r="3" stroke="currentColor" class="icon-abstract" />
-                            <path d="M12 3L12 9M12 15L12 21M3 12L9 12M15 12L21 12M6 6L9 9M15 15L18 18M18 6L15 9M9 15L6 18" stroke="currentColor" class="icon-abstract" />
-                        </svg>
-                        <h3>Multi-Chain</h3>
-                        <p>8 networks including Rialo Playground</p>
-                    </div>
+        <!-- Gallery Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            <!-- Art Card 1 -->
+            <div class="art-card rounded-xl overflow-hidden">
+                <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Abstract Dreams</h3>
+                    <p class="text-sm opacity-70 mb-3">by @artist_one</p>
+                    <button onclick="viewArt(1)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                        View
+                    </button>
+                </div>
+            </div>
 
-                    <div class="feature-card">
-                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                            <path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21M8 8L16 16M16 8L8 16" stroke="currentColor" class="icon-abstract" />
-                        </svg>
-                        <h3>Open Gallery</h3>
-                        <p>Browse art without authentication</p>
-                    </div>
+            <!-- Art Card 2 -->
+            <div class="art-card rounded-xl overflow-hidden">
+                <div class="aspect-square bg-gradient-to-br from-pink-900 to-orange-900"></div>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Digital Sunset</h3>
+                    <p class="text-sm opacity-70 mb-3">by @creator_two</p>
+                    <button onclick="viewArt(2)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                        View
+                    </button>
+                </div>
+            </div>
 
-                    <div class="feature-card">
-                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                            <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-abstract" />
-                        </svg>
-                        <h3>Social Auth</h3>
-                        <p>Google, X, Apple, Discord, Wallets</p>
-                    </div>
+            <!-- Art Card 3 -->
+            <div class="art-card rounded-xl overflow-hidden">
+                <div class="aspect-square bg-gradient-to-br from-green-900 to-teal-900"></div>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Cyber Nature</h3>
+                    <p class="text-sm opacity-70 mb-3">by @nature_artist</p>
+                    <button onclick="viewArt(3)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                        View
+                    </button>
+                </div>
+            </div>
+
+            <!-- Art Card 4 -->
+            <div class="art-card rounded-xl overflow-hidden">
+                <div class="aspect-square bg-gradient-to-br from-red-900 to-purple-900"></div>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Neon Nights</h3>
+                    <p class="text-sm opacity-70 mb-3">by @neon_creator</p>
+                    <button onclick="viewArt(4)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                        View
+                    </button>
+                </div>
+            </div>
+
+            <!-- Art Card 5 -->
+            <div class="art-card rounded-xl overflow-hidden">
+                <div class="aspect-square bg-gradient-to-br from-indigo-900 to-cyan-900"></div>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Ocean Depths</h3>
+                    <p class="text-sm opacity-70 mb-3">by @ocean_artist</p>
+                    <button onclick="viewArt(5)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                        View
+                    </button>
+                </div>
+            </div>
+
+            <!-- Art Card 6 -->
+            <div class="art-card rounded-xl overflow-hidden">
+                <div class="aspect-square bg-gradient-to-br from-yellow-900 to-red-900"></div>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1" style="color: #a9ddd3;">Fire & Gold</h3>
+                    <p class="text-sm opacity-70 mb-3">by @gold_master</p>
+                    <button onclick="viewArt(6)" class="w-full py-2 rounded-lg font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                        View
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="max-w-4xl mx-auto mt-24 p-8 rounded-xl" style="background: rgba(169, 221, 211, 0.05); border: 1px solid #a9ddd3;">
+            <h2 class="text-3xl font-light mb-8 text-center" style="color: #a9ddd3;">About</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="text-center">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: #a9ddd3;">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" class="icon-abstract" />
+                        <path d="M12 3L12 9M12 15L12 21M3 12L9 12M15 12L21 12" stroke="currentColor" class="icon-abstract" />
+                    </svg>
+                    <h3 class="font-medium mb-2" style="color: #a9ddd3;">Multi-Chain</h3>
+                    <p class="text-sm opacity-70">8 networks including Rialo Playground</p>
                 </div>
 
-                <div class="roadmap">
-                    <h2>Roadmap</h2>
-                    <div class="roadmap-grid">
-                        <div class="roadmap-item">
-                            <h3>Q2 2026</h3>
-                            <ul>
-                                <li>MVP platform</li>
-                                <li>Basic UI/UX</li>
-                                <li>Upload system</li>
-                                <li>Profiles</li>
-                            </ul>
-                        </div>
-                        <div class="roadmap-item">
-                            <h3>Q3 2026</h3>
-                            <ul>
-                                <li>Web3 integration</li>
-                                <li>Smart contracts</li>
-                                <li>Multi-chain</li>
-                                <li>IPFS</li>
-                            </ul>
-                        </div>
-                        <div class="roadmap-item">
-                            <h3>Q4 2026</h3>
-                            <ul>
-                                <li>Social features</li>
-                                <li>Music player</li>
-                                <li>Mobile version</li>
-                                <li>Developer API</li>
-                            </ul>
-                        </div>
-                        <div class="roadmap-item">
-                            <h3>2027</h3>
-                            <ul>
-                                <li>DAO launch</li>
-                                <li>Governance</li>
-                                <li>Gallery partnerships</li>
-                            </ul>
-                        </div>
+                <div class="text-center">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: #a9ddd3;">
+                        <path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21" stroke="currentColor" class="icon-abstract" />
+                    </svg>
+                    <h3 class="font-medium mb-2" style="color: #a9ddd3;">Open Gallery</h3>
+                    <p class="text-sm opacity-70">Browse art without authentication</p>
+                </div>
+
+                <div class="text-center">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: #a9ddd3;">
+                        <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12" stroke="currentColor" class="icon-abstract" />
+                    </svg>
+                    <h3 class="font-medium mb-2" style="color: #a9ddd3;">Social Auth</h3>
+                    <p class="text-sm opacity-70">Google, X, Apple, Discord, Wallets</p>
+                </div>
+            </div>
+
+            <!-- Roadmap -->
+            <div class="mt-12">
+                <h3 class="text-2xl font-light mb-6 text-center" style="color: #a9ddd3;">Roadmap</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">Q2 2026</h4>
+                        <ul class="space-y-1 opacity-70">
+                            <li>MVP platform</li>
+                            <li>Basic UI/UX</li>
+                            <li>Upload system</li>
+                            <li>Profiles</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">Q3 2026</h4>
+                        <ul class="space-y-1 opacity-70">
+                            <li>Web3 integration</li>
+                            <li>Smart contracts</li>
+                            <li>Multi-chain</li>
+                            <li>IPFS</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">Q4 2026</h4>
+                        <ul class="space-y-1 opacity-70">
+                            <li>Social features</li>
+                            <li>Music player</li>
+                            <li>Mobile version</li>
+                            <li>Developer API</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium mb-2" style="color: #a9ddd3;">2027</h4>
+                        <ul class="space-y-1 opacity-70">
+                            <li>DAO launch</li>
+                            <li>Governance</li>
+                            <li>Gallery partnerships</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <a href="docs.html" class="icon-btn">
-                <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+    <!-- Footer -->
+    <footer class="py-8 text-center">
+        <div class="tooltip-wrapper inline-block">
+            <a href="docs.html" class="inline-block p-2">
+                <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
                     <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-abstract" />
                 </svg>
             </a>
-            <p>Built by <a href="https://twitter.com/maysonkiller23" target="_blank">@maysonkiller23</a></p>
+            <div class="tooltip-content">Documentation</div>
         </div>
+        <p class="text-xs mt-4 opacity-70">
+            Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline" style="color: #a9ddd3;">@maysonkiller23</a>
+        </p>
     </footer>
 
-    <div id="networkModal" class="modal hidden">
-        <div class="modal-content">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">⚠</div>
-                <h2>Wrong Network</h2>
-                <p style="font-size: 0.875rem; margin-top: 0.5rem;">Please switch to Polygon</p>
-            </div>
+    <!-- AppKit Initialization -->
+    <script type="module">
+        import { createAppKit } from 'https://cdn.jsdelivr.net/npm/@reown/appkit@1.1.0/dist/index.js'
+        import { EthersAdapter } from 'https://cdn.jsdelivr.net/npm/@reown/appkit-adapter-ethers@1.1.0/dist/index.js'
 
-            <div class="modal-info">
-                <div class="modal-info-row">
-                    <span>Current:</span>
-                    <span id="currentNetwork" style="font-weight: 700; color: #ef4444;">-</span>
-                </div>
-                <div class="modal-info-row">
-                    <span>Required:</span>
-                    <span style="font-weight: 700; color: #10b981;">Polygon</span>
-                </div>
-            </div>
+        const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2'
 
-            <button class="modal-btn modal-btn-primary classic" onclick="switchToPolygon()">Switch to Polygon</button>
-            <button class="modal-btn modal-btn-secondary" onclick="openNetworkSelector()">Choose Different Network</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeNetworkModal()">Cancel</button>
-        </div>
-    </div>
+        const networks = [
+            {
+                chainId: 1,
+                name: 'Ethereum',
+                currency: 'ETH',
+                explorerUrl: 'https://etherscan.io',
+                rpcUrl: 'https://cloudflare-eth.com'
+            },
+            {
+                chainId: 137,
+                name: 'Polygon',
+                currency: 'MATIC',
+                explorerUrl: 'https://polygonscan.com',
+                rpcUrl: 'https://polygon-rpc.com'
+            },
+            {
+                chainId: 56,
+                name: 'BSC',
+                currency: 'BNB',
+                explorerUrl: 'https://bscscan.com',
+                rpcUrl: 'https://bsc-dataseed.binance.org'
+            },
+            {
+                chainId: 8453,
+                name: 'Base',
+                currency: 'ETH',
+                explorerUrl: 'https://basescan.org',
+                rpcUrl: 'https://mainnet.base.org'
+            },
+            {
+                chainId: 42161,
+                name: 'Arbitrum',
+                currency: 'ETH',
+                explorerUrl: 'https://arbiscan.io',
+                rpcUrl: 'https://arb1.arbitrum.io/rpc'
+            },
+            {
+                chainId: 10,
+                name: 'Optimism',
+                currency: 'ETH',
+                explorerUrl: 'https://optimistic.etherscan.io',
+                rpcUrl: 'https://mainnet.optimism.io'
+            },
+            {
+                chainId: 11155111,
+                name: 'Sepolia',
+                currency: 'ETH',
+                explorerUrl: 'https://sepolia.etherscan.io',
+                rpcUrl: 'https://rpc.sepolia.org'
+            },
+            {
+                chainId: 2025,
+                name: 'Rialo Playground',
+                currency: 'RIA',
+                explorerUrl: 'https://playground.rialo.io',
+                rpcUrl: 'https://playground.rialo.io/rpc'
+            }
+        ]
 
-    <script type="module" src="./app.js"></script>
+        const metadata = {
+            name: 'ArtSoul Marketplace',
+            description: 'Decentralized Art Marketplace',
+            url: 'https://maysonkiller.github.io/artsoul-marketplace',
+            icons: ['https://maysonkiller.github.io/artsoul-marketplace/logo.png']
+        }
+
+        try {
+            const modal = createAppKit({
+                adapters: [new EthersAdapter()],
+                networks,
+                metadata,
+                projectId,
+                features: {
+                    socials: ['google', 'x', 'apple', 'discord'],
+                    email: true,
+                    analytics: true
+                },
+                themeMode: 'dark',
+                themeVariables: {
+                    '--w3m-accent': '#a9ddd3'
+                }
+            })
+
+            window.connectWallet = () => modal.open()
+
+            modal.subscribeState((state) => {
+                console.log('Wallet state:', state)
+                updateNavButtons(state)
+            })
+
+            console.log('✅ AppKit initialized')
+        } catch (error) {
+            console.error('⚠️ AppKit initialization failed:', error)
+            window.connectWallet = () => alert('Wallet connection unavailable. Please refresh.')
+        }
+
+        function updateNavButtons(state) {
+            const navButtons = document.getElementById('navButtons')
+            const theme = document.body.classList.contains('future') ? 'future' : 'classic'
+            const btnClass = theme === 'future' ? 'future-btn' : ''
+
+            if (state?.address) {
+                navButtons.innerHTML = `
+                    <div class="tooltip-wrapper">
+                        <a href="gallery.html" class="p-2 inline-block">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
+                                <path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21" stroke="currentColor" class="icon-abstract" />
+                            </svg>
+                        </a>
+                        <div class="tooltip-content">Gallery</div>
+                    </div>
+                    <div class="tooltip-wrapper">
+                        <a href="upload.html" class="p-2 inline-block">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
+                                <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-abstract" />
+                            </svg>
+                        </a>
+                        <div class="tooltip-content">Upload</div>
+                    </div>
+                    <div class="tooltip-wrapper">
+                        <a href="profile.html" class="p-2 inline-block">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: #a9ddd3;">
+                                <circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-abstract" />
+                                <path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-abstract" />
+                            </svg>
+                        </a>
+                        <div class="tooltip-content">Profile</div>
+                    </div>
+                    <button onclick="window.connectWallet()" class="px-4 py-2 rounded-lg text-sm font-medium transition-all" style="background: rgba(169, 221, 211, 0.2); color: #a9ddd3; border: 1px solid #a9ddd3;">
+                        ${state.address.slice(0, 6)}...${state.address.slice(-4)}
+                    </button>
+                `
+            }
+        }
+    </script>
+
+    <!-- Theme & View Functions -->
     <script>
-        const NETWORKS = {
-            1: 'Ethereum',
-            137: 'Polygon',
-            56: 'BSC',
-            8453: 'Base',
-            42161: 'Arbitrum',
-            10: 'Optimism',
-            11155111: 'Sepolia',
-            2025: 'Rialo Playground'
-        };
-
-        const REQUIRED_CHAIN_ID = 137;
-
-        let connected = false;
-        let currentAddress = '';
-        let currentChainId = null;
-
         function setTheme(theme) {
-            document.body.className = theme;
-            localStorage.setItem('theme', theme);
+            document.body.className = theme
+            localStorage.setItem('theme', theme)
 
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            const classicBtn = document.getElementById('classicBtn')
+            const futureBtn = document.getElementById('futureBtn')
 
             if (theme === 'classic') {
-                document.querySelector('.classic-btn').classList.add('active');
-            } else {
-                document.querySelector('.future-btn').classList.add('active');
-            }
+                classicBtn.style.background = '#a9ddd3'
+                classicBtn.style.color = '#010101'
+                futureBtn.style.background = 'transparent'
+                futureBtn.style.color = '#a9ddd3'
 
-            updateNavButtons();
-        }
-
-        function updateNavButtons() {
-            const theme = document.body.className;
-            const navButtons = document.getElementById('navButtons');
-
-            if (!connected) {
-                navButtons.innerHTML = `
-                    <button class="btn btn-primary ${theme}" onclick="handleConnect()">
-                        ${theme === 'classic' ? 'Get Started' : 'Initialize Link'}
-                    </button>
-                `;
-            } else {
-                navButtons.innerHTML = `
-                    <a href="gallery.html" class="icon-btn" title="Gallery">
-                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                            <path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21M8 8L16 16M16 8L8 16" stroke="currentColor" class="icon-abstract" />
-                        </svg>
-                    </a>
-                    <a href="upload.html" class="icon-btn" title="Upload">
-                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                            <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-abstract" />
-                        </svg>
-                    </a>
-                    <a href="profile.html" class="icon-btn" title="Profile">
-                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                            <circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-abstract" />
-                            <path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-abstract" />
-                        </svg>
-                    </a>
-                    ${currentChainId ? `
-                    <button class="icon-btn" onclick="openNetworkSelector()" title="${NETWORKS[currentChainId] || 'Unknown'}">
-                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                            <circle cx="12" cy="12" r="3" stroke="currentColor" class="icon-abstract" />
-                            <path d="M12 3L12 9M12 15L12 21M3 12L9 12M15 12L21 12M6 6L9 9M15 15L18 18M18 6L15 9M9 15L6 18" stroke="currentColor" class="icon-abstract" />
-                        </svg>
-                    </button>
-                    ` : ''}
-                    <button class="address-btn" onclick="handleDisconnect()">
-                        ${currentAddress.slice(0, 6)}...${currentAddress.slice(-4)}
-                    </button>
-                `;
-            }
-        }
-
-        async function handleConnect() {
-            if (window.web3Modal) {
-                try {
-                    await window.web3Modal.open();
-                } catch (error) {
-                    console.error('Failed to open modal:', error);
-                    alert('Failed to connect wallet. Please try again.');
+                const mainBtn = document.querySelector('#navButtons button')
+                if (mainBtn && mainBtn.textContent.includes('Link')) {
+                    mainBtn.textContent = 'Get Started'
                 }
             } else {
-                alert('Wallet connection is not available. Please refresh the page.');
-            }
-        }
+                futureBtn.style.background = 'linear-gradient(to right, #a9ddd3, #00ffff)'
+                futureBtn.style.color = '#010101'
+                classicBtn.style.background = 'transparent'
+                classicBtn.style.color = '#a9ddd3'
 
-        async function handleDisconnect() {
-            if (window.web3Modal) {
-                await window.web3Modal.disconnect();
-            }
-        }
-
-        async function switchToPolygon() {
-            if (window.web3Modal) {
-                try {
-                    await window.web3Modal.switchNetwork(REQUIRED_CHAIN_ID);
-                    closeNetworkModal();
-                } catch (error) {
-                    console.error('Failed to switch network:', error);
+                const mainBtn = document.querySelector('#navButtons button')
+                if (mainBtn && mainBtn.textContent.includes('Started')) {
+                    mainBtn.textContent = 'Initialize Link'
                 }
             }
         }
 
-        async function openNetworkSelector() {
-            if (window.web3Modal) {
-                await window.web3Modal.open({ view: 'Networks' });
-            }
+        function viewArt(id) {
+            alert(`Viewing artwork #${id}. Full viewer coming soon!`)
         }
 
-        function closeNetworkModal() {
-            document.getElementById('networkModal').classList.add('hidden');
+        window.connectWallet = window.connectWallet || function() {
+            alert('Wallet connection is loading. Please wait...')
         }
-
-        window.addEventListener('walletStateChange', (event) => {
-            const state = event.detail;
-            connected = state.isConnected || false;
-            currentAddress = state.address || '';
-            currentChainId = state.chainId || null;
-
-            updateNavButtons();
-
-            if (connected && currentChainId && currentChainId !== REQUIRED_CHAIN_ID) {
-                document.getElementById('currentNetwork').textContent = NETWORKS[currentChainId] || 'Unknown';
-                document.getElementById('networkModal').classList.remove('hidden');
-            } else {
-                closeNetworkModal();
-            }
-        });
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'classic';
-            setTheme(savedTheme);
-        });
+            const savedTheme = localStorage.getItem('theme') || 'classic'
+            setTheme(savedTheme)
+        })
     </script>
 </body>
 </html>
