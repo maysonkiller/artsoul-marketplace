@@ -1,8 +1,10 @@
 // ArtSoul Marketplace - AppKit Integration
-const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
+// Project ID: 9fdc97f91c02d46a28ca9d185a9e58f2
 
 import { createAppKit } from 'https://cdn.jsdelivr.net/npm/@reown/appkit@1.1.0/dist/index.js'
 import { EthersAdapter } from 'https://cdn.jsdelivr.net/npm/@reown/appkit-adapter-ethers@1.1.0/dist/index.js'
+
+const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
 
 const networks = [
     {
@@ -83,16 +85,19 @@ try {
         },
         themeMode: 'dark',
         themeVariables: {
-            '--w3m-accent': '#00f5ff'
+            '--w3m-accent': '#00f5ff',
+            '--w3m-color-mix': '#bf00ff'
         }
     });
 
     window.web3Modal = modal;
 
+    // Connect wallet function
     window.connectWallet = () => {
         modal.open();
     };
 
+    // Subscribe to wallet state changes
     modal.subscribeState((state) => {
         console.log('Wallet state:', state);
 
@@ -119,7 +124,7 @@ try {
 function handleSuccessfulLogin(state) {
     const theme = document.body.classList.contains('future') ? 'future' : 'classic';
 
-    // Show success wave in Future mode
+    // Show success wave effect in Future mode
     if (theme === 'future' && window.showSuccessWave) {
         window.showSuccessWave();
     }

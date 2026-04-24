@@ -7,45 +7,101 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-classic: #010101;
+            --text-classic: #e8e3d5;
+            --accent-classic: #a9ddd3;
+            --accent-future: #00f5ff;
+            --neon-purple: #bf00ff;
+        }
 
-        /* Classic Mode */
-        body.classic { background: #010101; color: #a9ddd3; }
-        .classic header { background: rgba(1,1,1,0.95); border-bottom: 1px solid #a9ddd3; }
-        .classic .btn-main { background: #a9ddd3; color: #010101; border: 1px solid #a9ddd3; }
-        .classic .btn-main:hover { background: transparent; color: #a9ddd3; }
-        .classic .card { background: rgba(169,221,211,0.03); border: 1px solid #a9ddd3; }
-        .classic .card:hover { box-shadow: 0 15px 40px rgba(169,221,211,0.3); }
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        /* Future Mode */
-        body.future { background: #000; color: #00f5ff; }
-        .future header { background: rgba(0,0,0,0.8); border-bottom: 1px solid #00f5ff; box-shadow: 0 0 20px rgba(0,245,255,0.3); }
+        /* Classic Mode - Museum Minimalism */
+        body.classic {
+            background: var(--bg-classic);
+            color: var(--text-classic);
+        }
+
+        .classic header {
+            background: rgba(1, 1, 1, 0.95);
+            border-bottom: 1px solid var(--accent-classic);
+        }
+
+        .classic .btn-main {
+            background: var(--text-classic);
+            color: var(--bg-classic);
+            border: 1px solid var(--text-classic);
+        }
+
+        .classic .btn-main:hover {
+            background: transparent;
+            color: var(--text-classic);
+        }
+
+        .classic .card {
+            background: rgba(232, 227, 213, 0.03);
+            border: 1px solid var(--accent-classic);
+        }
+
+        .classic .card:hover {
+            box-shadow: 0 20px 50px rgba(169, 221, 211, 0.4);
+            border-color: var(--text-classic);
+        }
+
+        /* Future Mode - 2030 Alien Interface */
+        body.future {
+            background: #000000;
+            color: var(--accent-future);
+        }
+
+        .future header {
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--accent-future);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
         .future .btn-main {
-            background: linear-gradient(135deg, #00f5ff 0%, #00d4ff 100%);
-            color: #000;
+            background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%);
+            color: #000000;
             clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
             border: none;
+            font-weight: 600;
         }
+
         .future .btn-main:hover {
-            animation: glow 0.3s infinite;
+            animation: neonPulse 0.3s infinite;
             transform: scale(1.05);
+            filter: brightness(1.3);
         }
+
         .future .card {
-            background: rgba(0,245,255,0.05);
-            border: 1px solid #00f5ff;
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid var(--accent-future);
             backdrop-filter: blur(10px);
         }
+
         .future .card:hover {
-            box-shadow: 0 0 30px #00f5ff, 0 0 60px #00f5ff;
-            animation: float 3s ease-in-out infinite;
+            box-shadow:
+                0 0 30px var(--accent-future),
+                0 0 60px var(--accent-future),
+                0 0 90px var(--neon-purple);
+            border-color: var(--neon-purple);
         }
+
+        /* Animated Grid Background - Future Only */
         .future::before {
             content: '';
             position: fixed;
             inset: 0;
             background:
-                linear-gradient(90deg, transparent 0%, rgba(0,245,255,0.03) 50%, transparent 100%),
-                linear-gradient(0deg, transparent 0%, rgba(0,245,255,0.03) 50%, transparent 100%);
+                linear-gradient(90deg, transparent 0%, rgba(0, 245, 255, 0.03) 50%, transparent 100%),
+                linear-gradient(0deg, transparent 0%, rgba(191, 0, 255, 0.03) 50%, transparent 100%);
             background-size: 100px 100px;
             animation: gridMove 20s linear infinite;
             pointer-events: none;
@@ -57,45 +113,129 @@
             100% { background-position: 100px 100px, 100px 100px; }
         }
 
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px #00f5ff, 0 0 40px #00f5ff; }
-            50% { box-shadow: 0 0 30px #00f5ff, 0 0 60px #00f5ff, 0 0 90px #00f5ff; }
+        /* Levitation Animations */
+        @keyframes levitateClassic {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(-10px); }
-            50% { transform: translateY(-15px); }
+        @keyframes levitateFuture {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px) rotateZ(0deg);
+            }
+            25% {
+                transform: translateY(-8px) translateX(4px) rotateZ(1deg);
+            }
+            50% {
+                transform: translateY(-15px) translateX(0px) rotateZ(0deg);
+            }
+            75% {
+                transform: translateY(-8px) translateX(-4px) rotateZ(-1deg);
+            }
         }
 
+        .classic .card {
+            animation: levitateClassic 6s ease-in-out infinite;
+        }
+
+        .future .card {
+            animation: levitateFuture 8s ease-in-out infinite;
+        }
+
+        /* Wave delay for each card */
+        .card:nth-child(1) { animation-delay: 0s; }
+        .card:nth-child(2) { animation-delay: 0.3s; }
+        .card:nth-child(3) { animation-delay: 0.6s; }
+        .card:nth-child(4) { animation-delay: 0.9s; }
+        .card:nth-child(5) { animation-delay: 1.2s; }
+        .card:nth-child(6) { animation-delay: 1.5s; }
+
+        .future .card:hover {
+            animation-play-state: paused;
+            transform: translateY(-20px) scale(1.02);
+        }
+
+        /* Neon Pulse */
+        @keyframes neonPulse {
+            0%, 100% {
+                box-shadow:
+                    0 0 20px var(--accent-future),
+                    0 0 40px var(--accent-future),
+                    0 0 60px var(--neon-purple);
+            }
+            50% {
+                box-shadow:
+                    0 0 30px var(--accent-future),
+                    0 0 60px var(--accent-future),
+                    0 0 90px var(--neon-purple);
+            }
+        }
+
+        /* Mode Transition Effect */
         @keyframes modeTransition {
             0% { filter: brightness(1); }
-            50% { filter: brightness(2) saturate(2); }
+            50% { filter: brightness(2.5) saturate(2); }
             100% { filter: brightness(1); }
         }
 
-        @keyframes successWave {
-            0% { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(200%) skewX(-15deg); opacity: 0; }
+        body.transitioning {
+            animation: modeTransition 0.6s ease-out;
         }
 
-        body.transitioning { animation: modeTransition 0.6s ease-out; }
+        /* Success Wave */
+        @keyframes successWave {
+            0% {
+                transform: translateX(-100%) skewX(-15deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(200%) skewX(-15deg);
+                opacity: 0;
+            }
+        }
 
         .success-wave {
             position: fixed;
             inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(0,245,255,0.5), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.5), rgba(191, 0, 255, 0.5), transparent);
             pointer-events: none;
             z-index: 9999;
             animation: successWave 1s ease-out;
         }
 
-        header { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); }
-        .btn-main { padding: 0.75rem 2rem; font-weight: 500; cursor: pointer; transition: all 0.3s; }
-        .card { transition: all 0.4s; cursor: pointer; }
-        .icon-svg { stroke-width: 0.75px; }
+        /* Layout */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
 
-        .tooltip-wrap { position: relative; display: inline-block; }
+        .btn-main {
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card {
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .icon-svg {
+            stroke-width: 0.75px;
+        }
+
+        /* Tooltips */
+        .tooltip-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
         .tooltip-text {
             position: absolute;
             top: 100%;
@@ -111,18 +251,40 @@
             transition: opacity 0.3s;
             z-index: 100;
         }
-        .tooltip-wrap:hover .tooltip-text { opacity: 1; }
-        .classic .tooltip-text { background: #010101; color: #a9ddd3; border: 1px solid #a9ddd3; }
-        .future .tooltip-text {
-            background: rgba(0,0,0,0.9);
-            color: #00f5ff;
-            border: 1px solid #00f5ff;
-            box-shadow: 0 0 20px rgba(0,245,255,0.5);
+
+        .tooltip-wrap:hover .tooltip-text {
+            opacity: 1;
         }
 
-        .theme-toggle { display: flex; gap: 0.25rem; padding: 0.25rem; border-radius: 0.5rem; }
-        .classic .theme-toggle { background: rgba(169,221,211,0.1); }
-        .future .theme-toggle { background: rgba(0,245,255,0.1); border: 1px solid rgba(0,245,255,0.3); }
+        .classic .tooltip-text {
+            background: var(--bg-classic);
+            color: var(--text-classic);
+            border: 1px solid var(--accent-classic);
+        }
+
+        .future .tooltip-text {
+            background: rgba(0, 0, 0, 0.9);
+            color: var(--accent-future);
+            border: 1px solid var(--accent-future);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .classic .theme-toggle {
+            background: rgba(169, 221, 211, 0.1);
+        }
+
+        .future .theme-toggle {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+        }
 
         .theme-btn {
             padding: 0.25rem 0.75rem;
@@ -133,20 +295,43 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .theme-btn.active-classic { background: #a9ddd3; color: #010101; }
-        .theme-btn.active-future { background: linear-gradient(to right, #00f5ff, #00d4ff); color: #000; }
-        .theme-btn:not(.active-classic):not(.active-future) { background: transparent; opacity: 0.6; }
 
+        .theme-btn.active-classic {
+            background: var(--text-classic);
+            color: var(--bg-classic);
+        }
+
+        .theme-btn.active-future {
+            background: linear-gradient(to right, var(--accent-future), var(--neon-purple));
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+        }
+
+        .theme-btn:not(.active-classic):not(.active-future) {
+            background: transparent;
+            opacity: 0.6;
+        }
+
+        /* Gallery Grid */
         .gallery {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+            gap: 1.5rem;
             max-width: 1200px;
             margin: 0 auto;
         }
 
         @media (max-width: 768px) {
-            .gallery { grid-template-columns: repeat(2, 1fr); }
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -157,8 +342,12 @@
                 <div class="flex items-center gap-4">
                     <a href="index.html" class="text-2xl font-light tracking-wide">ArtSoul</a>
                     <div class="theme-toggle">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">Classic</button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">Future</button>
+                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
+                            Classic
+                        </button>
+                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
+                            Future
+                        </button>
                     </div>
                 </div>
                 <div class="flex items-center gap-3" id="navButtons">
@@ -168,69 +357,81 @@
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-8 relative z-10">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-light mb-3">Decentralized Art Marketplace</h1>
-            <p class="text-lg font-light opacity-80">Where community determines value</p>
+    <main class="container mx-auto px-4 py-12 relative z-10">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-light mb-4">Decentralized Art Marketplace</h1>
+            <p class="text-xl font-light opacity-80">Where community determines value</p>
         </div>
 
-        <div class="gallery mb-12">
+        <div class="gallery mb-16">
             <div class="card rounded-xl overflow-hidden" onclick="viewArt(1)">
                 <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
-                <div class="p-3">
-                    <h3 class="text-base font-medium mb-1">Abstract Dreams</h3>
-                    <p class="text-xs opacity-70 mb-2">by @artist_one</p>
-                    <button class="w-full py-1.5 rounded text-sm" style="background: rgba(169,221,211,0.2); border: 1px solid currentColor;">View</button>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1">Abstract Dreams</h3>
+                    <p class="text-sm opacity-70 mb-3">by @artist_one</p>
+                    <button class="w-full py-2 rounded-lg text-sm font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
+                        View
+                    </button>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" onclick="viewArt(2)">
                 <div class="aspect-square bg-gradient-to-br from-pink-900 to-orange-900"></div>
-                <div class="p-3">
-                    <h3 class="text-base font-medium mb-1">Digital Sunset</h3>
-                    <p class="text-xs opacity-70 mb-2">by @creator_two</p>
-                    <button class="w-full py-1.5 rounded text-sm" style="background: rgba(169,221,211,0.2); border: 1px solid currentColor;">View</button>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1">Digital Sunset</h3>
+                    <p class="text-sm opacity-70 mb-3">by @creator_two</p>
+                    <button class="w-full py-2 rounded-lg text-sm font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
+                        View
+                    </button>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" onclick="viewArt(3)">
                 <div class="aspect-square bg-gradient-to-br from-green-900 to-teal-900"></div>
-                <div class="p-3">
-                    <h3 class="text-base font-medium mb-1">Cyber Nature</h3>
-                    <p class="text-xs opacity-70 mb-2">by @nature_artist</p>
-                    <button class="w-full py-1.5 rounded text-sm" style="background: rgba(169,221,211,0.2); border: 1px solid currentColor;">View</button>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1">Cyber Nature</h3>
+                    <p class="text-sm opacity-70 mb-3">by @nature_artist</p>
+                    <button class="w-full py-2 rounded-lg text-sm font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
+                        View
+                    </button>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" onclick="viewArt(4)">
                 <div class="aspect-square bg-gradient-to-br from-red-900 to-purple-900"></div>
-                <div class="p-3">
-                    <h3 class="text-base font-medium mb-1">Neon Nights</h3>
-                    <p class="text-xs opacity-70 mb-2">by @neon_creator</p>
-                    <button class="w-full py-1.5 rounded text-sm" style="background: rgba(169,221,211,0.2); border: 1px solid currentColor;">View</button>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1">Neon Nights</h3>
+                    <p class="text-sm opacity-70 mb-3">by @neon_creator</p>
+                    <button class="w-full py-2 rounded-lg text-sm font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
+                        View
+                    </button>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" onclick="viewArt(5)">
                 <div class="aspect-square bg-gradient-to-br from-indigo-900 to-cyan-900"></div>
-                <div class="p-3">
-                    <h3 class="text-base font-medium mb-1">Ocean Depths</h3>
-                    <p class="text-xs opacity-70 mb-2">by @ocean_artist</p>
-                    <button class="w-full py-1.5 rounded text-sm" style="background: rgba(169,221,211,0.2); border: 1px solid currentColor;">View</button>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1">Ocean Depths</h3>
+                    <p class="text-sm opacity-70 mb-3">by @ocean_artist</p>
+                    <button class="w-full py-2 rounded-lg text-sm font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
+                        View
+                    </button>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" onclick="viewArt(6)">
                 <div class="aspect-square bg-gradient-to-br from-yellow-900 to-red-900"></div>
-                <div class="p-3">
-                    <h3 class="text-base font-medium mb-1">Fire & Gold</h3>
-                    <p class="text-xs opacity-70 mb-2">by @gold_master</p>
-                    <button class="w-full py-1.5 rounded text-sm" style="background: rgba(169,221,211,0.2); border: 1px solid currentColor;">View</button>
+                <div class="p-4">
+                    <h3 class="text-lg font-medium mb-1">Fire & Gold</h3>
+                    <p class="text-sm opacity-70 mb-3">by @gold_master</p>
+                    <button class="w-full py-2 rounded-lg text-sm font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
+                        View
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-4xl mx-auto mt-16 p-8 rounded-xl" style="background: rgba(169,221,211,0.03); border: 1px solid currentColor;">
+        <div class="max-w-4xl mx-auto mt-24 p-8 rounded-xl" style="background: rgba(169, 221, 211, 0.03); border: 1px solid currentColor;">
             <h2 class="text-3xl font-light mb-8 text-center">About</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 <div class="text-center">
@@ -309,55 +510,57 @@
             </a>
             <div class="tooltip-text">Documentation</div>
         </div>
-        <p class="text-xs mt-4 opacity-70">Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline">@maysonkiller23</a></p>
+        <p class="text-xs mt-4 opacity-70">
+            Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline">@maysonkiller23</a>
+        </p>
     </footer>
 
     <script type="module" src="./app.js"></script>
     <script>
         function setTheme(theme) {
-            document.body.classList.add('transitioning')
-            setTimeout(() => document.body.classList.remove('transitioning'), 600)
+            document.body.classList.add('transitioning');
+            setTimeout(() => document.body.classList.remove('transitioning'), 600);
 
-            document.body.className = theme
-            localStorage.setItem('theme', theme)
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
 
-            const classicBtn = document.getElementById('classicBtn')
-            const futureBtn = document.getElementById('futureBtn')
+            const classicBtn = document.getElementById('classicBtn');
+            const futureBtn = document.getElementById('futureBtn');
 
-            classicBtn.classList.remove('active-classic', 'active-future')
-            futureBtn.classList.remove('active-classic', 'active-future')
+            classicBtn.classList.remove('active-classic', 'active-future');
+            futureBtn.classList.remove('active-classic', 'active-future');
 
             if (theme === 'classic') {
-                classicBtn.classList.add('active-classic')
+                classicBtn.classList.add('active-classic');
             } else {
-                futureBtn.classList.add('active-future')
+                futureBtn.classList.add('active-future');
             }
 
-            const mainBtn = document.querySelector('#navButtons .btn-main')
+            const mainBtn = document.querySelector('#navButtons .btn-main');
             if (mainBtn) {
-                mainBtn.className = 'btn-main'
+                mainBtn.className = 'btn-main';
             }
         }
 
         function viewArt(id) {
-            alert(`Viewing artwork #${id}. Full viewer coming soon!`)
+            alert(`Viewing artwork #${id}. Full viewer coming soon!`);
         }
 
         window.connectWallet = window.connectWallet || function() {
-            alert('Wallet connection is loading...')
-        }
+            alert('Wallet connection is loading...');
+        };
 
         window.showSuccessWave = function() {
-            const wave = document.createElement('div')
-            wave.className = 'success-wave'
-            document.body.appendChild(wave)
-            setTimeout(() => wave.remove(), 1000)
-        }
+            const wave = document.createElement('div');
+            wave.className = 'success-wave';
+            document.body.appendChild(wave);
+            setTimeout(() => wave.remove(), 1000);
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'classic'
-            setTheme(savedTheme)
-        })
+            const savedTheme = localStorage.getItem('theme') || 'classic';
+            setTheme(savedTheme);
+        });
     </script>
 </body>
 </html>
