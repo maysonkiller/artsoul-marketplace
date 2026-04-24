@@ -62,7 +62,8 @@
         const { useState, useEffect, useRef } = React;
 
         // Privy Configuration
-        const PRIVY_APP_ID = 'clxxx-your-privy-app-id'; // Replace with your Privy App ID
+        const PRIVY_APP_ID = 'cmodfsfg100jn0bl853s7mrqu'; // ArtSoul Privy App ID
+        const PRIVY_CLIENT_ID = 'client-WY6YeXHQHQ3DzYJudG1qUhbG5dK8qS3kB31ei6SLe1i7g'; // Mobile client
 
         // Initialize Privy
         let privyClient = null;
@@ -71,6 +72,7 @@
             if (typeof Privy !== 'undefined') {
                 privyClient = new Privy.PrivyClient({
                     appId: PRIVY_APP_ID,
+                    clientId: PRIVY_CLIENT_ID,
                     config: {
                         appearance: {
                             theme: 'dark',
@@ -80,6 +82,10 @@
                         loginMethods: ['wallet', 'email', 'google', 'twitter'],
                         embeddedWallets: {
                             createOnLogin: 'users-without-wallets',
+                        },
+                        // Mobile configuration
+                        mobileWalletConnectOptions: {
+                            projectId: 'artsoul-marketplace',
                         },
                     },
                 });
