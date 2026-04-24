@@ -23,111 +23,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Ethers.js v6 -->
-    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
-
-    <!-- Web3Modal v3 -->
-    <script type="module">
-        import { createWeb3Modal, defaultConfig } from 'https://cdn.jsdelivr.net/npm/@web3modal/ethers@3.5.0/+esm'
-
-        const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2'
-
-        const mainnet = {
-            chainId: 1,
-            name: 'Ethereum',
-            currency: 'ETH',
-            explorerUrl: 'https://etherscan.io',
-            rpcUrl: 'https://cloudflare-eth.com'
-        }
-
-        const polygon = {
-            chainId: 137,
-            name: 'Polygon',
-            currency: 'MATIC',
-            explorerUrl: 'https://polygonscan.com',
-            rpcUrl: 'https://polygon-rpc.com'
-        }
-
-        const bsc = {
-            chainId: 56,
-            name: 'BSC',
-            currency: 'BNB',
-            explorerUrl: 'https://bscscan.com',
-            rpcUrl: 'https://bsc-dataseed.binance.org'
-        }
-
-        const base = {
-            chainId: 8453,
-            name: 'Base',
-            currency: 'ETH',
-            explorerUrl: 'https://basescan.org',
-            rpcUrl: 'https://mainnet.base.org'
-        }
-
-        const arbitrum = {
-            chainId: 42161,
-            name: 'Arbitrum',
-            currency: 'ETH',
-            explorerUrl: 'https://arbiscan.io',
-            rpcUrl: 'https://arb1.arbitrum.io/rpc'
-        }
-
-        const optimism = {
-            chainId: 10,
-            name: 'Optimism',
-            currency: 'ETH',
-            explorerUrl: 'https://optimistic.etherscan.io',
-            rpcUrl: 'https://mainnet.optimism.io'
-        }
-
-        const sepolia = {
-            chainId: 11155111,
-            name: 'Sepolia',
-            currency: 'ETH',
-            explorerUrl: 'https://sepolia.etherscan.io',
-            rpcUrl: 'https://rpc.sepolia.org'
-        }
-
-        const rialoPlayground = {
-            chainId: 2025,
-            name: 'Rialo Playground',
-            currency: 'RIA',
-            explorerUrl: 'https://playground.rialo.io',
-            rpcUrl: 'https://playground.rialo.io/rpc'
-        }
-
-        const metadata = {
-            name: 'ArtSoul Marketplace',
-            description: 'Decentralized Art Marketplace',
-            url: 'https://maysonkiller.github.io/artsoul-marketplace',
-            icons: ['https://maysonkiller.github.io/artsoul-marketplace/logo.png']
-        }
-
-        const ethersConfig = defaultConfig({
-            metadata,
-            enableEIP6963: true,
-            enableInjected: true,
-            enableCoinbase: true,
-            rpcUrl: polygon.rpcUrl,
-            defaultChainId: 137
-        })
-
-        window.modal = createWeb3Modal({
-            ethersConfig,
-            chains: [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground],
-            projectId,
-            enableAnalytics: true,
-            themeMode: 'dark',
-            themeVariables: {
-                '--w3m-accent': '#06b6d4'
-            }
-        })
-
-        window.modal.subscribeProvider((state) => {
-            console.log('Wallet state:', state)
-            window.dispatchEvent(new CustomEvent('walletStateChange', { detail: state }))
-        })
-    </script>
+    <!-- Web3Modal AppKit - Loaded via app.js -->
+    <script type="module" src="./app.js"></script>
 
     <style>
         @keyframes float {
@@ -155,13 +52,17 @@
 </head>
 <body>
     <div id="app"></div>
+
+    <!-- React -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
 
+    <!-- Main App -->
     <script type="text/babel">
         const { useState, useEffect } = React;
 
+        // Network configurations
         const NETWORKS = {
             1: { name: 'Ethereum', icon: '⟠', color: '#627EEA' },
             137: { name: 'Polygon', icon: '⬡', color: '#8247E5' },
@@ -173,7 +74,7 @@
             2025: { name: 'Rialo Playground', icon: '◈', color: '#00D4FF' }
         };
 
-        const REQUIRED_CHAIN_ID = 137;
+        const REQUIRED_CHAIN_ID = 137; // Polygon
 
         function App() {
             const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'classic');
@@ -184,6 +85,7 @@
 
             const isClassic = theme === 'classic';
 
+            // Listen to wallet state changes
             useEffect(() => {
                 const handleWalletChange = (event) => {
                     const state = event.detail;
@@ -191,6 +93,7 @@
                     setAddress(state.address || '');
                     setChainId(state.chainId || null);
 
+                    // Show network modal if wrong network
                     if (state.isConnected && state.chainId && state.chainId !== REQUIRED_CHAIN_ID) {
                         setShowNetworkModal(true);
                     } else {
@@ -203,25 +106,27 @@
             }, []);
 
             const handleConnect = async () => {
-                if (window.modal) {
+                if (window.web3Modal) {
                     try {
-                        await window.modal.open();
+                        await window.web3Modal.open();
                     } catch (error) {
                         console.error('Failed to open modal:', error);
                     }
+                } else {
+                    console.error('Web3Modal not initialized yet');
                 }
             };
 
             const handleDisconnect = async () => {
-                if (window.modal) {
-                    await window.modal.disconnect();
+                if (window.web3Modal) {
+                    await window.web3Modal.disconnect();
                 }
             };
 
             const switchNetwork = async (targetChainId) => {
-                if (window.modal) {
+                if (window.web3Modal) {
                     try {
-                        await window.modal.switchNetwork(targetChainId);
+                        await window.web3Modal.switchNetwork(targetChainId);
                         setShowNetworkModal(false);
                     } catch (error) {
                         console.error('Failed to switch network:', error);
@@ -230,8 +135,8 @@
             };
 
             const openNetworkSelector = async () => {
-                if (window.modal) {
-                    await window.modal.open({ view: 'Networks' });
+                if (window.web3Modal) {
+                    await window.web3Modal.open({ view: 'Networks' });
                 }
             };
 
@@ -241,6 +146,7 @@
 
             return (
                 <div className={`min-h-screen ${bgClass} transition-all duration-500`}>
+                    {/* Header */}
                     <header className={`sticky top-0 z-50 backdrop-blur-md ${isClassic ? 'bg-white/90 border-b border-gray-300' : 'bg-black/50 border-b border-cyan-500/30'}`}>
                         <div className="container mx-auto px-4 py-4">
                             <div className="flex items-center justify-between flex-wrap gap-4">
@@ -298,6 +204,7 @@
                                             className={`px-4 py-2 rounded-lg font-medium transform hover:scale-105 flex items-center gap-2 ${
                                                 isClassic ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-800 text-cyan-400 hover:bg-gray-700 border border-cyan-500/30'
                                             }`}
+                                            title="Switch Network"
                                         >
                                             <span style={{ color: NETWORKS[chainId]?.color }}>{NETWORKS[chainId]?.icon}</span>
                                             <span className="hidden sm:inline">{NETWORKS[chainId]?.name || 'Unknown'}</span>
@@ -319,8 +226,9 @@
                         </div>
                     </header>
 
+                    {/* Network Warning Modal */}
                     {showNetworkModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-4">
                             <div className={`max-w-md w-full rounded-xl p-8 ${isClassic ? 'bg-white' : 'bg-gray-900 border border-red-500/50'}`}>
                                 <div className="text-center mb-6">
                                     <div className="text-6xl mb-4">⚠️</div>
@@ -330,6 +238,23 @@
                                     <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
                                         Please switch to {NETWORKS[REQUIRED_CHAIN_ID].name}
                                     </p>
+                                </div>
+
+                                <div className={`p-4 rounded-lg mb-6 ${isClassic ? 'bg-gray-100' : 'bg-gray-800/50'}`}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>Current:</span>
+                                        <span className={`font-bold flex items-center gap-2 ${isClassic ? 'text-red-600' : 'text-red-400'}`}>
+                                            <span style={{ color: NETWORKS[chainId]?.color }}>{NETWORKS[chainId]?.icon}</span>
+                                            {NETWORKS[chainId]?.name}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>Required:</span>
+                                        <span className={`font-bold flex items-center gap-2 ${isClassic ? 'text-green-600' : 'text-green-400'}`}>
+                                            <span style={{ color: NETWORKS[REQUIRED_CHAIN_ID].color }}>{NETWORKS[REQUIRED_CHAIN_ID].icon}</span>
+                                            {NETWORKS[REQUIRED_CHAIN_ID].name}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <button
@@ -348,7 +273,7 @@
 
                                 <button
                                     onClick={() => setShowNetworkModal(false)}
-                                    className={`w-full py-2 rounded-lg ${isClassic ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-gray-800'}`}
+                                    className={`w-full py-2 rounded-lg text-sm ${isClassic ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-gray-800'}`}
                                 >
                                     Cancel
                                 </button>
@@ -356,25 +281,60 @@
                         </div>
                     )}
 
+                    {/* Main Content */}
                     <main className="container mx-auto px-4 py-16 text-center">
-                        <h1 className={`text-5xl font-bold mb-4 ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                        <h1 className={`text-5xl font-bold mb-4 animate-fadeIn ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
                             Welcome to ArtSoul
                         </h1>
-                        <p className={`text-xl mb-8 ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
+                        <p className={`text-xl mb-8 animate-fadeIn ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
                             Decentralized Art Marketplace with Rialo Support
                         </p>
                         {!connected && (
                             <button
                                 onClick={handleConnect}
-                                className={`px-8 py-4 rounded-lg font-bold text-xl transform hover:scale-105 ${
+                                className={`px-8 py-4 rounded-lg font-bold text-xl transform hover:scale-105 animate-fadeIn ${
                                     isClassic ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg' : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl neon-border'
                                 }`}
                             >
                                 Connect Wallet
                             </button>
                         )}
+
+                        {/* Features Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mt-12">
+                            <div className={`p-6 rounded-xl ${isClassic ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
+                                <div className="text-4xl mb-4">🌐</div>
+                                <h3 className={`text-xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>
+                                    8 Networks
+                                </h3>
+                                <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    Ethereum, Polygon, BSC, Base, Arbitrum, Optimism, Sepolia, Rialo
+                                </p>
+                            </div>
+
+                            <div className={`p-6 rounded-xl ${isClassic ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
+                                <div className="text-4xl mb-4">◈</div>
+                                <h3 className={`text-xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>
+                                    Rialo Playground
+                                </h3>
+                                <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    Custom network support with Chain ID 2025
+                                </p>
+                            </div>
+
+                            <div className={`p-6 rounded-xl ${isClassic ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
+                                <div className="text-4xl mb-4">🔐</div>
+                                <h3 className={`text-xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-400'}`}>
+                                    All Wallets
+                                </h3>
+                                <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    MetaMask, WalletConnect, Coinbase, and 300+ more
+                                </p>
+                            </div>
+                        </div>
                     </main>
 
+                    {/* Footer */}
                     <footer className="mt-16 pb-8 text-center">
                         <div className="mb-4">
                             <a href="docs.html" className={`inline-block px-6 py-3 rounded-lg font-medium transform hover:scale-105 ${isClassic ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gradient-to-r from-green-500 to-cyan-500 text-white'}`}>
@@ -386,6 +346,7 @@
                         </p>
                     </footer>
 
+                    {/* Background Effects */}
                     {!isClassic && (
                         <div className="fixed inset-0 pointer-events-none overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-cyan-900/20" />
@@ -397,6 +358,7 @@
             );
         }
 
+        // Use React 18 createRoot
         const root = ReactDOM.createRoot(document.getElementById('app'));
         root.render(<App />);
     </script>
