@@ -79,46 +79,55 @@ const metadata = {
     icons: ['https://maysonkiller.github.io/artsoul-marketplace/logo.png']
 };
 
-// Ethers config
-const ethersConfig = defaultConfig({
-    metadata,
-    enableEIP6963: true,
-    enableInjected: true,
-    enableCoinbase: true,
-    rpcUrl: polygon.rpcUrl,
-    defaultChainId: 137
-});
+// Initialize Web3Modal safely
+try {
+    // Ethers config
+    const ethersConfig = defaultConfig({
+        metadata,
+        enableEIP6963: true,
+        enableInjected: true,
+        enableCoinbase: true,
+        rpcUrl: polygon.rpcUrl,
+        defaultChainId: 137
+    });
 
-// Create Web3Modal instance
-const modal = createWeb3Modal({
-    ethersConfig,
-    chains: [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground],
-    projectId,
-    enableAnalytics: true,
-    themeMode: 'dark',
-    themeVariables: {
-        '--w3m-accent': '#06b6d4',
-        '--w3m-border-radius-master': '8px'
-    }
-});
-
-// Subscribe to wallet state changes
-modal.subscribeProvider((state) => {
-    console.log('Wallet state changed:', state);
-
-    // Dispatch custom event for React components
-    window.dispatchEvent(new CustomEvent('walletStateChange', {
-        detail: {
-            isConnected: state.isConnected,
-            address: state.address,
-            chainId: state.chainId
+    // Create Web3Modal instance
+    const modal = createWeb3Modal({
+        ethersConfig,
+        chains: [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground],
+        projectId,
+        enableAnalytics: true,
+        themeMode: 'dark',
+        themeVariables: {
+            '--w3m-accent': '#06b6d4',
+            '--w3m-border-radius-master': '8px'
         }
-    }));
-});
+    });
 
-// Export modal for global access
-window.web3Modal = modal;
+    // Subscribe to wallet state changes
+    modal.subscribeProvider((state) => {
+        console.log('Wallet state changed:', state);
 
-console.log('✅ Web3Modal initialized successfully');
-console.log('📊 Supported networks:', [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground].map(n => n.name));
-console.log('◈ Rialo Playground (Chain ID: 2025) is ready!');
+        // Dispatch custom event for React components
+        window.dispatchEvent(new CustomEvent('walletStateChange', {
+            detail: {
+                isConnected: state.isConnected,
+                address: state.address,
+                chainId: state.chainId
+            }
+        }));
+    });
+
+    // Export modal for global access
+    window.web3Modal = modal;
+
+    console.log('✅ Web3Modal initialized successfully');
+    console.log('📊 Supported networks:', [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground].map(n => n.name));
+    console.log('◈ Rialo Playground (Chain ID: 2025) is ready!');
+} catch (error) {
+    console.error('⚠️ Web3Modal initialization failed:', error);
+    console.log('📌 Site will continue to work without wallet connection');
+
+    // Set fallback so the app doesn't crash
+    window.web3Modal = null;
+}
