@@ -416,8 +416,18 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex items-center gap-3" id="navButtons">
-                    <button onclick="connectWallet()" class="btn-main">Get Started</button>
+                <div class="flex items-center gap-4">
+                    <div class="tooltip-wrap">
+                        <a href="docs.html" class="inline-block p-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-7 h-7" style="color: currentColor;">
+                                <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>
+                            </svg>
+                        </a>
+                        <div class="tooltip-text">Documentation</div>
+                    </div>
+                    <div class="flex items-center gap-3" id="navButtons">
+                        <button onclick="connectWallet()" class="btn-main">Get Started</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -577,15 +587,7 @@
     </main>
 
     <footer class="py-8 text-center relative z-10">
-        <div class="tooltip-wrap inline-block">
-            <a href="docs.html" class="inline-block p-2">
-                <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
-                    <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>
-                </svg>
-            </a>
-            <div class="tooltip-text">Documentation</div>
-        </div>
-        <p class="text-xs mt-4 opacity-70">
+        <p class="text-xs opacity-70">
             Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline">@maysonkiller23</a>
         </p>
     </footer>
@@ -778,66 +780,74 @@
             icons: ['https://maysonkiller.github.io/artsoul-marketplace/logo.png']
         };
 
-        try {
-            const modal = createAppKit({
-                adapters: [new EthersAdapter()],
-                networks,
-                metadata,
-                projectId,
-                features: {
-                    socials: ['google', 'x', 'apple', 'discord'],
-                    email: true,
-                    analytics: true
-                },
-                themeMode: 'dark',
-                themeVariables: {
-                    '--w3m-accent': '#00f5ff',
-                    '--w3m-color-mix': '#bf00ff'
-                }
-            });
-
-            window.web3Modal = modal;
-
-            window.connectWallet = async () => {
-                try {
-                    if (window.web3Modal) {
-                        await window.web3Modal.open();
-                    } else {
-                        console.error("Modal not initialized");
+        function initializeAppKit() {
+            try {
+                const modal = createAppKit({
+                    adapters: [new EthersAdapter()],
+                    networks,
+                    metadata,
+                    projectId,
+                    features: {
+                        socials: ['google', 'x', 'apple', 'discord'],
+                        email: true,
+                        analytics: true
+                    },
+                    themeMode: 'dark',
+                    themeVariables: {
+                        '--w3m-accent': '#00f5ff',
+                        '--w3m-color-mix': '#bf00ff'
                     }
-                } catch (err) {
-                    console.error(err);
-                }
-            };
+                });
 
-            modal.subscribeState((state) => {
-                console.log('Wallet state:', state);
+                window.web3Modal = modal;
 
-                if (state?.address) {
-                    handleSuccessfulLogin(state);
-                } else {
-                    resetNavButtons();
-                }
-            });
+                // Global connectWallet function
+                window.connectWallet = async () => {
+                    try {
+                        if (window.web3Modal) {
+                            await window.web3Modal.open();
+                        } else {
+                            console.error("Modal not initialized");
+                        }
+                    } catch (err) {
+                        console.error('Connection error:', err);
+                    }
+                };
 
-            console.log('✅ AppKit initialized successfully');
-            console.log('📊 Supported networks:', networks.map(n => n.name));
-            console.log('◈ Rialo Playground (Chain ID: 2025) ready');
+                modal.subscribeState((state) => {
+                    console.log('Wallet state:', state);
 
-        } catch (error) {
-            console.error('⚠️ AppKit initialization failed:', error);
-            console.log('📌 Site will continue to work without wallet connection');
+                    if (state?.address) {
+                        handleSuccessfulLogin(state);
+                    } else {
+                        resetNavButtons();
+                    }
+                });
 
-            window.connectWallet = async () => {
-                console.error('Wallet connection unavailable');
-            };
+                console.log('✅ AppKit initialized successfully');
+                console.log('📊 Supported networks:', networks.map(n => n.name));
+                console.log('◈ Rialo Playground (Chain ID: 2025) ready');
+
+            } catch (error) {
+                console.error('⚠️ AppKit initialization failed:', error);
+                console.log('📌 Site will continue to work without wallet connection');
+
+                // Fallback connectWallet
+                window.connectWallet = async () => {
+                    if (!window.ethereum) {
+                        alert('No Web3 wallet detected. Please install MetaMask or use a Web3-enabled browser.');
+                    } else {
+                        console.error('Wallet connection unavailable');
+                    }
+                };
+            }
         }
 
         function handleSuccessfulLogin(state) {
             const theme = document.body.classList.contains('future') ? 'future' : 'classic';
 
-            if (theme === 'future') {
-                showSuccessWave();
+            if (theme === 'future' && window.showSuccessWave) {
+                window.showSuccessWave();
             }
 
             updateNavButtons(state, theme);
@@ -881,6 +891,19 @@
                 <button onclick="connectWallet()" class="btn-main">Get Started</button>
             `;
         }
+
+        // Initialize on DOMContentLoaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAppKit);
+        } else {
+            initializeAppKit();
+        }
+
+        // Export functions to global scope
+        window.setTheme = window.setTheme;
+        window.viewArt = window.viewArt;
+        window.morphToAnagram = window.morphToAnagram;
+        window.resetMorph = window.resetMorph;
     </script>
 </body>
 </html>
