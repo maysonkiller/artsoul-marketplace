@@ -1,0 +1,566 @@
+    <style>
+        :root {
+            --bg-classic: #010101;
+            --text-classic: #e8e3d5;
+            --accent-classic: #a9ddd3;
+            --accent-future: #00f5ff;
+            --neon-purple: #bf00ff;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Classic Mode - Museum Minimalism */
+        body.classic {
+            background: var(--bg-classic);
+            color: var(--text-classic);
+        }
+
+        .classic header {
+            background: rgba(1, 1, 1, 0.95);
+            border-bottom: 1px solid var(--accent-classic);
+        }
+
+        .classic .btn-main {
+            background: var(--text-classic);
+            color: var(--bg-classic);
+            border: 1px solid var(--text-classic);
+        }
+
+        .classic .btn-main:hover {
+            background: transparent;
+            color: var(--text-classic);
+        }
+
+        .classic .card {
+            background: rgba(232, 227, 213, 0.03);
+            border: 1px solid var(--accent-classic);
+            position: relative;
+            transition: all 0.5s ease-out;
+            overflow: hidden;
+        }
+
+        .classic .card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 50px rgba(169, 221, 211, 0.4);
+            border-color: var(--text-classic);
+        }
+
+        /* Smoke effect for Classic mode */
+        .classic .card:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to top, rgba(169, 221, 211, 0.2), transparent);
+            opacity: 0.5;
+            animation: smokeClassic 2.5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes smokeClassic {
+            0%, 100% {
+                transform: translateY(0) scaleX(1);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translateY(-15px) scaleX(1.15);
+                opacity: 0.5;
+            }
+        }
+
+        /* Future Mode - 2030 Alien Interface */
+        body.future {
+            background: #000000;
+            color: var(--accent-future);
+        }
+
+        .future header {
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--accent-future);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
+        .future .btn-main {
+            background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%);
+            color: #000000;
+            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+            border: none;
+            font-weight: 600;
+        }
+
+        .future .btn-main:hover {
+            animation: neonPulse 0.3s infinite;
+            transform: scale(1.05);
+            filter: brightness(1.3);
+        }
+
+        .future .card {
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid var(--accent-future);
+            backdrop-filter: blur(10px);
+            position: relative;
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        .future .card:hover {
+            transform: translateY(-12px);
+            box-shadow:
+                0 0 15px var(--neon-purple),
+                0 0 30px var(--neon-purple),
+                0 0 10px var(--accent-future),
+                0 0 60px var(--accent-future),
+                0 0 90px var(--neon-purple);
+            border-color: var(--neon-purple);
+        }
+
+        /* Smoke effect for Future mode */
+        .future .card:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to top, rgba(191, 0, 255, 0.25), rgba(0, 245, 255, 0.15), transparent);
+            opacity: 0.7;
+            animation: smokeFuture 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes smokeFuture {
+            0%, 100% {
+                transform: translateY(0) scaleX(1);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translateY(-15px) scaleX(1.2);
+                opacity: 0.7;
+            }
+        }
+
+        /* Smoke effect for Future mode */
+        .future .card:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.15), transparent);
+            opacity: 0.6;
+            animation: smoke 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes smoke {
+            0%, 100% {
+                transform: translateY(0) scaleX(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-10px) scaleX(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        /* Animated Grid Background - Future Only */
+        .future::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(90deg, transparent 0%, rgba(0, 245, 255, 0.03) 50%, transparent 100%),
+                linear-gradient(0deg, transparent 0%, rgba(191, 0, 255, 0.03) 50%, transparent 100%);
+            background-size: 100px 100px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 100px 100px, 100px 100px; }
+        }
+
+        /* Levitation Animations */
+        @keyframes levitateClassic {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes levitateFuture {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px) rotateZ(0deg);
+            }
+            25% {
+                transform: translateY(-8px) translateX(4px) rotateZ(1deg);
+            }
+            50% {
+                transform: translateY(-15px) translateX(0px) rotateZ(0deg);
+            }
+            75% {
+                transform: translateY(-8px) translateX(-4px) rotateZ(-1deg);
+            }
+        }
+
+        .classic .card {
+            animation: levitateClassic 6s ease-in-out infinite;
+        }
+
+        .future .card {
+            animation: levitateFuture 8s ease-in-out infinite;
+        }
+
+        /* Wave delay for each card */
+        .card:nth-child(1) { animation-delay: 0s; }
+        .card:nth-child(2) { animation-delay: 0.3s; }
+        .card:nth-child(3) { animation-delay: 0.6s; }
+        .card:nth-child(4) { animation-delay: 0.9s; }
+        .card:nth-child(5) { animation-delay: 1.2s; }
+        .card:nth-child(6) { animation-delay: 1.5s; }
+
+        .future .card:hover {
+            animation-play-state: paused;
+            transform: translateY(-20px) scale(1.02);
+        }
+
+        /* Neon Pulse */
+        @keyframes neonPulse {
+            0%, 100% {
+                box-shadow:
+                    0 0 20px var(--accent-future),
+                    0 0 40px var(--accent-future),
+                    0 0 60px var(--neon-purple);
+            }
+            50% {
+                box-shadow:
+                    0 0 30px var(--accent-future),
+                    0 0 60px var(--accent-future),
+                    0 0 90px var(--neon-purple);
+            }
+        }
+
+        /* Mode Transition Effect */
+        @keyframes modeTransition {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(2.5) saturate(2); }
+            100% { filter: brightness(1); }
+        }
+
+        body.transitioning {
+            animation: modeTransition 0.6s ease-out;
+        }
+
+        /* Success Wave */
+        @keyframes successWave {
+            0% {
+                transform: translateX(-100%) skewX(-15deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(200%) skewX(-15deg);
+                opacity: 0;
+            }
+        }
+
+        .success-wave {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.5), rgba(191, 0, 255, 0.5), transparent);
+            pointer-events: none;
+            z-index: 9999;
+            animation: successWave 1s ease-out;
+        }
+
+        /* Layout */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+
+        .btn-main {
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card {
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .icon-svg {
+            stroke-width: 0.75px;
+        }
+
+        /* Tooltips */
+        .tooltip-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-text {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        .tooltip-wrap:hover .tooltip-text {
+            opacity: 1;
+        }
+
+        .classic .tooltip-text {
+            background: var(--bg-classic);
+            color: var(--text-classic);
+            border: 1px solid var(--accent-classic);
+        }
+
+        .future .tooltip-text {
+            background: rgba(0, 0, 0, 0.9);
+            color: var(--accent-future);
+            border: 1px solid var(--accent-future);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .classic .theme-toggle {
+            background: rgba(169, 221, 211, 0.1);
+        }
+
+        .future .theme-toggle {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+        }
+
+        .theme-btn {
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-btn.active-classic {
+            background: var(--text-classic);
+            color: var(--bg-classic);
+        }
+
+        .theme-btn.active-future {
+            background: linear-gradient(to right, var(--accent-future), var(--neon-purple));
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+        }
+
+        .theme-btn:not(.active-classic):not(.active-future) {
+            background: transparent;
+            opacity: 0.6;
+        }
+
+        /* Gallery Grid - 6 in one row */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            max-width: 1400px;
+            margin: 0 auto 150px;
+        }
+
+        @media (max-width: 1200px) {
+            .gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Anagram Morph */
+        .card-morph {
+            position: fixed !important;
+            z-index: 1000 !important;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            animation: none !important;
+        }
+
+        .card-letter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.3s;
+            pointer-events: none;
+        }
+
+        .card-morph .card-letter {
+            opacity: 1;
+        }
+
+        .classic .card-letter {
+            color: var(--text-classic);
+            text-shadow: 0 0 20px var(--accent-classic);
+        }
+
+        .future .card-letter {
+            color: var(--accent-future);
+            text-shadow:
+                0 0 20px var(--accent-future),
+                0 0 40px var(--accent-future),
+                0 0 60px var(--neon-purple);
+        }
+
+        .morph-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .morph-backdrop.active {
+            opacity: 1;
+        }
+
+        .logo-interactive {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logo-interactive:hover {
+            transform: scale(1.05);
+        }
+
+        /* Network Badge & Balance */
+        .network-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .classic .network-badge {
+            background: rgba(232, 227, 213, 0.1);
+            border: 1px solid var(--accent-classic);
+        }
+
+        .classic .network-badge:hover {
+            background: rgba(232, 227, 213, 0.2);
+            border-color: var(--text-classic);
+        }
+
+        .future .network-badge {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid var(--accent-future);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .future .network-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.3), transparent);
+            animation: scanning 3s linear infinite;
+        }
+
+        @keyframes scanning {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .future .network-badge:hover {
+            box-shadow: 0 0 15px var(--accent-future), 0 0 30px var(--neon-purple);
+            border-color: var(--neon-purple);
+        }
+
+        .network-name {
+            font-weight: 600;
+        }
+
+        .balance-amount {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 640px) {
+            .network-badge {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            .balance-amount {
+                display: none;
+            }
+        }
+
+        .profile-notification-dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            background: #ff4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+    </style>
