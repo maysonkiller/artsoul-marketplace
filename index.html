@@ -47,9 +47,12 @@
         .classic .card {
             background: rgba(232, 227, 213, 0.03);
             border: 1px solid var(--accent-classic);
+            position: relative;
+            transition: all 0.5s ease-out;
         }
 
         .classic .card:hover {
+            transform: translateY(-12px);
             box-shadow: 0 20px 50px rgba(169, 221, 211, 0.4);
             border-color: var(--text-classic);
         }
@@ -84,14 +87,44 @@
             background: rgba(0, 245, 255, 0.05);
             border: 1px solid var(--accent-future);
             backdrop-filter: blur(10px);
+            position: relative;
+            transition: all 0.3s ease-out;
         }
 
         .future .card:hover {
+            transform: translateY(-12px);
             box-shadow:
-                0 0 30px var(--accent-future),
+                0 0 15px var(--neon-purple),
+                0 0 30px var(--neon-purple),
+                0 0 10px var(--accent-future),
                 0 0 60px var(--accent-future),
                 0 0 90px var(--neon-purple);
             border-color: var(--neon-purple);
+        }
+
+        /* Smoke effect for Future mode */
+        .future .card:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.15), transparent);
+            opacity: 0.6;
+            animation: smoke 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes smoke {
+            0%, 100% {
+                transform: translateY(0) scaleX(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-10px) scaleX(1.1);
+                opacity: 0.6;
+            }
         }
 
         /* Animated Grid Background - Future Only */
@@ -780,9 +813,72 @@
             icons: ['https://maysonkiller.github.io/artsoul-marketplace/logo.png']
         };
 
+        // Define functions first
+        let modal = null;
+
+        const connectWallet = async () => {
+            try {
+                if (modal) {
+                    await modal.open();
+                } else {
+                    console.error("Modal not initialized");
+                    alert('Wallet connection is still loading. Please try again in a moment.');
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+            }
+        };
+
+        function handleSuccessfulLogin(state) {
+            const theme = document.body.classList.contains('future') ? 'future' : 'classic';
+
+            if (theme === 'future' && window.showSuccessWave) {
+                window.showSuccessWave();
+            }
+
+            updateNavButtons(state);
+        }
+
+        function updateNavButtons(state) {
+            const navButtons = document.getElementById('navButtons');
+            if (!navButtons) return;
+
+            navButtons.innerHTML = `
+                <div class="tooltip-wrap">
+                    <a href="upload.html" class="p-2 inline-block">
+                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
+                            <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/>
+                        </svg>
+                    </a>
+                    <div class="tooltip-text">Upload</div>
+                </div>
+                <div class="tooltip-wrap">
+                    <a href="profile.html" class="p-2 inline-block">
+                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
+                            <circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/>
+                            <path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/>
+                        </svg>
+                    </a>
+                    <div class="tooltip-text">Profile</div>
+                </div>
+                <button onclick="window.web3Modal.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    ${state.address.slice(0, 6)}...${state.address.slice(-4)}
+                </button>
+            `;
+        }
+
+        function resetNavButtons() {
+            const navButtons = document.getElementById('navButtons');
+            if (!navButtons) return;
+
+            navButtons.innerHTML = `
+                <button onclick="connectWallet()" class="btn-main">Get Started</button>
+            `;
+        }
+
         function initializeAppKit() {
             try {
-                const modal = createAppKit({
+                modal = createAppKit({
                     adapters: [new EthersAdapter()],
                     networks,
                     metadata,
@@ -803,19 +899,6 @@
 
                 window.web3Modal = modal;
 
-                // Global connectWallet function
-                const connectWallet = async () => {
-                    try {
-                        if (window.web3Modal) {
-                            await window.web3Modal.open();
-                        } else {
-                            console.error("Modal not initialized");
-                        }
-                    } catch (err) {
-                        console.error('Connection error:', err);
-                    }
-                };
-
                 modal.subscribeState((state) => {
                     console.log('Wallet state:', state);
 
@@ -826,76 +909,19 @@
                     }
                 });
 
-                console.log('✅ AppKit 1.7.11 initialized successfully');
-                console.log('📊 Supported networks:', networks.map(n => n.name));
-                console.log('◈ Rialo Playground (Chain ID: 2025) ready');
-                console.log('🔧 Features: Social, Email, Onramp, Swaps, Analytics');
-
-                // Export to global scope
-                window.connectWallet = connectWallet;
+                console.log('✅ AppKit 1.7.11 initialized');
+                console.log('📊 Networks:', networks.map(n => n.name).join(', '));
+                console.log('🔧 Features: Social, Email, Onramp, Swaps');
 
             } catch (error) {
                 console.error('⚠️ AppKit initialization failed:', error);
-                console.log('📌 Site will continue to work without wallet connection');
+                console.log('📌 Site continues without wallet');
 
-                // Fallback connectWallet
-                window.connectWallet = async () => {
-                    if (!window.ethereum) {
-                        alert('No Web3 wallet detected. Please install MetaMask or use a Web3-enabled browser.');
-                    } else {
-                        console.error('Wallet connection unavailable');
-                    }
-                };
+                // Fallback for missing wallet
+                if (!window.ethereum) {
+                    console.warn('No Web3 wallet detected');
+                }
             }
-        }
-
-        function handleSuccessfulLogin(state) {
-            const theme = document.body.classList.contains('future') ? 'future' : 'classic';
-
-            if (theme === 'future' && window.showSuccessWave) {
-                window.showSuccessWave();
-            }
-
-            updateNavButtons(state, theme);
-        }
-
-        function updateNavButtons(state, theme) {
-            const navButtons = document.getElementById('navButtons');
-            if (!navButtons) return;
-
-            const btnClass = 'btn-main';
-
-            navButtons.innerHTML = `
-                <div class="tooltip-wrap">
-                    <a href="upload.html" class="p-2 inline-block">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
-                            <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/>
-                        </svg>
-                    </a>
-                    <div class="tooltip-text">Upload</div>
-                </div>
-                <div class="tooltip-wrap">
-                    <a href="profile.html" class="p-2 inline-block">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
-                            <circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/>
-                            <path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/>
-                        </svg>
-                    </a>
-                    <div class="tooltip-text">Profile</div>
-                </div>
-                <button onclick="window.web3Modal.disconnect()" class="${btnClass}" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                    ${state.address.slice(0, 6)}...${state.address.slice(-4)}
-                </button>
-            `;
-        }
-
-        function resetNavButtons() {
-            const navButtons = document.getElementById('navButtons');
-            if (!navButtons) return;
-
-            navButtons.innerHTML = `
-                <button onclick="connectWallet()" class="btn-main">Get Started</button>
-            `;
         }
 
         // Initialize on DOMContentLoaded
@@ -904,6 +930,9 @@
         } else {
             initializeAppKit();
         }
+
+        // Export to global scope - CRITICAL
+        window.connectWallet = connectWallet;
     </script>
 </body>
 </html>
