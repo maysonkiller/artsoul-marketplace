@@ -338,6 +338,67 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Anagram Morph */
+        .card-morph {
+            position: fixed !important;
+            z-index: 1000 !important;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            animation: none !important;
+        }
+
+        .card-letter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.3s;
+            pointer-events: none;
+        }
+
+        .card-morph .card-letter {
+            opacity: 1;
+        }
+
+        .classic .card-letter {
+            color: var(--text-classic);
+            text-shadow: 0 0 20px var(--accent-classic);
+        }
+
+        .future .card-letter {
+            color: var(--accent-future);
+            text-shadow:
+                0 0 20px var(--accent-future),
+                0 0 40px var(--accent-future),
+                0 0 60px var(--neon-purple);
+        }
+
+        .morph-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .morph-backdrop.active {
+            opacity: 1;
+        }
+
+        .logo-interactive {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logo-interactive:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="classic">
@@ -345,7 +406,7 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between flex-wrap gap-4">
                 <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-2xl font-light tracking-wide">ArtSoul</a>
+                    <a href="index.html" class="text-2xl font-light tracking-wide logo-interactive" onmouseenter="morphToAnagram()" onmouseleave="resetMorph()">ArtSoul</a>
                     <div class="theme-toggle">
                         <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
                             Classic
@@ -362,6 +423,9 @@
         </div>
     </header>
 
+    <!-- Morph Backdrop -->
+    <div id="morphBackdrop" class="morph-backdrop"></div>
+
     <main class="container mx-auto px-4 py-12 relative z-10">
         <div class="text-center mb-12">
             <h1 class="text-5xl font-light mb-4">Decentralized Art Marketplace</h1>
@@ -369,8 +433,9 @@
         </div>
 
         <div class="gallery">
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(1)">
+            <div class="card rounded-xl overflow-hidden" onclick="viewArt(1)" data-letter="A">
                 <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
+                <div class="card-letter">A</div>
                 <div class="p-3">
                     <h3 class="text-sm font-medium mb-1">Abstract Dreams</h3>
                     <p class="text-xs opacity-70 mb-2">by @artist_one</p>
@@ -380,8 +445,9 @@
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(2)">
+            <div class="card rounded-xl overflow-hidden" onclick="viewArt(2)" data-letter="R">
                 <div class="aspect-square bg-gradient-to-br from-pink-900 to-orange-900"></div>
+                <div class="card-letter">R</div>
                 <div class="p-3">
                     <h3 class="text-sm font-medium mb-1">Digital Sunset</h3>
                     <p class="text-xs opacity-70 mb-2">by @creator_two</p>
@@ -391,8 +457,9 @@
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(3)">
+            <div class="card rounded-xl overflow-hidden" onclick="viewArt(3)" data-letter="T">
                 <div class="aspect-square bg-gradient-to-br from-green-900 to-teal-900"></div>
+                <div class="card-letter">T</div>
                 <div class="p-3">
                     <h3 class="text-sm font-medium mb-1">Cyber Nature</h3>
                     <p class="text-xs opacity-70 mb-2">by @nature_artist</p>
@@ -402,8 +469,9 @@
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(4)">
+            <div class="card rounded-xl overflow-hidden" onclick="viewArt(4)" data-letter="S">
                 <div class="aspect-square bg-gradient-to-br from-red-900 to-purple-900"></div>
+                <div class="card-letter">S</div>
                 <div class="p-3">
                     <h3 class="text-sm font-medium mb-1">Neon Nights</h3>
                     <p class="text-xs opacity-70 mb-2">by @neon_creator</p>
@@ -413,8 +481,9 @@
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(5)">
+            <div class="card rounded-xl overflow-hidden" onclick="viewArt(5)" data-letter="O">
                 <div class="aspect-square bg-gradient-to-br from-indigo-900 to-cyan-900"></div>
+                <div class="card-letter">O</div>
                 <div class="p-3">
                     <h3 class="text-sm font-medium mb-1">Ocean Depths</h3>
                     <p class="text-xs opacity-70 mb-2">by @ocean_artist</p>
@@ -424,8 +493,9 @@
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(6)">
+            <div class="card rounded-xl overflow-hidden" onclick="viewArt(6)" data-letter="L">
                 <div class="aspect-square bg-gradient-to-br from-yellow-900 to-red-900"></div>
+                <div class="card-letter">L</div>
                 <div class="p-3">
                     <h3 class="text-sm font-medium mb-1">Fire & Gold</h3>
                     <p class="text-xs opacity-70 mb-2">by @gold_master</p>
@@ -522,6 +592,9 @@
 
     <!-- Theme Functions -->
     <script>
+        let morphActive = false;
+        let originalPositions = [];
+
         function setTheme(theme) {
             document.body.classList.add('transitioning');
             setTimeout(() => document.body.classList.remove('transitioning'), 600);
@@ -548,6 +621,7 @@
         }
 
         function viewArt(id) {
+            if (morphActive) return;
             alert(`Viewing artwork #${id}. Full viewer coming soon!`);
         }
 
@@ -556,6 +630,73 @@
             wave.className = 'success-wave';
             document.body.appendChild(wave);
             setTimeout(() => wave.remove(), 1000);
+        }
+
+        function morphToAnagram() {
+            if (morphActive) return;
+            morphActive = true;
+
+            const cards = document.querySelectorAll('.card');
+            const backdrop = document.getElementById('morphBackdrop');
+
+            backdrop.classList.add('active');
+
+            // Save original positions
+            originalPositions = [];
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                originalPositions.push({
+                    top: rect.top,
+                    left: rect.left,
+                    width: rect.width,
+                    height: rect.height
+                });
+            });
+
+            // Calculate center positions for ARTSOL
+            const cardWidth = 150;
+            const cardHeight = 150;
+            const gap = 20;
+            const totalWidth = (cardWidth * 6) + (gap * 5);
+            const startX = (window.innerWidth - totalWidth) / 2;
+            const centerY = (window.innerHeight - cardHeight) / 2;
+
+            cards.forEach((card, index) => {
+                card.classList.add('card-morph');
+                const targetX = startX + (index * (cardWidth + gap));
+
+                card.style.width = cardWidth + 'px';
+                card.style.height = cardHeight + 'px';
+                card.style.left = targetX + 'px';
+                card.style.top = centerY + 'px';
+            });
+        }
+
+        function resetMorph() {
+            if (!morphActive) return;
+            morphActive = false;
+
+            const cards = document.querySelectorAll('.card');
+            const backdrop = document.getElementById('morphBackdrop');
+
+            backdrop.classList.remove('active');
+
+            cards.forEach((card, index) => {
+                const original = originalPositions[index];
+
+                card.style.width = original.width + 'px';
+                card.style.height = original.height + 'px';
+                card.style.left = original.left + 'px';
+                card.style.top = original.top + 'px';
+
+                setTimeout(() => {
+                    card.classList.remove('card-morph');
+                    card.style.width = '';
+                    card.style.height = '';
+                    card.style.left = '';
+                    card.style.top = '';
+                }, 800);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
