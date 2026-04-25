@@ -772,8 +772,8 @@
 
     <!-- AppKit Integration -->
     <script type="module">
-        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11'
-        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11'
+        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
+        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
 
         const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
 
@@ -851,11 +851,12 @@
                 if (modal) {
                     await modal.open();
                 } else {
-                    console.error("Modal not initialized");
-                    alert('Wallet connection is still loading. Please try again in a moment.');
+                    console.error("Modal not initialized yet");
+                    alert('Wallet connection is loading. Please wait a moment and try again.');
                 }
             } catch (err) {
                 console.error('Connection error:', err);
+                alert('Failed to open wallet connection. Please refresh the page.');
             }
         };
 
@@ -902,12 +903,14 @@
             if (!navButtons) return;
 
             navButtons.innerHTML = `
-                <button onclick="connectWallet()" class="btn-main">Get Started</button>
+                <button onclick="window.connectWallet()" class="btn-main">Get Started</button>
             `;
         }
 
-        function initializeAppKit() {
+        async function initializeAppKit() {
             try {
+                console.log('🚀 Initializing AppKit 1.7.11 (bundled)...');
+
                 modal = createAppKit({
                     adapters: [new EthersAdapter()],
                     networks,
@@ -939,29 +942,30 @@
                     }
                 });
 
-                console.log('✅ AppKit 1.7.11 initialized');
+                console.log('✅ AppKit 1.7.11 initialized (bundled)');
                 console.log('📊 Networks:', networks.map(n => n.name).join(', '));
-                console.log('🔧 Features: Social, Email, Onramp, Swaps');
+                console.log('🔧 Features: Social (Google, X, Apple, Discord), Email, Onramp, Swaps');
 
             } catch (error) {
                 console.error('⚠️ AppKit initialization failed:', error);
                 console.log('📌 Site continues without wallet');
-
-                // Fallback for missing wallet
-                if (!window.ethereum) {
-                    console.warn('No Web3 wallet detected');
-                }
             }
         }
 
         // Initialize on DOMContentLoaded
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeAppKit);
+            document.addEventListener('DOMContentLoaded', () => {
+                initializeAppKit();
+                // Explicitly bind to window after init
+                window.connectWallet = connectWallet;
+            });
         } else {
             initializeAppKit();
+            // Explicitly bind to window after init
+            window.connectWallet = connectWallet;
         }
 
-        // Export to global scope - CRITICAL
+        // CRITICAL: Export to global scope immediately
         window.connectWallet = connectWallet;
     </script>
 </body>
