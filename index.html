@@ -59,7 +59,6 @@
             border-color: var(--text-classic);
         }
 
-        /* Smoke effect for Classic mode */
         .classic .card:hover::after {
             content: '';
             position: absolute;
@@ -131,7 +130,6 @@
             border-color: var(--neon-purple);
         }
 
-        /* Smoke effect for Future mode */
         .future .card:hover::after {
             content: '';
             position: absolute;
@@ -157,7 +155,6 @@
             }
         }
 
-        /* Animated Grid Background - Future Only */
         .future::before {
             content: '';
             position: fixed;
@@ -176,697 +173,244 @@
             100% { background-position: 100px 100px, 100px 100px; }
         }
 
-        /* Levitation Animations */
-        @keyframes levitateClassic {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-        }
-
-        @keyframes levitateFuture {
-            0%, 100% {
-                transform: translateY(0px) translateX(0px) rotateZ(0deg);
-            }
-            25% {
-                transform: translateY(-8px) translateX(4px) rotateZ(1deg);
-            }
-            50% {
-                transform: translateY(-15px) translateX(0px) rotateZ(0deg);
-            }
-            75% {
-                transform: translateY(-8px) translateX(-4px) rotateZ(-1deg);
-            }
-        }
-
-        .classic .card {
-            animation: levitateClassic 6s ease-in-out infinite;
-        }
-
-        .future .card {
-            animation: levitateFuture 8s ease-in-out infinite;
-        }
-
-        /* Wave delay for each card */
-        .card:nth-child(1) { animation-delay: 0s; }
-        .card:nth-child(2) { animation-delay: 0.3s; }
-        .card:nth-child(3) { animation-delay: 0.6s; }
-        .card:nth-child(4) { animation-delay: 0.9s; }
-        .card:nth-child(5) { animation-delay: 1.2s; }
-        .card:nth-child(6) { animation-delay: 1.5s; }
-
-        .future .card:hover {
-            animation-play-state: paused;
-            transform: translateY(-20px) scale(1.02);
-        }
-
-        /* Neon Pulse */
         @keyframes neonPulse {
-            0%, 100% {
-                box-shadow:
-                    0 0 20px var(--accent-future),
-                    0 0 40px var(--accent-future),
-                    0 0 60px var(--neon-purple);
-            }
-            50% {
-                box-shadow:
-                    0 0 30px var(--accent-future),
-                    0 0 60px var(--accent-future),
-                    0 0 90px var(--neon-purple);
-            }
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
         }
 
-        /* Mode Transition Effect */
-        @keyframes modeTransition {
-            0% { filter: brightness(1); }
-            50% { filter: brightness(2.5) saturate(2); }
-            100% { filter: brightness(1); }
-        }
-
-        body.transitioning {
-            animation: modeTransition 0.6s ease-out;
-        }
-
-        /* Success Wave */
-        @keyframes successWave {
-            0% {
-                transform: translateX(-100%) skewX(-15deg);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateX(200%) skewX(-15deg);
-                opacity: 0;
-            }
-        }
-
-        .success-wave {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.5), rgba(191, 0, 255, 0.5), transparent);
-            pointer-events: none;
-            z-index: 9999;
-            animation: successWave 1s ease-out;
-        }
-
-        /* Layout */
         header {
             position: sticky;
             top: 0;
-            z-index: 50;
-            backdrop-filter: blur(12px);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
         .btn-main {
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         .card {
-            transition: all 0.4s;
+            border-radius: 1rem;
+            padding: 1rem;
             cursor: pointer;
         }
 
         .icon-svg {
-            stroke-width: 0.75px;
+            stroke-width: 2;
+            fill: none;
         }
 
-        /* Tooltips */
         .tooltip-wrap {
             position: relative;
             display: inline-block;
         }
 
         .tooltip-text {
+            visibility: hidden;
             position: absolute;
-            top: 100%;
+            bottom: 125%;
             left: 50%;
             transform: translateX(-50%);
-            margin-top: 0.5rem;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
-            font-size: 0.75rem;
             white-space: nowrap;
+            font-size: 0.875rem;
             opacity: 0;
-            pointer-events: none;
             transition: opacity 0.3s;
-            z-index: 100;
+            pointer-events: none;
+            z-index: 1000;
         }
 
         .tooltip-wrap:hover .tooltip-text {
+            visibility: visible;
             opacity: 1;
         }
 
-        .classic .tooltip-text {
-            background: var(--bg-classic);
-            color: var(--text-classic);
-            border: 1px solid var(--accent-classic);
-        }
-
-        .future .tooltip-text {
-            background: rgba(0, 0, 0, 0.9);
-            color: var(--accent-future);
-            border: 1px solid var(--accent-future);
-            box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            display: flex;
-            gap: 0.25rem;
-            padding: 0.25rem;
-            border-radius: 0.5rem;
-        }
-
-        .classic .theme-toggle {
-            background: rgba(169, 221, 211, 0.1);
-        }
-
-        .future .theme-toggle {
-            background: rgba(0, 245, 255, 0.1);
-            border: 1px solid rgba(0, 245, 255, 0.3);
-        }
-
-        .theme-btn {
-            padding: 0.25rem 0.75rem;
-            border: none;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .theme-btn.active-classic {
-            background: var(--text-classic);
-            color: var(--bg-classic);
-        }
-
-        .theme-btn.active-future {
-            background: linear-gradient(to right, var(--accent-future), var(--neon-purple));
-            color: #000;
-            box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
-        }
-
-        .theme-btn:not(.active-classic):not(.active-future) {
-            background: transparent;
-            opacity: 0.6;
-        }
-
-        /* Gallery Grid - 6 in one row */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 1rem;
-            max-width: 1400px;
-            margin: 0 auto 150px;
-        }
-
-        @media (max-width: 1200px) {
-            .gallery {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .gallery {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .gallery {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Anagram Morph */
-        .card-morph {
-            position: fixed !important;
-            z-index: 1000 !important;
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            animation: none !important;
-        }
-
-        .card-letter {
-            position: absolute;
+        #anagramContainer {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 8rem;
+            display: none;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        #anagramContainer.active {
+            display: flex;
+            gap: 0.5rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .anagram-letter {
+            font-size: 4rem;
             font-weight: 700;
-            opacity: 0;
-            transition: opacity 0.5s ease 0.3s;
-            pointer-events: none;
+            animation: letterFloat 0.6s ease-out forwards;
         }
 
-        .card-morph .card-letter {
-            opacity: 1;
+        @keyframes letterFloat {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-20px) rotate(5deg); opacity: 1; }
+            100% { transform: translateY(0) rotate(0deg); opacity: 1; }
         }
 
-        .classic .card-letter {
-            color: var(--text-classic);
-            text-shadow: 0 0 20px var(--accent-classic);
-        }
-
-        .future .card-letter {
+        .classic .anagram-letter { color: var(--accent-classic); }
+        .future .anagram-letter {
             color: var(--accent-future);
-            text-shadow:
-                0 0 20px var(--accent-future),
-                0 0 40px var(--accent-future),
-                0 0 60px var(--neon-purple);
-        }
-
-        .morph-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s;
-        }
-
-        .morph-backdrop.active {
-            opacity: 1;
-        }
-
-        .logo-interactive {
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logo-interactive:hover {
-            transform: scale(1.05);
+            text-shadow: 0 0 20px var(--neon-purple), 0 0 40px var(--accent-future);
         }
     </style>
 </head>
 <body class="classic">
-    <header>
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-2xl font-light tracking-wide logo-interactive" onmouseenter="morphToAnagram()" onmouseleave="resetMorph()">ArtSoul</a>
-                    <div class="theme-toggle">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
-                            Classic
-                        </button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
-                            Future
-                        </button>
-                    </div>
+    <div id="anagramContainer"></div>
+
+    <header class="py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold cursor-pointer" id="logo" onmouseover="showAnagram()" onmouseout="hideAnagram()">
+                ArtSoul
+            </h1>
+            <div class="flex items-center gap-4">
+                <div class="tooltip-wrap">
+                    <button onclick="toggleTheme()" class="p-2">
+                        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
+                            <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>
+                        </svg>
+                    </button>
+                    <div class="tooltip-text">Switch Theme</div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="tooltip-wrap">
-                        <a href="docs.html" class="inline-block p-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                            <svg viewBox="0 0 24 24" fill="none" class="w-7 h-7" style="color: currentColor;">
-                                <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>
-                            </svg>
-                        </a>
-                        <div class="tooltip-text">Documentation</div>
-                    </div>
-                    <div class="flex items-center gap-3" id="navButtons">
-                        <button onclick="connectWallet()" class="btn-main">Get Started</button>
-                    </div>
+                <div id="navButtons">
+                    <button onclick="window.connectWallet()" class="btn-main">Get Started</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Morph Backdrop -->
-    <div id="morphBackdrop" class="morph-backdrop"></div>
+    <main class="max-w-7xl mx-auto px-6 py-12" style="position: relative; z-index: 1;">
+        <section class="text-center mb-16">
+            <h2 class="text-5xl font-bold mb-4">Where Community Determines Value</h2>
+            <p class="text-xl opacity-80 mb-8">Decentralized art marketplace powered by collective appreciation</p>
+        </section>
 
-    <main class="container mx-auto px-4 py-12 relative z-10">
-        <div class="text-center mb-12">
-            <h1 class="text-5xl font-light mb-4">Decentralized Art Marketplace</h1>
-            <p class="text-xl font-light opacity-80">Where community determines value</p>
-        </div>
-
-        <div class="gallery">
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(1)" data-letter="A">
-                <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
-                <div class="card-letter">A</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Abstract Dreams</h3>
-                    <p class="text-xs opacity-70 mb-2">by @artist_one</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold mb-8">Featured Artworks</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <div class="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg mb-4"></div>
+                    <h4 class="text-xl font-semibold mb-2">Digital Dreams #1</h4>
+                    <p class="opacity-70">Abstract exploration of consciousness</p>
+                </div>
+                <div class="card">
+                    <div class="aspect-square bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg mb-4"></div>
+                    <h4 class="text-xl font-semibold mb-2">Neon Nights</h4>
+                    <p class="opacity-70">Cyberpunk cityscape series</p>
+                </div>
+                <div class="card">
+                    <div class="aspect-square bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg mb-4"></div>
+                    <h4 class="text-xl font-semibold mb-2">Nature's Code</h4>
+                    <p class="opacity-70">Generative art meets organic forms</p>
+                </div>
+                <div class="card">
+                    <div class="aspect-square bg-gradient-to-br from-orange-500 to-red-500 rounded-lg mb-4"></div>
+                    <h4 class="text-xl font-semibold mb-2">Solar Flare</h4>
+                    <p class="opacity-70">Energy and motion captured</p>
+                </div>
+                <div class="card">
+                    <div class="aspect-square bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg mb-4"></div>
+                    <h4 class="text-xl font-semibold mb-2">Quantum Realm</h4>
+                    <p class="opacity-70">Microscopic universe visualization</p>
+                </div>
+                <div class="card">
+                    <div class="aspect-square bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg mb-4"></div>
+                    <h4 class="text-xl font-semibold mb-2">Golden Hour</h4>
+                    <p class="opacity-70">Light and shadow interplay</p>
                 </div>
             </div>
+        </section>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(2)" data-letter="R">
-                <div class="aspect-square bg-gradient-to-br from-pink-900 to-orange-900"></div>
-                <div class="card-letter">R</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Digital Sunset</h3>
-                    <p class="text-xs opacity-70 mb-2">by @creator_two</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
-                </div>
-            </div>
-
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(3)" data-letter="T">
-                <div class="aspect-square bg-gradient-to-br from-green-900 to-teal-900"></div>
-                <div class="card-letter">T</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Cyber Nature</h3>
-                    <p class="text-xs opacity-70 mb-2">by @nature_artist</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
-                </div>
-            </div>
-
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(4)" data-letter="S">
-                <div class="aspect-square bg-gradient-to-br from-red-900 to-purple-900"></div>
-                <div class="card-letter">S</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Neon Nights</h3>
-                    <p class="text-xs opacity-70 mb-2">by @neon_creator</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
-                </div>
-            </div>
-
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(5)" data-letter="O">
-                <div class="aspect-square bg-gradient-to-br from-indigo-900 to-cyan-900"></div>
-                <div class="card-letter">O</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Ocean Depths</h3>
-                    <p class="text-xs opacity-70 mb-2">by @ocean_artist</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
-                </div>
-            </div>
-
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(6)" data-letter="L">
-                <div class="aspect-square bg-gradient-to-br from-yellow-900 to-red-900"></div>
-                <div class="card-letter">L</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Fire & Gold</h3>
-                    <p class="text-xs opacity-70 mb-2">by @gold_master</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="max-w-4xl mx-auto mt-24 p-8 rounded-xl" style="background: rgba(169, 221, 211, 0.03); border: 1px solid currentColor;">
-            <h2 class="text-3xl font-light mb-8 text-center">About</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div class="text-center">
-                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: currentColor;">
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" class="icon-svg"/>
-                        <path d="M12 3L12 9M12 15L12 21M3 12L9 12M15 12L21 12" stroke="currentColor" class="icon-svg"/>
-                    </svg>
-                    <h3 class="font-medium mb-2">Multi-Chain</h3>
-                    <p class="text-sm opacity-70">8 networks including Rialo Playground</p>
-                </div>
-                <div class="text-center">
-                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: currentColor;">
-                        <path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21" stroke="currentColor" class="icon-svg"/>
-                    </svg>
-                    <h3 class="font-medium mb-2">Open Gallery</h3>
-                    <p class="text-sm opacity-70">Browse art without authentication</p>
-                </div>
-                <div class="text-center">
-                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8 mx-auto mb-3" style="color: currentColor;">
-                        <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12" stroke="currentColor" class="icon-svg"/>
-                    </svg>
-                    <h3 class="font-medium mb-2">Social Auth</h3>
-                    <p class="text-sm opacity-70">Google, X, Apple, Discord, Wallets</p>
-                </div>
-            </div>
-
-            <div class="mt-12">
-                <h3 class="text-2xl font-light mb-6 text-center">Roadmap</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                    <div>
-                        <h4 class="font-medium mb-2">Q2 2026</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>MVP platform</li>
-                            <li>Basic UI/UX</li>
-                            <li>Upload system</li>
-                            <li>Profiles</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-medium mb-2">Q3 2026</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>Web3 integration</li>
-                            <li>Smart contracts</li>
-                            <li>Multi-chain</li>
-                            <li>IPFS</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-medium mb-2">Q4 2026</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>Social features</li>
-                            <li>Music player</li>
-                            <li>Mobile version</li>
-                            <li>Developer API</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-medium mb-2">2027</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>DAO launch</li>
-                            <li>Governance</li>
-                            <li>Gallery partnerships</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <section class="text-center">
+            <h3 class="text-3xl font-bold mb-4">Join the Revolution</h3>
+            <p class="text-xl opacity-80 mb-8">Connect your wallet to start collecting and creating</p>
+            <button onclick="window.connectWallet()" class="btn-main text-lg">Get Started</button>
+        </section>
     </main>
 
-    <footer class="py-8 text-center relative z-10">
-        <p class="text-xs opacity-70">
-            Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline">@maysonkiller23</a>
-        </p>
-    </footer>
-
-    <!-- Theme Functions -->
     <script>
-        let morphActive = false;
-        let originalPositions = [];
+        // CRITICAL: Define connectWallet FIRST, globally, with fallback
+        window.connectWallet = async () => {
+            alert('Wallet connection is loading. Please wait a moment...');
+        };
 
-        function setTheme(theme) {
-            document.body.classList.add('transitioning');
-            setTimeout(() => document.body.classList.remove('transitioning'), 600);
+        // Theme Management
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
 
-            document.body.className = theme;
-            localStorage.setItem('theme', theme);
-
-            const classicBtn = document.getElementById('classicBtn');
-            const futureBtn = document.getElementById('futureBtn');
-
-            classicBtn.classList.remove('active-classic', 'active-future');
-            futureBtn.classList.remove('active-classic', 'active-future');
-
-            if (theme === 'classic') {
-                classicBtn.classList.add('active-classic');
+            if (body.classList.contains('classic')) {
+                body.classList.remove('classic');
+                body.classList.add('future');
+                localStorage.setItem('theme', 'future');
+                icon.innerHTML = '<path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21" stroke="currentColor" class="icon-svg"/>';
             } else {
-                futureBtn.classList.add('active-future');
-            }
-
-            const mainBtn = document.querySelector('#navButtons .btn-main');
-            if (mainBtn) {
-                mainBtn.className = 'btn-main';
+                body.classList.remove('future');
+                body.classList.add('classic');
+                localStorage.setItem('theme', 'classic');
+                icon.innerHTML = '<path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>';
             }
         }
 
-        function viewArt(id) {
-            if (morphActive) return;
-            alert(`Viewing artwork #${id}. Full viewer coming soon!`);
-        }
-
-        function showSuccessWave() {
-            const wave = document.createElement('div');
-            wave.className = 'success-wave';
-            document.body.appendChild(wave);
-            setTimeout(() => wave.remove(), 1000);
-        }
-
-        function morphToAnagram() {
-            if (morphActive) return;
-            morphActive = true;
-
-            const cards = document.querySelectorAll('.card');
-            const backdrop = document.getElementById('morphBackdrop');
-
-            backdrop.classList.add('active');
-
-            // Save original positions
-            originalPositions = [];
-            cards.forEach(card => {
-                const rect = card.getBoundingClientRect();
-                originalPositions.push({
-                    top: rect.top,
-                    left: rect.left,
-                    width: rect.width,
-                    height: rect.height
-                });
-            });
-
-            // Calculate center positions for ARTSOL
-            const cardWidth = 150;
-            const cardHeight = 150;
-            const gap = 20;
-            const totalWidth = (cardWidth * 6) + (gap * 5);
-            const startX = (window.innerWidth - totalWidth) / 2;
-            const centerY = (window.innerHeight - cardHeight) / 2;
-
-            cards.forEach((card, index) => {
-                card.classList.add('card-morph');
-                const targetX = startX + (index * (cardWidth + gap));
-
-                card.style.width = cardWidth + 'px';
-                card.style.height = cardHeight + 'px';
-                card.style.left = targetX + 'px';
-                card.style.top = centerY + 'px';
-            });
-        }
-
-        function resetMorph() {
-            if (!morphActive) return;
-            morphActive = false;
-
-            const cards = document.querySelectorAll('.card');
-            const backdrop = document.getElementById('morphBackdrop');
-
-            backdrop.classList.remove('active');
-
-            cards.forEach((card, index) => {
-                const original = originalPositions[index];
-
-                card.style.width = original.width + 'px';
-                card.style.height = original.height + 'px';
-                card.style.left = original.left + 'px';
-                card.style.top = original.top + 'px';
-
-                setTimeout(() => {
-                    card.classList.remove('card-morph');
-                    card.style.width = '';
-                    card.style.height = '';
-                    card.style.left = '';
-                    card.style.top = '';
-                }, 800);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
+        function loadTheme() {
             const savedTheme = localStorage.getItem('theme') || 'classic';
-            setTheme(savedTheme);
-        });
-    </script>
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
 
-    <!-- AppKit Integration -->
-    <script type="module">
-        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
-        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
+            body.classList.remove('classic', 'future');
+            body.classList.add(savedTheme);
 
-        const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
-
-        const networks = [
-            {
-                chainId: 1,
-                name: 'Ethereum',
-                currency: 'ETH',
-                explorerUrl: 'https://etherscan.io',
-                rpcUrl: 'https://cloudflare-eth.com'
-            },
-            {
-                chainId: 137,
-                name: 'Polygon',
-                currency: 'MATIC',
-                explorerUrl: 'https://polygonscan.com',
-                rpcUrl: 'https://polygon-rpc.com'
-            },
-            {
-                chainId: 56,
-                name: 'BSC',
-                currency: 'BNB',
-                explorerUrl: 'https://bscscan.com',
-                rpcUrl: 'https://bsc-dataseed.binance.org'
-            },
-            {
-                chainId: 8453,
-                name: 'Base',
-                currency: 'ETH',
-                explorerUrl: 'https://basescan.org',
-                rpcUrl: 'https://mainnet.base.org'
-            },
-            {
-                chainId: 42161,
-                name: 'Arbitrum',
-                currency: 'ETH',
-                explorerUrl: 'https://arbiscan.io',
-                rpcUrl: 'https://arb1.arbitrum.io/rpc'
-            },
-            {
-                chainId: 10,
-                name: 'Optimism',
-                currency: 'ETH',
-                explorerUrl: 'https://optimistic.etherscan.io',
-                rpcUrl: 'https://mainnet.optimism.io'
-            },
-            {
-                chainId: 11155111,
-                name: 'Sepolia',
-                currency: 'ETH',
-                explorerUrl: 'https://sepolia.etherscan.io',
-                rpcUrl: 'https://rpc.sepolia.org'
-            },
-            {
-                chainId: 2025,
-                name: 'Rialo Playground',
-                currency: 'RIA',
-                explorerUrl: 'https://playground.rialo.io',
-                rpcUrl: 'https://playground.rialo.io/rpc'
+            if (savedTheme === 'future') {
+                icon.innerHTML = '<path d="M3 3L21 3M3 21L21 21M3 3L3 21M21 3L21 21" stroke="currentColor" class="icon-svg"/>';
             }
-        ];
+        }
 
-        const metadata = {
-            name: 'ArtSoul Marketplace',
-            description: 'Decentralized Art Marketplace - Where community determines value',
-            url: 'https://maysonkiller.github.io/artsoul-marketplace',
-            icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg']
-        };
+        loadTheme();
 
-        // Define functions first
-        let modal = null;
+        // Anagram Effect
+        let anagramTimeout;
+        function showAnagram() {
+            clearTimeout(anagramTimeout);
+            const container = document.getElementById('anagramContainer');
+            const letters = ['A', 'R', 'T', 'S', 'O', 'U', 'L'];
 
-        const connectWallet = async () => {
-            try {
-                if (modal) {
-                    await modal.open();
-                } else {
-                    console.error("Modal not initialized yet");
-                    alert('Wallet connection is loading. Please wait a moment and try again.');
-                }
-            } catch (err) {
-                console.error('Connection error:', err);
-                alert('Failed to open wallet connection. Please refresh the page.');
-            }
-        };
+            container.innerHTML = '';
+            letters.forEach((letter, index) => {
+                const span = document.createElement('span');
+                span.className = 'anagram-letter';
+                span.textContent = letter;
+                span.style.animationDelay = `${index * 0.1}s`;
+                container.appendChild(span);
+            });
+
+            container.classList.add('active');
+        }
+
+        function hideAnagram() {
+            anagramTimeout = setTimeout(() => {
+                document.getElementById('anagramContainer').classList.remove('active');
+            }, 300);
+        }
 
         function handleSuccessfulLogin(state) {
             const theme = document.body.classList.contains('future') ? 'future' : 'classic';
-
-            if (theme === 'future' && window.showSuccessWave) {
-                window.showSuccessWave();
-            }
-
             updateNavButtons(state);
         }
 
@@ -906,12 +450,38 @@
                 <button onclick="window.connectWallet()" class="btn-main">Get Started</button>
             `;
         }
+    </script>
 
-        async function initializeAppKit() {
+    <!-- AppKit Integration with Fallback -->
+    <script type="module">
+        (async () => {
             try {
-                console.log('🚀 Initializing AppKit 1.7.11 (bundled)...');
+                console.log('🚀 Loading AppKit 1.7.11...');
 
-                modal = createAppKit({
+                const { createAppKit } = await import('https://cdn.jsdelivr.net/npm/@reown/appkit@1.7.11/+esm');
+                const { EthersAdapter } = await import('https://cdn.jsdelivr.net/npm/@reown/appkit-adapter-ethers@1.7.11/+esm');
+
+                const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
+
+                const mainnet = { chainId: 1, name: 'Ethereum', currency: 'ETH', explorerUrl: 'https://etherscan.io', rpcUrl: 'https://cloudflare-eth.com' };
+                const polygon = { chainId: 137, name: 'Polygon', currency: 'MATIC', explorerUrl: 'https://polygonscan.com', rpcUrl: 'https://polygon-rpc.com' };
+                const bsc = { chainId: 56, name: 'BSC', currency: 'BNB', explorerUrl: 'https://bscscan.com', rpcUrl: 'https://bsc-dataseed.binance.org' };
+                const base = { chainId: 8453, name: 'Base', currency: 'ETH', explorerUrl: 'https://basescan.org', rpcUrl: 'https://mainnet.base.org' };
+                const arbitrum = { chainId: 42161, name: 'Arbitrum', currency: 'ETH', explorerUrl: 'https://arbiscan.io', rpcUrl: 'https://arb1.arbitrum.io/rpc' };
+                const optimism = { chainId: 10, name: 'Optimism', currency: 'ETH', explorerUrl: 'https://optimistic.etherscan.io', rpcUrl: 'https://mainnet.optimism.io' };
+                const sepolia = { chainId: 11155111, name: 'Sepolia', currency: 'ETH', explorerUrl: 'https://sepolia.etherscan.io', rpcUrl: 'https://rpc.sepolia.org' };
+                const rialo = { chainId: 2025, name: 'Rialo Playground', currency: 'RIA', explorerUrl: 'https://playground.rialo.io', rpcUrl: 'https://playground.rialo.io/rpc' };
+
+                const networks = [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialo];
+
+                const metadata = {
+                    name: 'ArtSoul Marketplace',
+                    description: 'Decentralized Art Marketplace - Where community determines value',
+                    url: 'https://maysonkiller.github.io/artsoul-marketplace',
+                    icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg']
+                };
+
+                const modal = createAppKit({
                     adapters: [new EthersAdapter()],
                     networks,
                     metadata,
@@ -932,9 +502,21 @@
 
                 window.web3Modal = modal;
 
+                window.connectWallet = async () => {
+                    try {
+                        if (modal) {
+                            await modal.open();
+                        } else {
+                            alert('Wallet connection is still initializing. Please try again in a moment.');
+                        }
+                    } catch (err) {
+                        console.error('Connection error:', err);
+                        alert('Failed to open wallet connection. Please refresh the page and try again.');
+                    }
+                };
+
                 modal.subscribeState((state) => {
                     console.log('Wallet state:', state);
-
                     if (state?.address) {
                         handleSuccessfulLogin(state);
                     } else {
@@ -942,31 +524,28 @@
                     }
                 });
 
-                console.log('✅ AppKit 1.7.11 initialized (bundled)');
+                console.log('✅ AppKit 1.7.11 initialized successfully');
                 console.log('📊 Networks:', networks.map(n => n.name).join(', '));
-                console.log('🔧 Features: Social (Google, X, Apple, Discord), Email, Onramp, Swaps');
+                console.log('🔧 Features: Social (Google, X, Apple, Discord), Email, Onramp, Swaps, Analytics');
 
             } catch (error) {
                 console.error('⚠️ AppKit initialization failed:', error);
-                console.log('📌 Site continues without wallet');
+                console.log('📌 Fallback mode: Basic wallet connection only');
+
+                window.connectWallet = async () => {
+                    if (window.ethereum) {
+                        try {
+                            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                            alert(`Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`);
+                        } catch (err) {
+                            alert('Failed to connect wallet. Please try again.');
+                        }
+                    } else {
+                        alert('No Web3 wallet detected. Please install MetaMask or use a Web3-enabled browser.');
+                    }
+                };
             }
-        }
-
-        // Initialize on DOMContentLoaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                initializeAppKit();
-                // Explicitly bind to window after init
-                window.connectWallet = connectWallet;
-            });
-        } else {
-            initializeAppKit();
-            // Explicitly bind to window after init
-            window.connectWallet = connectWallet;
-        }
-
-        // CRITICAL: Export to global scope immediately
-        window.connectWallet = connectWallet;
+        })();
     </script>
 </body>
 </html>
