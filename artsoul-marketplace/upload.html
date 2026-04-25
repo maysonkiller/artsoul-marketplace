@@ -365,7 +365,32 @@
             const file = event.target.files[0];
             if (file) {
                 selectedFile = file;
-                document.getElementById('fileName').textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                document.getElementById('fileName').textContent = `Selected: ${file.name} (${sizeMB} MB)`;
+
+                // Auto-detect file type and generate description
+                const mimeType = file.type;
+                let category = 'Unknown';
+                let autoDescription = '';
+
+                if (mimeType.startsWith('image/')) {
+                    category = mimeType.includes('gif') ? 'GIF Animation' : 'Digital Art';
+                    autoDescription = `A unique ${category.toLowerCase()} piece showcasing creative vision and artistic expression.`;
+                } else if (mimeType.startsWith('video/')) {
+                    category = 'Video Art';
+                    autoDescription = 'An immersive video artwork combining motion, sound, and visual storytelling.';
+                } else if (mimeType.startsWith('audio/')) {
+                    category = 'Music NFT';
+                    autoDescription = 'An original music composition capturing emotion and rhythm in digital form.';
+                }
+
+                // Auto-fill description if empty
+                const descField = document.getElementById('artDescription');
+                if (!descField.value) {
+                    descField.value = autoDescription;
+                }
+
+                console.log(`📁 File detected: ${category} (${mimeType})`);
             }
         }
 
@@ -375,16 +400,37 @@
             const description = document.getElementById('artDescription').value;
 
             if (!selectedFile) {
-                alert('Please select a file to upload');
+                if (modal) modal.open();
                 return;
             }
 
             if (!title || !price) {
-                alert('Please fill in title and price');
+                if (modal) modal.open();
                 return;
             }
 
-            alert(`Minting feature coming soon!\n\nYour artwork:\nTitle: ${title}\nPrice: ${price} ETH\nFile: ${selectedFile.name}\n\nThis will be integrated with smart contracts in the next update.`);
+            // Check if user has profile
+            const profile = localStorage.getItem('userProfile');
+            if (!profile) {
+                window.location.href = 'profile.html';
+                return;
+            }
+
+            // Simulate upload process
+            const mimeType = selectedFile.type;
+            let category = 'art';
+            if (mimeType.startsWith('video/')) category = 'video';
+            else if (mimeType.startsWith('audio/')) category = 'music';
+            else if (mimeType.includes('gif')) category = 'gif';
+
+            console.log(`🚀 Uploading ${category}: ${title} at ${price} ETH`);
+            console.log(`📝 Description: ${description}`);
+            console.log(`📦 File: ${selectedFile.name} (${selectedFile.type})`);
+
+            // Show success and redirect
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
         }
     </script>
 

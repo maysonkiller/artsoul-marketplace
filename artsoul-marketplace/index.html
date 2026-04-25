@@ -572,6 +572,47 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.5; transform: scale(1.2); }
         }
+
+        /* Artwork Modal */
+        #artworkModal {
+            backdrop-filter: blur(10px);
+        }
+
+        #artworkModal > div {
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .future #artworkModal > div {
+            background: #000000 !important;
+            border: 1px solid var(--accent-future) !important;
+            box-shadow: 0 0 40px rgba(0, 245, 255, 0.3);
+        }
+
+        .future #artworkModal > div > div {
+            border-color: var(--accent-future) !important;
+        }
+
+        @media (max-width: 768px) {
+            #artworkModal > div {
+                flex-direction: column;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+            #artworkModal > div > div {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body class="classic">
@@ -758,6 +799,81 @@
                 </div>
             </div>
         </div>
+
+        <!-- Artwork Modal with Triple Valuation -->
+        <div id="artworkModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4" style="background: rgba(0, 0, 0, 0.9);">
+            <div class="max-w-6xl w-full rounded-2xl overflow-hidden" style="background: var(--bg-classic); border: 1px solid var(--accent-classic); max-height: 90vh; display: flex; flex-direction: row;">
+                <!-- Left Side: Artwork Display -->
+                <div class="w-1/2 p-8 flex flex-col">
+                    <div class="flex-1 flex items-center justify-center mb-6">
+                        <div id="modalImage" class="w-full aspect-square rounded-xl"></div>
+                    </div>
+                    <div class="text-center">
+                        <h2 id="modalTitle" class="text-3xl font-light mb-2"></h2>
+                        <p id="modalArtist" class="opacity-70 mb-4"></p>
+                        <p id="modalDescription" class="text-sm opacity-80 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Right Side: Triple Valuation -->
+                <div class="w-1/2 p-8 flex flex-col" style="border-left: 1px solid var(--accent-classic);">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-light">Triple Valuation</h3>
+                        <button onclick="closeModal()" class="text-2xl opacity-70 hover:opacity-100">&times;</button>
+                    </div>
+
+                    <div class="space-y-4 flex-1">
+                        <!-- Creator Value -->
+                        <div class="p-4 rounded-xl" style="background: rgba(169, 221, 211, 0.05); border: 1px solid var(--accent-classic);">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm opacity-70">Creator Value</span>
+                                <span class="text-xl font-medium" id="creatorValue">0.5 ETH</span>
+                            </div>
+                            <p class="text-xs opacity-60">Initial price set by the artist</p>
+                        </div>
+
+                        <!-- Community Value -->
+                        <div class="p-4 rounded-xl" style="background: rgba(169, 221, 211, 0.05); border: 1px solid var(--accent-classic);">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm opacity-70">Community Value</span>
+                                <span class="text-xl font-medium" id="communityValue">0.62 ETH</span>
+                            </div>
+                            <p class="text-xs opacity-60">Average valuation from voters</p>
+                        </div>
+
+                        <!-- System Value -->
+                        <div class="p-4 rounded-xl" style="background: rgba(169, 221, 211, 0.05); border: 1px solid var(--accent-classic);">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm opacity-70">System Value</span>
+                                <span class="text-xl font-medium" id="systemValue">0.58 ETH</span>
+                            </div>
+                            <p class="text-xs opacity-60">AI-based on 3-day auction data</p>
+                        </div>
+
+                        <!-- Auction Info -->
+                        <div class="p-4 rounded-xl" style="background: rgba(169, 221, 211, 0.1); border: 1px solid var(--accent-classic);">
+                            <div class="flex justify-between mb-3">
+                                <div>
+                                    <p class="text-xs opacity-70 mb-1">Current Bid</p>
+                                    <p class="text-lg font-medium" id="highestBid">0.65 ETH</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs opacity-70 mb-1">Time Left</p>
+                                    <p class="text-lg font-medium" id="timeLeft">2d 14h</p>
+                                </div>
+                            </div>
+                            <p class="text-xs opacity-60" id="bidCount">12 bids placed</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 space-y-3">
+                        <button onclick="placeBid()" class="btn-main w-full py-3 text-center">Place Bid</button>
+                        <button onclick="shareArtwork()" class="w-full py-3 text-center rounded-lg" style="border: 1px solid var(--accent-classic); background: transparent;">Share</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <footer class="py-8 text-center relative z-10">
@@ -796,9 +912,67 @@
             }
         }
 
+        const artworks = {
+            1: { title: 'Abstract Dreams', artist: '@artist_one', creatorValue: 0.5, communityValue: 0.62, systemValue: 0.58, description: 'A mesmerizing blend of abstract forms and dreamlike colors.', bids: 12, timeLeft: '2d 14h', highestBid: 0.65, image: 'from-purple-900 to-blue-900' },
+            2: { title: 'Digital Sunset', artist: '@creator_two', creatorValue: 0.8, communityValue: 0.75, systemValue: 0.78, description: 'Capturing the beauty of a digital sunset in vibrant hues.', bids: 8, timeLeft: '1d 6h', highestBid: 0.82, image: 'from-pink-900 to-orange-900' },
+            3: { title: 'Cyber Nature', artist: '@nature_artist', creatorValue: 1.2, communityValue: 1.35, systemValue: 1.28, description: 'Where technology meets organic beauty.', bids: 15, timeLeft: '2d 22h', highestBid: 1.4, image: 'from-green-900 to-teal-900' },
+            4: { title: 'Neon Nights', artist: '@neon_creator', creatorValue: 0.6, communityValue: 0.68, systemValue: 0.64, description: 'Electric nights in a neon-lit cityscape.', bids: 10, timeLeft: '1d 18h', highestBid: 0.7, image: 'from-red-900 to-purple-900' },
+            5: { title: 'Ocean Depths', artist: '@ocean_artist', creatorValue: 0.9, communityValue: 0.95, systemValue: 0.92, description: 'Exploring the mysterious depths of the digital ocean.', bids: 18, timeLeft: '2d 8h', highestBid: 1.0, image: 'from-indigo-900 to-cyan-900' },
+            6: { title: 'Fire & Gold', artist: '@gold_master', creatorValue: 1.5, communityValue: 1.48, systemValue: 1.52, description: 'A fiery masterpiece with golden accents.', bids: 20, timeLeft: '1d 12h', highestBid: 1.6, image: 'from-yellow-900 to-red-900' }
+        };
+
         function viewArt(id) {
             if (morphActive) return;
-            alert(`Viewing artwork #${id}. Full viewer coming soon!`);
+            const art = artworks[id];
+            if (!art) return;
+
+            const modal = document.getElementById('artworkModal');
+            document.getElementById('modalImage').className = `w-full h-full bg-gradient-to-br ${art.image}`;
+            document.getElementById('modalTitle').textContent = art.title;
+            document.getElementById('modalArtist').textContent = art.artist;
+            document.getElementById('modalDescription').textContent = art.description;
+            document.getElementById('creatorValue').textContent = `${art.creatorValue} ETH`;
+            document.getElementById('communityValue').textContent = `${art.communityValue} ETH`;
+            document.getElementById('systemValue').textContent = `${art.systemValue} ETH`;
+            document.getElementById('bidCount').textContent = `${art.bids} bids`;
+            document.getElementById('timeLeft').textContent = art.timeLeft;
+            document.getElementById('highestBid').textContent = `${art.highestBid} ETH`;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('artworkModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function placeBid() {
+            const profile = localStorage.getItem('userProfile');
+            if (!profile) {
+                window.location.href = 'profile.html';
+                return;
+            }
+            if (modal) {
+                modal.open();
+            }
+        }
+
+        function shareArtwork() {
+            const title = document.getElementById('modalTitle').textContent;
+            const artist = document.getElementById('modalArtist').textContent;
+            const shareData = {
+                title: `${title} by ${artist} - ArtSoul`,
+                text: `Check out this amazing artwork on ArtSoul Marketplace!`,
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+            }
         }
 
         function showSuccessWave() {
@@ -964,6 +1138,17 @@
 
             if (theme === 'future' && window.showSuccessWave) {
                 window.showSuccessWave();
+            }
+
+            // Check if user has profile
+            const hasProfile = localStorage.getItem('userProfile');
+
+            // If new user (no profile), redirect to profile creation after 1 second
+            if (!hasProfile && state?.address) {
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1000);
+                return;
             }
 
             updateNavButtons(state);
