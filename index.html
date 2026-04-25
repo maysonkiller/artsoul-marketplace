@@ -709,8 +709,8 @@
 
     <!-- AppKit Integration -->
     <script type="module">
-        import { createAppKit } from 'https://cdn.jsdelivr.net/npm/@reown/appkit@1.1.0/dist/index.js'
-        import { EthersAdapter } from 'https://cdn.jsdelivr.net/npm/@reown/appkit-adapter-ethers@1.1.0/dist/index.js'
+        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11'
+        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11'
 
         const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
 
@@ -790,6 +790,8 @@
                     features: {
                         socials: ['google', 'x', 'apple', 'discord'],
                         email: true,
+                        onramp: true,
+                        swaps: true,
                         analytics: true
                     },
                     themeMode: 'dark',
@@ -802,7 +804,7 @@
                 window.web3Modal = modal;
 
                 // Global connectWallet function
-                window.connectWallet = async () => {
+                const connectWallet = async () => {
                     try {
                         if (window.web3Modal) {
                             await window.web3Modal.open();
@@ -824,9 +826,13 @@
                     }
                 });
 
-                console.log('✅ AppKit initialized successfully');
+                console.log('✅ AppKit 1.7.11 initialized successfully');
                 console.log('📊 Supported networks:', networks.map(n => n.name));
                 console.log('◈ Rialo Playground (Chain ID: 2025) ready');
+                console.log('🔧 Features: Social, Email, Onramp, Swaps, Analytics');
+
+                // Export to global scope
+                window.connectWallet = connectWallet;
 
             } catch (error) {
                 console.error('⚠️ AppKit initialization failed:', error);
@@ -898,12 +904,6 @@
         } else {
             initializeAppKit();
         }
-
-        // Export functions to global scope
-        window.setTheme = window.setTheme;
-        window.viewArt = window.viewArt;
-        window.morphToAnagram = window.morphToAnagram;
-        window.resetMorph = window.resetMorph;
     </script>
 </body>
 </html>
