@@ -937,6 +937,8 @@
         let currentBalance = '0.00';
 
         function handleSuccessfulLogin(state) {
+            console.log('🔄 Handling successful login...', state);
+
             const theme = document.body.classList.contains('future') ? 'future' : 'classic';
 
             if (theme === 'future' && window.showSuccessWave) {
@@ -946,13 +948,21 @@
             updateNavButtons(state);
             updateNetworkBadge(state);
 
+            // Close modal if still open
+            if (window.web3Modal) {
+                window.web3Modal.close();
+            }
+
             // Check if first time user (no profile saved)
             const hasProfile = localStorage.getItem('userProfile');
             if (!hasProfile) {
-                // First time user - redirect to profile after 1 second
+                console.log('👤 First time user - redirecting to profile...');
+                // First time user - redirect to profile after 1.5 seconds
                 setTimeout(() => {
                     window.location.href = 'profile.html';
-                }, 1000);
+                }, 1500);
+            } else {
+                console.log('✅ Welcome back!');
             }
         }
 
@@ -1112,13 +1122,31 @@
                     }
                 };
 
+                // Subscribe to state changes
                 modal.subscribeState((state) => {
                     console.log('Wallet state:', state);
 
-                    if (state?.address) {
+                    if (state?.address && state?.isConnected) {
+                        console.log('✅ Wallet connected:', state.address);
                         handleSuccessfulLogin(state);
-                    } else {
+                    } else if (!state?.isConnected && !state?.address) {
                         resetNavButtons();
+                    }
+                });
+
+                // Additional event listeners for connection
+                modal.subscribeEvents((event) => {
+                    console.log('AppKit event:', event);
+
+                    if (event.type === 'CONNECT_SUCCESS') {
+                        console.log('🎉 Connection successful!');
+                        // Force state check after successful connection
+                        setTimeout(() => {
+                            const currentState = modal.getState();
+                            if (currentState?.address) {
+                                handleSuccessfulLogin(currentState);
+                            }
+                        }, 500);
                     }
                 });
 
