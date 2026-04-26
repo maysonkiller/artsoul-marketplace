@@ -936,8 +936,17 @@
         let currentNetwork = null;
         let currentBalance = '0.00';
 
+        let isConnecting = false;
+
         function handleSuccessfulLogin(state) {
             console.log('🔄 Handling successful login...', state);
+
+            if (isConnecting) {
+                console.log('⏳ Already processing connection...');
+                return;
+            }
+
+            isConnecting = true;
 
             const theme = document.body.classList.contains('future') ? 'future' : 'classic';
 
@@ -948,21 +957,16 @@
             updateNavButtons(state);
             updateNetworkBadge(state);
 
-            // Close modal if still open
-            if (window.web3Modal) {
-                window.web3Modal.close();
-            }
-
             // Check if first time user (no profile saved)
             const hasProfile = localStorage.getItem('userProfile');
             if (!hasProfile) {
                 console.log('👤 First time user - redirecting to profile...');
-                // First time user - redirect to profile after 1.5 seconds
                 setTimeout(() => {
                     window.location.href = 'profile.html';
                 }, 1500);
             } else {
                 console.log('✅ Welcome back!');
+                isConnecting = false;
             }
         }
 
@@ -1122,31 +1126,20 @@
                     }
                 };
 
-                // Subscribe to state changes
+                // Subscribe to state changes with debounce
+                let lastAddress = null;
                 modal.subscribeState((state) => {
                     console.log('Wallet state:', state);
 
-                    if (state?.address && state?.isConnected) {
+                    // Only trigger on actual connection change
+                    if (state?.address && state?.isConnected && state.address !== lastAddress) {
                         console.log('✅ Wallet connected:', state.address);
+                        lastAddress = state.address;
                         handleSuccessfulLogin(state);
-                    } else if (!state?.isConnected && !state?.address) {
+                    } else if (!state?.isConnected && !state?.address && lastAddress) {
+                        lastAddress = null;
+                        isConnecting = false;
                         resetNavButtons();
-                    }
-                });
-
-                // Additional event listeners for connection
-                modal.subscribeEvents((event) => {
-                    console.log('AppKit event:', event);
-
-                    if (event.type === 'CONNECT_SUCCESS') {
-                        console.log('🎉 Connection successful!');
-                        // Force state check after successful connection
-                        setTimeout(() => {
-                            const currentState = modal.getState();
-                            if (currentState?.address) {
-                                handleSuccessfulLogin(currentState);
-                            }
-                        }, 500);
                     }
                 });
 
