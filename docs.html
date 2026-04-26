@@ -355,34 +355,63 @@
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
         import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
+        import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
         const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
-        const networks = [
-            { chainId: 1, name: 'Ethereum', currency: 'ETH', explorerUrl: 'https://etherscan.io', rpcUrl: 'https://cloudflare-eth.com' },
-            { chainId: 137, name: 'Polygon', currency: 'MATIC', explorerUrl: 'https://polygonscan.com', rpcUrl: 'https://polygon-rpc.com' },
-            { chainId: 56, name: 'BSC', currency: 'BNB', explorerUrl: 'https://bscscan.com', rpcUrl: 'https://bsc-dataseed.binance.org' },
-            { chainId: 8453, name: 'Base', currency: 'ETH', explorerUrl: 'https://basescan.org', rpcUrl: 'https://mainnet.base.org' },
-            { chainId: 42161, name: 'Arbitrum', currency: 'ETH', explorerUrl: 'https://arbiscan.io', rpcUrl: 'https://arb1.arbitrum.io/rpc' },
-            { chainId: 10, name: 'Optimism', currency: 'ETH', explorerUrl: 'https://optimistic.etherscan.io', rpcUrl: 'https://mainnet.optimism.io' },
-            { chainId: 11155111, name: 'Sepolia', currency: 'ETH', explorerUrl: 'https://sepolia.etherscan.io', rpcUrl: 'https://rpc.sepolia.org' },
-            { chainId: 2025, name: 'Rialo Playground', currency: 'RIA', explorerUrl: 'https://playground.rialo.io', rpcUrl: 'https://playground.rialo.io/rpc' }
-        ];
-        const metadata = { name: 'ArtSoul Marketplace', description: 'Decentralized Art Marketplace', url: 'https://maysonkiller.github.io/artsoul-marketplace', icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg'] };
+
+        const rialoPlayground = {
+            id: 2025,
+            name: 'Rialo Playground',
+            nativeCurrency: { name: 'RIA', symbol: 'RIA', decimals: 18 },
+            rpcUrls: { default: { http: ['https://playground.rialo.io/rpc'] } },
+            blockExplorers: { default: { name: 'Rialo Explorer', url: 'https://playground.rialo.io' } }
+        };
+
+        const networks = [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground];
+        const metadata = {
+            name: 'ArtSoul Marketplace',
+            description: 'Decentralized Art Marketplace',
+            url: 'https://maysonkiller.github.io/artsoul-marketplace',
+            icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg']
+        };
 
         let modal = null;
         let currentNetwork = null;
         let currentBalance = '0.00';
 
+        const networkMap = {
+            1: { name: 'Ethereum', currency: 'ETH' },
+            137: { name: 'Polygon', currency: 'MATIC' },
+            56: { name: 'BSC', currency: 'BNB' },
+            8453: { name: 'Base', currency: 'ETH' },
+            42161: { name: 'Arbitrum', currency: 'ETH' },
+            10: { name: 'Optimism', currency: 'ETH' },
+            11155111: { name: 'Sepolia', currency: 'ETH' },
+            2025: { name: 'Rialo Playground', currency: 'RIA' }
+        };
+
         function updateNetworkBadge(state) {
             const networkBadgeContainer = document.getElementById('networkBadge');
             if (!networkBadgeContainer) return;
             if (state?.address && state?.chainId) {
-                const network = networks.find(n => n.chainId === state.chainId) || { name: 'Unknown', currency: 'ETH' };
+                const network = networkMap[state.chainId] || { name: 'Unknown', currency: 'ETH' };
                 currentNetwork = network;
                 if (window.ethereum) {
-                    window.ethereum.request({ method: 'eth_getBalance', params: [state.address, 'latest'] }).then(balance => { currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4); renderNetworkBadge(); }).catch(() => { currentBalance = '0.00'; renderNetworkBadge(); });
-                } else { renderNetworkBadge(); }
-            } else { networkBadgeContainer.innerHTML = ''; }
+                    window.ethereum.request({ method: 'eth_getBalance', params: [state.address, 'latest'] })
+                        .then(balance => {
+                            currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
+                            renderNetworkBadge();
+                        })
+                        .catch(() => {
+                            currentBalance = '0.00';
+                            renderNetworkBadge();
+                        });
+                } else {
+                    renderNetworkBadge();
+                }
+            } else {
+                networkBadgeContainer.innerHTML = '';
+            }
         }
 
         function renderNetworkBadge() {
@@ -394,7 +423,9 @@
         function updateNavButtons(state) {
             const navButtons = document.getElementById('navButtons');
             if (!navButtons) return;
-            navButtons.innerHTML = `<div class="tooltip-wrap"><a href="profile.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/><path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/></svg></a><div class="tooltip-text">My Profile</div></div><div class="tooltip-wrap"><a href="upload.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/></svg></a><div class="tooltip-text">Upload NFT</div></div><button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
+            const hasProfile = localStorage.getItem('userProfile');
+            const profileNotification = hasProfile ? '' : '<div style="position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: #ff4444; border-radius: 50%; animation: pulse 2s infinite;"></div>';
+            navButtons.innerHTML = `<div class="tooltip-wrap" style="position: relative;"><a href="profile.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/><path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/></svg></a>${profileNotification}<div class="tooltip-text">My Profile</div></div><div class="tooltip-wrap"><a href="upload.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/></svg></a><div class="tooltip-text">Upload NFT</div></div><button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
         }
 
         function resetNavButtons() {
@@ -405,19 +436,56 @@
             if (networkBadge) networkBadge.innerHTML = '';
         }
 
-        window.connectWallet = async () => { if (modal) await modal.open(); };
+        window.connectWallet = async () => {
+            if (modal) await modal.open();
+        };
 
         async function initializeAppKit() {
             try {
-                modal = createAppKit({ adapters: [new EthersAdapter()], networks, metadata, projectId, features: { socials: ['google', 'x', 'apple', 'discord'], email: true, onramp: true, swaps: true, analytics: true }, themeMode: 'dark', themeVariables: { '--w3m-accent': '#00f5ff', '--w3m-color-mix': '#bf00ff' } });
+                modal = createAppKit({
+                    adapters: [new EthersAdapter()],
+                    networks,
+                    metadata,
+                    projectId,
+                    features: {
+                        socials: ['google', 'x', 'apple', 'discord'],
+                        email: true,
+                        onramp: true,
+                        swaps: true,
+                        analytics: true
+                    },
+                    themeMode: 'dark',
+                    themeVariables: {
+                        '--w3m-accent': '#00f5ff',
+                        '--w3m-color-mix': '#bf00ff'
+                    }
+                });
+
                 window.web3Modal = modal;
-                window.connectWallet = async () => { if (modal) await modal.open(); };
-                modal.subscribeState((state) => { if (state?.address) { updateNavButtons(state); updateNetworkBadge(state); } else resetNavButtons(); });
-                console.log('AppKit initialized on docs.html');
-            } catch (error) { console.error('AppKit init failed:', error); }
+                window.connectWallet = async () => {
+                    if (modal) await modal.open();
+                };
+
+                modal.subscribeState((state) => {
+                    if (state?.address) {
+                        updateNavButtons(state);
+                        updateNetworkBadge(state);
+                    } else {
+                        resetNavButtons();
+                    }
+                });
+
+                console.log('✅ AppKit initialized on docs.html');
+            } catch (error) {
+                console.error('⚠️ AppKit init failed:', error);
+            }
         }
 
-        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initializeAppKit); } else { initializeAppKit(); }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAppKit);
+        } else {
+            initializeAppKit();
+        }
     </script>
 </body>
 </html>
