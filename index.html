@@ -572,6 +572,20 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.5; transform: scale(1.2); }
         }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .network-badge {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.75rem;
+            }
+            .balance-amount {
+                display: none;
+            }
+            header .flex {
+                gap: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body class="classic">
@@ -968,6 +982,15 @@
 
             updateNavButtons(state);
             updateNetworkBadge(state);
+
+            // Check if first time user (no profile saved)
+            const hasProfile = localStorage.getItem('userProfile');
+            if (!hasProfile) {
+                // First time user - redirect to profile after 1 second
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1000);
+            }
         }
 
         function updateNetworkBadge(state) {

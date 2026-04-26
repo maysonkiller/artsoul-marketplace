@@ -269,6 +269,22 @@
         html {
             scroll-behavior: smooth;
         }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .network-badge {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.75rem;
+            }
+            .balance-amount {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="classic">
@@ -430,7 +446,11 @@
         function updateNavButtons(state) {
             const navButtons = document.getElementById('navButtons');
             if (!navButtons) return;
-            navButtons.innerHTML = `<div class="tooltip-wrap"><a href="profile.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/><path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/></svg></a><div class="tooltip-text">My Profile</div></div><button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
+
+            const hasProfile = localStorage.getItem('userProfile');
+            const profileNotification = hasProfile ? '' : '<div style="position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: #ff4444; border-radius: 50%; animation: pulse 2s infinite;"></div>';
+
+            navButtons.innerHTML = `<div class="tooltip-wrap" style="position: relative;"><a href="profile.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/><path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/></svg></a>${profileNotification}<div class="tooltip-text">My Profile</div></div><button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
         }
 
         function resetNavButtons() {
