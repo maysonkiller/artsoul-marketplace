@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Profile - ArtSoul</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtSoul - Decentralized Art Marketplace</title>
     <link rel="icon" type="image/jpeg" href="https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,465 +23,155 @@
             box-sizing: border-box;
         }
 
-        body.classic {
-            background: var(--bg-classic);
-            color: var(--text-classic);
+        /* --- Classic Mode --- */
+        body.classic { background: var(--bg-classic); color: var(--text-classic); }
+        .classic header { background: rgba(1, 1, 1, 0.95); border-bottom: 1px solid var(--accent-classic); }
+        .classic .btn-main { background: var(--text-classic); color: var(--bg-classic); border: 1px solid var(--text-classic); }
+        .classic .btn-main:hover { background: transparent; color: var(--text-classic); }
+        .classic .card { background: rgba(232, 227, 213, 0.03); border: 1px solid var(--accent-classic); position: relative; transition: all 0.5s ease-out; overflow: hidden; animation: levitateClassic 6s ease-in-out infinite; }
+        .classic .card:hover { transform: translateY(-12px); box-shadow: 0 20px 50px rgba(169, 221, 211, 0.4); border-color: var(--text-classic); }
+
+        /* --- Future Mode --- */
+        body.future { background: #000000; color: var(--accent-future); }
+        .future header { background: rgba(0, 0, 0, 0.8); border-bottom: 1px solid var(--accent-future); box-shadow: 0 0 20px rgba(0, 245, 255, 0.3); }
+        .future .btn-main { background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%); color: #000000; clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%); border: none; font-weight: 600; }
+        .future .btn-main:hover { animation: neonPulse 0.3s infinite; transform: scale(1.05); filter: brightness(1.3); }
+        .future .card { background: rgba(0, 245, 255, 0.05); border: 1px solid var(--accent-future); backdrop-filter: blur(10px); position: relative; transition: all 0.3s ease-out; overflow: hidden; animation: levitateFuture 8s ease-in-out infinite; }
+        .future .card:hover { transform: translateY(-12px); box-shadow: 0 0 30px var(--neon-purple), 0 0 60px var(--accent-future); border-color: var(--neon-purple); animation-play-state: paused; }
+
+        /* Smoke Effects */
+        .card:hover::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; pointer-events: none; z-index: 1;
+        }
+        .classic .card:hover::after {
+            background: linear-gradient(to top, rgba(169, 221, 211, 0.2), transparent);
+            animation: smoke 2.5s ease-in-out infinite;
+        }
+        .future .card:hover::after {
+            background: linear-gradient(to top, rgba(191, 0, 255, 0.25), rgba(0, 245, 255, 0.15), transparent);
+            animation: smoke 2s ease-in-out infinite;
         }
 
-        .classic header {
-            background: rgba(1, 1, 1, 0.95);
-            border-bottom: 1px solid var(--accent-classic);
+        @keyframes smoke {
+            0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.3; }
+            50% { transform: translateY(-15px) scaleX(1.1); opacity: 0.6; }
         }
 
-        .classic .btn-main {
-            background: var(--text-classic);
-            color: var(--bg-classic);
-            border: 1px solid var(--text-classic);
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+        /* Animations */
+        @keyframes levitateClassic { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
+        @keyframes levitateFuture { 0%, 100% { transform: translateY(0px) rotateZ(0deg); } 50% { transform: translateY(-15px) rotateZ(1deg); } }
+        @keyframes neonPulse { 0%, 100% { box-shadow: 0 0 20px var(--accent-future), 0 0 60px var(--neon-purple); } 50% { box-shadow: 0 0 40px var(--accent-future), 0 0 90px var(--neon-purple); } }
 
-        .classic .btn-main:hover {
-            background: transparent;
-            color: var(--text-classic);
-        }
+        /* Network & Badge */
+        .network-badge { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
+        .classic .network-badge { background: rgba(232, 227, 213, 0.1); border: 1px solid var(--accent-classic); }
+        .future .network-badge { background: rgba(0, 245, 255, 0.1); border: 1px solid var(--accent-future); box-shadow: 0 0 10px rgba(0, 245, 255, 0.2); }
 
-        body.future {
-            background: #000000;
-            color: var(--accent-future);
-        }
-
-        .future header {
-            background: rgba(0, 0, 0, 0.8);
-            border-bottom: 1px solid var(--accent-future);
-            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
-        }
-
-        .future .btn-main {
-            background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%);
-            color: #000000;
-            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-            border: none;
-            font-weight: 600;
-            padding: 0.5rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .future .btn-main:hover {
-            animation: neonPulse 0.3s infinite;
-            transform: scale(1.05);
-            filter: brightness(1.3);
-        }
-
-        @keyframes neonPulse {
-            0%, 100% {
-                box-shadow: 0 0 10px var(--accent-future), 0 0 20px var(--neon-purple);
-            }
-            50% {
-                box-shadow: 0 0 20px var(--accent-future), 0 0 40px var(--neon-purple);
-            }
-        }
-
-        .theme-toggle {
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.25rem;
-            border-radius: 0.5rem;
-        }
-
-        .classic .theme-toggle {
-            background: rgba(232, 227, 213, 0.1);
-        }
-
-        .future .theme-toggle {
-            background: rgba(0, 245, 255, 0.1);
-        }
-
-        .theme-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: all 0.3s;
-            color: currentColor;
-        }
-
-        .classic .theme-btn.active-classic {
-            background: var(--accent-classic);
-            color: var(--bg-classic);
-        }
-
-        .future .theme-btn.active-future {
-            background: linear-gradient(135deg, var(--accent-future), var(--neon-purple));
-            color: #000000;
-        }
-
-        .network-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .classic .network-badge {
-            background: rgba(232, 227, 213, 0.1);
-            border: 1px solid var(--accent-classic);
-        }
-
-        .future .network-badge {
-            background: rgba(0, 245, 255, 0.1);
-            border: 1px solid var(--accent-future);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .future .network-badge::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.3), transparent);
-            animation: scanning 3s linear infinite;
-        }
-
-        @keyframes scanning {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        @media (max-width: 640px) {
-            .network-badge {
-                padding: 0.375rem 0.75rem;
-                font-size: 0.75rem;
-            }
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            color: inherit;
-            margin-top: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .classic .form-input {
-            background: rgba(232, 227, 213, 0.05);
-            border: 1px solid var(--accent-classic);
-        }
-
-        .classic .form-input:focus {
-            outline: none;
-            border-color: var(--text-classic);
-            background: rgba(232, 227, 213, 0.1);
-        }
-
-        .future .form-input {
-            background: rgba(0, 245, 255, 0.05);
-            border: 1px solid var(--accent-future);
-        }
-
-        .future .form-input:focus {
-            outline: none;
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 15px rgba(191, 0, 255, 0.3);
-        }
-
-        .icon-svg {
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .tooltip-wrap {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip-text {
-            visibility: hidden;
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .classic .tooltip-text {
-            background: var(--text-classic);
-            color: var(--bg-classic);
-        }
-
-        .future .tooltip-text {
-            background: var(--accent-future);
-            color: #000000;
-        }
-
-        .tooltip-wrap:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        .theme-btn { padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.75rem; transition: 0.3s; }
+        .active-classic { background: var(--text-classic); color: var(--bg-classic); }
+        .active-future { background: linear-gradient(to right, var(--accent-future), var(--neon-purple)); color: #000; }
+        
+        .gallery { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; max-width: 1400px; margin: 0 auto 100px; }
+        @media (max-width: 1024px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 640px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body class="classic">
     <header>
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-2xl font-light tracking-wide">ArtSoul</a>
-                    <div class="theme-toggle">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
-                            Classic
-                        </button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
-                            Future
-                        </button>
-                    </div>
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="index.html" class="text-2xl font-light tracking-widest">ArtSoul</a>
+                <div class="flex bg-white/5 p-1 rounded-lg gap-1">
+                    <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">Classic</button>
+                    <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">Future</button>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="tooltip-wrap">
-                        <a href="docs.html" class="p-2 inline-block">
-                            <svg viewBox="0 0 24 24" fill="none" class="w-7 h-7" style="color: currentColor;">
-                                <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>
-                            </svg>
-                        </a>
-                        <div class="tooltip-text">Documentation</div>
-                    </div>
-                    <div id="networkBadge"></div>
-                    <div class="flex items-center gap-3" id="navButtons">
-                        <button onclick="window.connectWallet()" class="btn-main">Get Started</button>
-                    </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="networkBadge"></div>
+                <div id="navButtons">
+                    <button onclick="window.openConnectModal()" class="btn-main">Get Started</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-12 max-w-2xl">
-        <h1 class="text-4xl font-light mb-8">Complete Your Profile</h1>
-        <form id="profileForm" class="space-y-6">
-            <div>
-                <label class="block mb-2 font-medium">Username</label>
-                <input type="text" id="username" class="form-input" placeholder="@artist_name" required>
+    <main class="container mx-auto px-4 py-12">
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-light mb-4">Decentralized Art</h1>
+            <p class="opacity-60">Community-driven value estimation</p>
+        </div>
+
+        <div class="gallery">
+            <div class="card rounded-xl overflow-hidden" onclick="viewArt(1)">
+                <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
+                <div class="p-4">
+                    <h3 class="text-sm font-bold">Abstract Dreams</h3>
+                    <p class="text-xs opacity-50 mb-3">@artist_one</p>
+                    <button class="w-full py-2 border border-current rounded text-xs hover:bg-white/10 transition">View Artwork</button>
+                </div>
             </div>
-            <div>
-                <label class="block mb-2 font-medium">Bio</label>
-                <textarea id="bio" class="form-input h-32" placeholder="Tell the community about your art..."></textarea>
             </div>
-            <div>
-                <label class="block mb-2 font-medium">X (Twitter) Handle</label>
-                <input type="text" id="twitter" class="form-input" placeholder="@handle">
-            </div>
-            <div>
-                <label class="block mb-2 font-medium">Discord Username</label>
-                <input type="text" id="discord" class="form-input" placeholder="username#1234">
-            </div>
-            <div>
-                <label class="block mb-2 font-medium">VK Username</label>
-                <input type="text" id="vk" class="form-input" placeholder="username">
-            </div>
-            <button type="submit" class="btn-main w-full">Save Profile</button>
-        </form>
     </main>
 
     <script>
         function setTheme(theme) {
             document.body.className = theme;
             localStorage.setItem('theme', theme);
-            const classicBtn = document.getElementById('classicBtn');
-            const futureBtn = document.getElementById('futureBtn');
-            if (theme === 'classic') {
-                classicBtn.className = 'theme-btn active-classic';
-                futureBtn.className = 'theme-btn';
-            } else {
-                classicBtn.className = 'theme-btn';
-                futureBtn.className = 'theme-btn active-future';
-            }
+            document.getElementById('classicBtn').className = `theme-btn ${theme === 'classic' ? 'active-classic' : ''}`;
+            document.getElementById('futureBtn').className = `theme-btn ${theme === 'future' ? 'active-future' : ''}`;
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'classic';
-            setTheme(savedTheme);
+        function viewArt(id) { alert("Artwork details coming soon!"); }
 
-            const existingProfile = localStorage.getItem('userProfile');
-            if (existingProfile) {
-                const profile = JSON.parse(existingProfile);
-                document.getElementById('username').value = profile.username || '';
-                document.getElementById('bio').value = profile.bio || '';
-                document.getElementById('twitter').value = profile.twitter || '';
-                document.getElementById('discord').value = profile.discord || '';
-                document.getElementById('vk').value = profile.vk || '';
-            }
-        });
-
-        document.getElementById('profileForm').onsubmit = (e) => {
-            e.preventDefault();
-            const profile = {
-                username: document.getElementById('username').value,
-                bio: document.getElementById('bio').value,
-                twitter: document.getElementById('twitter').value,
-                discord: document.getElementById('discord').value,
-                vk: document.getElementById('vk').value
-            };
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-            alert('Profile saved! You can now upload art.');
-            window.location.href = 'index.html';
-        };
+        window.onload = () => {
+            const saved = localStorage.getItem('theme') || 'classic';
+            setTheme(saved);
+        }
     </script>
 
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
         import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
-        // ВАЖНО: Импортируем готовые объекты сетей, чтобы не было ошибки undefined
-        import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks@1.7.11?bundle'
+        import { mainnet, polygon, bsc, base, arbitrum, optimism } from 'https://esm.sh/@reown/appkit/networks@1.7.11?bundle'
 
         const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
-        
-        // Список сетей для внутреннего отображения (используем импортированные объекты ниже)
-        const allNetworks = [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia];
 
-        const metadata = { 
-            name: 'ArtSoul Marketplace', 
-            description: 'Decentralized Art Marketplace', 
-            url: 'https://maysonkiller.github.io/artsoul-marketplace', 
-            icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg'] 
-        };
+        const modal = createAppKit({
+            adapters: [new EthersAdapter()],
+            networks: [mainnet, polygon, bsc, base, arbitrum, optimism],
+            projectId,
+            themeMode: 'dark',
+            features: { analytics: true, socials: ['google', 'x', 'discord', 'apple'] }
+        });
 
-        let modal = null;
-        let currentNetwork = null;
-        let currentBalance = '0.00';
+        window.openConnectModal = () => modal.open();
 
-        function updateNetworkBadge(state) {
-            const networkBadgeContainer = document.getElementById('networkBadge');
-            if (!networkBadgeContainer) return;
-            
-            if (state?.address && state?.chainId) {
-                // Поиск сети по chainId среди импортированных объектов
-                const network = allNetworks.find(n => n.id === state.chainId) || { name: 'Unknown', nativeCurrency: { symbol: 'ETH' } };
-                currentNetwork = network;
-                
-                if (window.ethereum) {
-                    window.ethereum.request({ 
-                        method: 'eth_getBalance', 
-                        params: [state.address, 'latest'] 
-                    }).then(balance => { 
-                        currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4); 
-                        renderNetworkBadge(); 
-                    }).catch(() => { 
-                        currentBalance = '0.00'; 
-                        renderNetworkBadge(); 
-                    });
-                } else { 
-                    renderNetworkBadge(); 
-                }
-            } else { 
-                networkBadgeContainer.innerHTML = ''; 
+        function updateUI() {
+            const account = modal.getAccount();
+            const network = modal.getNetworkData();
+            const badge = document.getElementById('networkBadge');
+            const nav = document.getElementById('navButtons');
+
+            if (account.isConnected) {
+                badge.innerHTML = `
+                    <div class="network-badge" onclick="window.openConnectModal()">
+                        <span class="network-name">${network?.name || 'Network'}</span>
+                        <span class="balance-amount">${account.address.slice(0,6)}...</span>
+                    </div>`;
+                nav.innerHTML = `
+                    <a href="profile.html" class="relative">
+                        <div class="w-10 h-10 rounded-full border border-current flex items-center justify-center overflow-hidden bg-white/10">
+                            <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${account.address}" alt="avatar">
+                        </div>
+                    </a>`;
+            } else {
+                badge.innerHTML = '';
+                nav.innerHTML = `<button onclick="window.openConnectModal()" class="btn-main">Get Started</button>`;
             }
         }
 
-        function renderNetworkBadge() {
-            const networkBadgeContainer = document.getElementById('networkBadge');
-            if (!networkBadgeContainer || !currentNetwork) return;
-            const symbol = currentNetwork.nativeCurrency?.symbol || 'ETH';
-            networkBadgeContainer.innerHTML = `
-                <div class="network-badge" onclick="window.web3Modal?.open({ view: 'Networks' })">
-                    <span class="network-name">${currentNetwork.name}</span>
-                    <span class="balance-amount">${currentBalance} ${symbol}</span>
-                </div>`;
-        }
-
-        function updateNavButtons(state) {
-            const navButtons = document.getElementById('navButtons');
-            if (!navButtons) return;
-            navButtons.innerHTML = `
-                <div class="tooltip-wrap">
-                    <a href="upload.html" class="p-2 inline-block">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
-                            <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/>
-                        </svg>
-                    </a>
-                    <div class="tooltip-text">Upload NFT</div>
-                </div>
-                <button onclick="window.web3Modal?.open()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                    ${state.address.slice(0, 6)}...${state.address.slice(-4)}
-                </button>`;
-        }
-
-        function resetNavButtons() {
-            const navButtons = document.getElementById('navButtons');
-            const networkBadge = document.getElementById('networkBadge');
-            if (!navButtons) return;
-            navButtons.innerHTML = '<button onclick="window.connectWallet()" class="btn-main">Get Started</button>';
-            if (networkBadge) networkBadge.innerHTML = '';
-        }
-
-        window.connectWallet = async () => { if (modal) await modal.open(); };
-
-        async function initializeAppKit() {
-            try {
-                modal = createAppKit({ 
-                    adapters: [new EthersAdapter()], 
-                    networks: allNetworks, 
-                    metadata: metadata, 
-                    projectId: projectId, 
-                    features: { 
-                        socials: ['google', 'x', 'apple', 'discord'], 
-                        email: true, 
-                        onramp: true, 
-                        swaps: true, 
-                        analytics: true 
-                    }, 
-                    themeMode: 'dark', 
-                    themeVariables: { 
-                        '--w3m-accent': '#00f5ff', 
-                        '--w3m-color-mix': '#bf00ff' 
-                    } 
-                });
-                
-                window.web3Modal = modal;
-                
-                modal.subscribeState((state) => { 
-                    if (state?.address) { 
-                        updateNavButtons(state); 
-                        updateNetworkBadge(state); 
-                    } else {
-                        resetNavButtons(); 
-                    }
-                });
-                
-                console.log('✅ AppKit 1.7.11 ready on Profile page');
-            } catch (error) { 
-                console.error('❌ AppKit init failed:', error); 
-            }
-        }
-
-        if (document.readyState === 'loading') { 
-            document.addEventListener('DOMContentLoaded', initializeAppKit); 
-        } else { 
-            initializeAppKit(); 
-        }
+        modal.subscribeAccount(updateUI);
+        modal.subscribeNetwork(updateUI);
     </script>
 </body>
 </html>
