@@ -938,6 +938,7 @@
         let currentBalance = '0.00';
 
         let isConnecting = false;
+        let currentWalletAddress = null;
 
         async function handleSuccessfulLogin(state) {
             console.log('🔄 Handling successful login...', state);
@@ -948,6 +949,7 @@
             }
 
             isConnecting = true;
+            currentWalletAddress = state.address.toLowerCase();
 
             const theme = document.body.classList.contains('future') ? 'future' : 'classic';
 
@@ -955,52 +957,58 @@
                 window.showSuccessWave();
             }
 
+            // First update UI immediately
             updateNavButtons(state);
             updateNetworkBadge(state);
 
-            // Check/Create profile in Supabase
+            // Then handle profile
             try {
-                const walletAddress = state.address.toLowerCase();
-                console.log('📝 Checking profile for:', walletAddress);
+                console.log('📝 Checking profile for:', currentWalletAddress);
 
                 // Wait for Supabase client to be ready
                 await window.ArtSoulDB.initSupabase();
 
-                let profile = await window.ArtSoulDB.getProfile(walletAddress);
+                let profile = await window.ArtSoulDB.getProfile(currentWalletAddress);
 
                 if (!profile) {
                     console.log('👤 First time user - creating profile...');
 
                     // Create basic profile
-                    profile = await window.ArtSoulDB.createProfile(walletAddress, {
-                        username: `user_${walletAddress.slice(2, 8)}`,
+                    profile = await window.ArtSoulDB.createProfile(currentWalletAddress, {
+                        username: `user_${currentWalletAddress.slice(2, 8)}`,
                         bio: '',
-                        twitter: '',
-                        discord: ''
+                        twitter_handle: '',
+                        discord_username: ''
                     });
 
                     console.log('✅ Profile created:', profile);
 
-                    // Redirect to profile page to complete setup
+                    // Show welcome message
+                    alert('Welcome to ArtSoul! Please complete your profile.');
+
+                    // Redirect to profile page
                     setTimeout(() => {
                         window.location.href = 'profile.html';
-                    }, 1500);
+                    }, 1000);
                 } else {
                     console.log('✅ Welcome back!', profile.username);
 
                     // Check if profile is incomplete
                     if (!profile.username || profile.username.startsWith('user_')) {
                         console.log('⚠️ Profile incomplete - redirecting...');
+                        alert('Please complete your profile.');
                         setTimeout(() => {
                             window.location.href = 'profile.html';
-                        }, 1500);
+                        }, 1000);
                     } else {
+                        // Profile complete - stay on gallery
+                        console.log('🎨 Profile complete - showing gallery');
                         isConnecting = false;
                     }
                 }
             } catch (error) {
                 console.error('❌ Error handling profile:', error);
-                alert('Error connecting to database. Please try again.');
+                alert('Error connecting to database: ' + error.message);
                 isConnecting = false;
             }
         }
@@ -1109,15 +1117,35 @@
             const connectBtn = document.getElementById('connectBtn');
             if (connectBtn) {
                 connectBtn.addEventListener('click', async () => {
-                    console.log('Connect button clicked');
+                    console.log('🔘 Connect button clicked');
                     if (window.web3Modal) {
-                        await window.web3Modal.open();
+                        try {
+                            await window.web3Modal.open();
+                        } catch (error) {
+                            console.error('Error opening modal:', error);
+                        }
                     } else {
                         console.error('AppKit not initialized yet');
                     }
                 });
             }
+
+            // Check if already connected on page load
+            setTimeout(async () => {
+                if (window.web3Modal) {
+                    const state = window.web3Modal.getState();
+                    console.log('🔍 Initial state check:', state);
+
+                    if (state?.address) {
+                        console.log('🔄 Already connected, processing...');
+                        await handleSuccessfulLogin(state);
+                    }
+                }
+            }, 1000);
         });
+
+        // Make wallet address globally accessible
+        window.getCurrentWalletAddress = () => currentWalletAddress;
 
         // CRITICAL: Define window.connectWallet FIRST with fallback
         window.connectWallet = async () => {
@@ -1163,18 +1191,46 @@
 
                 // Subscribe to state changes with debounce
                 let lastAddress = null;
-                modal.subscribeState((state) => {
-                    console.log('Wallet state:', state);
+                let processingConnection = false;
 
-                    // Only trigger on actual connection change
-                    if (state?.address && state?.isConnected && state.address !== lastAddress) {
-                        console.log('✅ Wallet connected:', state.address);
+                modal.subscribeState(async (state) => {
+                    console.log('📊 Wallet state changed:', state);
+
+                    // Check for connection
+                    if (state?.address && !processingConnection && state.address !== lastAddress) {
+                        processingConnection = true;
                         lastAddress = state.address;
-                        handleSuccessfulLogin(state);
-                    } else if (!state?.isConnected && !state?.address && lastAddress) {
+
+                        console.log('✅ Wallet connected:', state.address);
+
+                        // Wait a bit for state to stabilize
+                        await new Promise(resolve => setTimeout(resolve, 500));
+
+                        await handleSuccessfulLogin(state);
+
+                        processingConnection = false;
+                    } else if (!state?.address && lastAddress) {
+                        // Disconnected
+                        console.log('❌ Wallet disconnected');
                         lastAddress = null;
+                        processingConnection = false;
                         isConnecting = false;
                         resetNavButtons();
+                    }
+                });
+
+                // Also listen to provider events
+                modal.subscribeProvider(async (provider) => {
+                    if (provider?.session) {
+                        console.log('🔗 Provider session detected:', provider.session);
+
+                        // Get current state
+                        const currentState = modal.getState();
+                        if (currentState?.address && !processingConnection) {
+                            processingConnection = true;
+                            await handleSuccessfulLogin(currentState);
+                            processingConnection = false;
+                        }
                     }
                 });
 
