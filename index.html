@@ -16,116 +16,133 @@
             --neon-purple: #bf00ff;
         }
 
-        * {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* --- Classic Mode --- */
+        /* --- CLASSIC MODE --- */
         body.classic { background: var(--bg-classic); color: var(--text-classic); }
         .classic header { background: rgba(1, 1, 1, 0.95); border-bottom: 1px solid var(--accent-classic); }
         .classic .btn-main { background: var(--text-classic); color: var(--bg-classic); border: 1px solid var(--text-classic); }
-        .classic .btn-main:hover { background: transparent; color: var(--text-classic); }
-        .classic .card { background: rgba(232, 227, 213, 0.03); border: 1px solid var(--accent-classic); position: relative; transition: all 0.5s ease-out; overflow: hidden; animation: levitateClassic 6s ease-in-out infinite; }
+        .classic .card { background: rgba(232, 227, 213, 0.03); border: 1px solid var(--accent-classic); transition: all 0.5s ease-out; }
         .classic .card:hover { transform: translateY(-12px); box-shadow: 0 20px 50px rgba(169, 221, 211, 0.4); border-color: var(--text-classic); }
 
-        /* --- Future Mode --- */
+        /* --- FUTURE MODE --- */
         body.future { background: #000000; color: var(--accent-future); }
         .future header { background: rgba(0, 0, 0, 0.8); border-bottom: 1px solid var(--accent-future); box-shadow: 0 0 20px rgba(0, 245, 255, 0.3); }
-        .future .btn-main { background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%); color: #000000; clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%); border: none; font-weight: 600; }
-        .future .btn-main:hover { animation: neonPulse 0.3s infinite; transform: scale(1.05); filter: brightness(1.3); }
-        .future .card { background: rgba(0, 245, 255, 0.05); border: 1px solid var(--accent-future); backdrop-filter: blur(10px); position: relative; transition: all 0.3s ease-out; overflow: hidden; animation: levitateFuture 8s ease-in-out infinite; }
-        .future .card:hover { transform: translateY(-12px); box-shadow: 0 0 30px var(--neon-purple), 0 0 60px var(--accent-future); border-color: var(--neon-purple); animation-play-state: paused; }
+        .future .btn-main { background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%); color: #000000; clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%); border: none; }
+        .future .card { background: rgba(0, 245, 255, 0.05); border: 1px solid var(--accent-future); backdrop-filter: blur(10px); transition: all 0.3s ease-out; }
+        .future .card:hover { transform: translateY(-12px); border-color: var(--neon-purple); box-shadow: 0 0 30px var(--neon-purple), 0 0 10px var(--accent-future); }
 
-        /* Smoke Effects */
-        .card:hover::after {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; pointer-events: none; z-index: 1;
+        /* АНИМИРОВАННАЯ СЕТКА (Future) */
+        .future::before {
+            content: ''; position: fixed; inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(0, 245, 255, 0.03) 50%, transparent 100%),
+                        linear-gradient(0deg, transparent 0%, rgba(191, 0, 255, 0.03) 50%, transparent 100%);
+            background-size: 100px 100px; animation: gridMove 20s linear infinite; pointer-events: none; z-index: 0;
         }
-        .classic .card:hover::after {
-            background: linear-gradient(to top, rgba(169, 221, 211, 0.2), transparent);
-            animation: smoke 2.5s ease-in-out infinite;
-        }
-        .future .card:hover::after {
-            background: linear-gradient(to top, rgba(191, 0, 255, 0.25), rgba(0, 245, 255, 0.15), transparent);
-            animation: smoke 2s ease-in-out infinite;
-        }
+        @keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 100px 100px; } }
 
-        @keyframes smoke {
-            0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.3; }
-            50% { transform: translateY(-15px) scaleX(1.1); opacity: 0.6; }
-        }
+        /* ГАЛЛЕРЕЯ (Твои 6 колонок) */
+        .gallery { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; max-width: 1400px; margin: 0 auto 150px; }
+        @media (max-width: 1200px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
 
-        /* Animations */
-        @keyframes levitateClassic { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
-        @keyframes levitateFuture { 0%, 100% { transform: translateY(0px) rotateZ(0deg); } 50% { transform: translateY(-15px) rotateZ(1deg); } }
-        @keyframes neonPulse { 0%, 100% { box-shadow: 0 0 20px var(--accent-future), 0 0 60px var(--neon-purple); } 50% { box-shadow: 0 0 40px var(--accent-future), 0 0 90px var(--neon-purple); } }
+        /* Твои спецэффекты (Дым и Анаграмма) */
+        .card:hover::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; pointer-events: none; }
+        .classic .card:hover::after { background: linear-gradient(to top, rgba(169, 221, 211, 0.2), transparent); animation: smoke 2.5s infinite; }
+        .future .card:hover::after { background: linear-gradient(to top, rgba(191, 0, 255, 0.25), transparent); animation: smoke 2s infinite; }
+        @keyframes smoke { 0%, 100% { transform: translateY(0); opacity: 0.3; } 50% { transform: translateY(-10px); opacity: 0.6; } }
 
-        /* Network & Badge */
-        .network-badge { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
-        .classic .network-badge { background: rgba(232, 227, 213, 0.1); border: 1px solid var(--accent-classic); }
-        .future .network-badge { background: rgba(0, 245, 255, 0.1); border: 1px solid var(--accent-future); box-shadow: 0 0 10px rgba(0, 245, 255, 0.2); }
+        .card-letter { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 8rem; font-weight: 700; opacity: 0; transition: 0.5s; pointer-events: none; }
+        .card-morph .card-letter { opacity: 1; }
+        .card-morph { position: fixed !important; z-index: 1000 !important; transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; }
 
-        .theme-btn { padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.75rem; transition: 0.3s; }
-        .active-classic { background: var(--text-classic); color: var(--bg-classic); }
-        .active-future { background: linear-gradient(to right, var(--accent-future), var(--neon-purple)); color: #000; }
-        
-        .gallery { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; max-width: 1400px; margin: 0 auto 100px; }
-        @media (max-width: 1024px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 640px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
+        /* Кнопка сети и профиль */
+        .network-badge { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid currentColor; cursor: pointer; font-size: 0.875rem; }
     </style>
 </head>
 <body class="classic">
-    <header>
-        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-6">
-                <a href="index.html" class="text-2xl font-light tracking-widest">ArtSoul</a>
-                <div class="flex bg-white/5 p-1 rounded-lg gap-1">
-                    <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">Classic</button>
-                    <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">Future</button>
+    <header class="sticky top-0 z-50 backdrop-blur-xl">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-2xl font-light logo-interactive" onmouseenter="morphToAnagram()" onmouseleave="resetMorph()">ArtSoul</a>
+                <div class="flex bg-white/10 p-1 rounded-lg">
+                    <button onclick="setTheme('classic')" id="classicBtn" class="px-3 py-1 text-xs rounded active-classic">Classic</button>
+                    <button onclick="setTheme('future')" id="futureBtn" class="px-3 py-1 text-xs rounded">Future</button>
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div id="networkBadge"></div>
                 <div id="navButtons">
-                    <button onclick="window.openConnectModal()" class="btn-main">Get Started</button>
+                    <button id="connectBtn" class="btn-main px-6 py-2 rounded-md transition-all">Get Started</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-12">
-        <div class="text-center mb-16">
-            <h1 class="text-5xl font-light mb-4">Decentralized Art</h1>
-            <p class="opacity-60">Community-driven value estimation</p>
+    <main class="container mx-auto px-4 py-12 relative z-10">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-light mb-4">Decentralized Art Marketplace</h1>
+            <p class="text-xl opacity-70">Where community determines value</p>
         </div>
 
-        <div class="gallery">
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(1)">
+        <div class="gallery" id="galleryGrid">
+            <div class="card rounded-xl overflow-hidden relative" data-letter="A">
                 <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
-                <div class="p-4">
-                    <h3 class="text-sm font-bold">Abstract Dreams</h3>
-                    <p class="text-xs opacity-50 mb-3">@artist_one</p>
-                    <button class="w-full py-2 border border-current rounded text-xs hover:bg-white/10 transition">View Artwork</button>
+                <div class="card-letter">A</div>
+                <div class="p-3">
+                    <h3 class="text-sm font-medium">Abstract Dreams</h3>
+                    <p class="text-xs opacity-60 mb-2">@artist_one</p>
+                    <button class="w-full py-1.5 rounded text-xs border border-current">View</button>
                 </div>
             </div>
             </div>
+
+        <div class="max-w-4xl mx-auto mt-24 p-8 rounded-xl border border-current bg-white/5">
+            <h2 class="text-3xl font-light mb-8 text-center">About ArtSoul</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="mb-4">🌐</div>
+                    <h3 class="font-bold">Multi-Chain</h3>
+                    <p class="text-sm opacity-70">8 networks integrated</p>
+                </div>
+                <div class="text-center">
+                    <div class="mb-4">🎨</div>
+                    <h3 class="font-bold">Open Gallery</h3>
+                    <p class="text-sm opacity-70">No auth required to browse</p>
+                </div>
+                <div class="text-center">
+                    <div class="mb-4">🔐</div>
+                    <h3 class="font-bold">Social Auth</h3>
+                    <p class="text-sm opacity-70">Web3 + Web2 login</p>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
         function setTheme(theme) {
             document.body.className = theme;
             localStorage.setItem('theme', theme);
-            document.getElementById('classicBtn').className = `theme-btn ${theme === 'classic' ? 'active-classic' : ''}`;
-            document.getElementById('futureBtn').className = `theme-btn ${theme === 'future' ? 'active-future' : ''}`;
+            document.getElementById('classicBtn').className = theme === 'classic' ? 'px-3 py-1 text-xs rounded active-classic' : 'px-3 py-1 text-xs rounded';
+            document.getElementById('futureBtn').className = theme === 'future' ? 'px-3 py-1 text-xs rounded active-future' : 'px-3 py-1 text-xs rounded';
         }
-
-        function viewArt(id) { alert("Artwork details coming soon!"); }
-
-        window.onload = () => {
-            const saved = localStorage.getItem('theme') || 'classic';
-            setTheme(saved);
+        
+        // Логика анаграммы (возвращена)
+        let morphActive = false;
+        let originalPositions = [];
+        function morphToAnagram() {
+            if (morphActive) return; morphActive = true;
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                originalPositions.push({top: rect.top, left: rect.left, width: rect.width, height: rect.height});
+                card.classList.add('card-morph');
+            });
+        }
+        function resetMorph() {
+            morphActive = false;
+            document.querySelectorAll('.card').forEach(card => card.classList.remove('card-morph'));
+            originalPositions = [];
         }
     </script>
 
@@ -140,38 +157,42 @@
             adapters: [new EthersAdapter()],
             networks: [mainnet, polygon, bsc, base, arbitrum, optimism],
             projectId,
-            themeMode: 'dark',
-            features: { analytics: true, socials: ['google', 'x', 'discord', 'apple'] }
+            features: { socials: ['google', 'x', 'discord', 'apple'] }
         });
 
-        window.openConnectModal = () => modal.open();
+        const connectBtn = document.getElementById('connectBtn');
+        const networkBadge = document.getElementById('networkBadge');
+        const navButtons = document.getElementById('navButtons');
+
+        // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Прямое открытие модалки
+        connectBtn.addEventListener('click', () => modal.open());
 
         function updateUI() {
             const account = modal.getAccount();
             const network = modal.getNetworkData();
-            const badge = document.getElementById('networkBadge');
-            const nav = document.getElementById('navButtons');
 
             if (account.isConnected) {
-                badge.innerHTML = `
-                    <div class="network-badge" onclick="window.openConnectModal()">
-                        <span class="network-name">${network?.name || 'Network'}</span>
-                        <span class="balance-amount">${account.address.slice(0,6)}...</span>
+                networkBadge.innerHTML = `
+                    <div class="network-badge" onclick="modal.open({ view: 'Networks' })">
+                        <span>${network?.name || 'Chain'}</span>
+                        <span class="opacity-50">|</span>
+                        <span>${account.address.slice(0, 6)}...</span>
                     </div>`;
-                nav.innerHTML = `
-                    <a href="profile.html" class="relative">
-                        <div class="w-10 h-10 rounded-full border border-current flex items-center justify-center overflow-hidden bg-white/10">
-                            <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${account.address}" alt="avatar">
-                        </div>
+                navButtons.innerHTML = `
+                    <a href="profile.html" class="w-10 h-10 rounded-full border border-current flex items-center justify-center overflow-hidden">
+                        <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${account.address}" alt="avatar">
                     </a>`;
             } else {
-                badge.innerHTML = '';
-                nav.innerHTML = `<button onclick="window.openConnectModal()" class="btn-main">Get Started</button>`;
+                networkBadge.innerHTML = '';
+                navButtons.innerHTML = `<button id="connectBtn" class="btn-main px-6 py-2 rounded-md">Get Started</button>`;
+                // Перенавешиваем событие, если кнопка перерисовалась
+                document.getElementById('connectBtn').onclick = () => modal.open();
             }
         }
 
         modal.subscribeAccount(updateUI);
         modal.subscribeNetwork(updateUI);
+        updateUI();
     </script>
 </body>
 </html>
