@@ -13,7 +13,6 @@ CREATE TABLE profiles (
     avatar_url TEXT,
     twitter_handle TEXT,
     discord_username TEXT,
-    vk_username TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

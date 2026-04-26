@@ -7,6 +7,7 @@
     <link rel="icon" type="image/jpeg" href="https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="supabase-client.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -325,13 +326,9 @@
                 <label class="block mb-2 font-medium">Discord Username</label>
                 <input type="text" id="discord" class="form-input" placeholder="username#1234">
             </div>
-            <div>
-                <label class="block mb-2 font-medium">VK Username</label>
-                <input type="text" id="vk" class="form-input" placeholder="username">
-            </div>
             <div class="mt-6 p-4 rounded-lg" style="background: rgba(169, 221, 211, 0.1); border: 1px solid currentColor;">
                 <p class="text-sm opacity-70 mb-2">📱 Social Integration</p>
-                <p class="text-xs opacity-60">Link your social accounts to share artworks with beautiful preview cards directly to X (Twitter), Discord, and VK.</p>
+                <p class="text-xs opacity-60">Link your social accounts to share artworks with beautiful preview cards directly to X (Twitter) and Discord.</p>
             </div>
             <button type="submit" class="btn-main w-full">Save Profile</button>
         </form>
@@ -356,38 +353,91 @@
             const savedTheme = localStorage.getItem('theme') || 'classic';
             setTheme(savedTheme);
 
-            const existingProfile = localStorage.getItem('userProfile');
-            if (existingProfile) {
-                const profile = JSON.parse(existingProfile);
-                document.getElementById('username').value = profile.username || '';
-                document.getElementById('bio').value = profile.bio || '';
-                document.getElementById('twitter').value = profile.twitter || '';
-                document.getElementById('discord').value = profile.discord || '';
-                document.getElementById('vk').value = profile.vk || '';
-            }
+            // Load profile from Supabase when wallet is connected
+            loadProfileFromSupabase();
         });
 
-        document.getElementById('profileForm').onsubmit = (e) => {
+        async function loadProfileFromSupabase() {
+            try {
+                // Wait for wallet connection
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Get wallet address from AppKit state
+                if (window.web3Modal) {
+                    const state = window.web3Modal.getState();
+                    if (state?.address) {
+                        const walletAddress = state.address.toLowerCase();
+                        console.log('Loading profile for:', walletAddress);
+
+                        await window.ArtSoulDB.initSupabase();
+                        const profile = await window.ArtSoulDB.getProfile(walletAddress);
+
+                        if (profile) {
+                            document.getElementById('username').value = profile.username || '';
+                            document.getElementById('bio').value = profile.bio || '';
+                            document.getElementById('twitter').value = profile.twitter_handle || '';
+                            document.getElementById('discord').value = profile.discord_username || '';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        document.getElementById('profileForm').onsubmit = async (e) => {
             e.preventDefault();
-            const profile = {
-                username: document.getElementById('username').value,
-                bio: document.getElementById('bio').value,
-                twitter: document.getElementById('twitter').value,
-                discord: document.getElementById('discord').value,
-                vk: document.getElementById('vk').value,
-                createdAt: new Date().toISOString()
-            };
-            localStorage.setItem('userProfile', JSON.stringify(profile));
 
-            // Show success message
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 245, 255, 0.95); color: #000; padding: 2rem 3rem; border-radius: 1rem; font-weight: 600; z-index: 9999; box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);';
-            successMsg.textContent = '✓ Profile saved! Redirecting to gallery...';
-            document.body.appendChild(successMsg);
+            try {
+                // Get wallet address
+                if (!window.web3Modal) {
+                    alert('Please connect your wallet first');
+                    return;
+                }
 
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
+                const state = window.web3Modal.getState();
+                if (!state?.address) {
+                    alert('Wallet not connected');
+                    return;
+                }
+
+                const walletAddress = state.address.toLowerCase();
+
+                const profileData = {
+                    username: document.getElementById('username').value,
+                    bio: document.getElementById('bio').value,
+                    twitter_handle: document.getElementById('twitter').value,
+                    discord_username: document.getElementById('discord').value
+                };
+
+                console.log('Saving profile:', profileData);
+
+                await window.ArtSoulDB.initSupabase();
+
+                // Check if profile exists
+                const existing = await window.ArtSoulDB.getProfile(walletAddress);
+
+                if (existing) {
+                    // Update existing profile
+                    await window.ArtSoulDB.updateProfile(walletAddress, profileData);
+                } else {
+                    // Create new profile
+                    await window.ArtSoulDB.createProfile(walletAddress, profileData);
+                }
+
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 245, 255, 0.95); color: #000; padding: 2rem 3rem; border-radius: 1rem; font-weight: 600; z-index: 9999; box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);';
+                successMsg.textContent = '✓ Profile saved! Redirecting to gallery...';
+                document.body.appendChild(successMsg);
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('Error saving profile: ' + error.message);
+            }
         };
     </script>
 

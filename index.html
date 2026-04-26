@@ -7,6 +7,7 @@
     <link rel="icon" type="image/jpeg" href="https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="supabase-client.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -938,7 +939,7 @@
 
         let isConnecting = false;
 
-        function handleSuccessfulLogin(state) {
+        async function handleSuccessfulLogin(state) {
             console.log('🔄 Handling successful login...', state);
 
             if (isConnecting) {
@@ -957,15 +958,49 @@
             updateNavButtons(state);
             updateNetworkBadge(state);
 
-            // Check if first time user (no profile saved)
-            const hasProfile = localStorage.getItem('userProfile');
-            if (!hasProfile) {
-                console.log('👤 First time user - redirecting to profile...');
-                setTimeout(() => {
-                    window.location.href = 'profile.html';
-                }, 1500);
-            } else {
-                console.log('✅ Welcome back!');
+            // Check/Create profile in Supabase
+            try {
+                const walletAddress = state.address.toLowerCase();
+                console.log('📝 Checking profile for:', walletAddress);
+
+                // Wait for Supabase client to be ready
+                await window.ArtSoulDB.initSupabase();
+
+                let profile = await window.ArtSoulDB.getProfile(walletAddress);
+
+                if (!profile) {
+                    console.log('👤 First time user - creating profile...');
+
+                    // Create basic profile
+                    profile = await window.ArtSoulDB.createProfile(walletAddress, {
+                        username: `user_${walletAddress.slice(2, 8)}`,
+                        bio: '',
+                        twitter: '',
+                        discord: ''
+                    });
+
+                    console.log('✅ Profile created:', profile);
+
+                    // Redirect to profile page to complete setup
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 1500);
+                } else {
+                    console.log('✅ Welcome back!', profile.username);
+
+                    // Check if profile is incomplete
+                    if (!profile.username || profile.username.startsWith('user_')) {
+                        console.log('⚠️ Profile incomplete - redirecting...');
+                        setTimeout(() => {
+                            window.location.href = 'profile.html';
+                        }, 1500);
+                    } else {
+                        isConnecting = false;
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error handling profile:', error);
+                alert('Error connecting to database. Please try again.');
                 isConnecting = false;
             }
         }
