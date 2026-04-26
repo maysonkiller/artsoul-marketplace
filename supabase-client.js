@@ -1,0 +1,371 @@
+// Supabase Client Configuration for ArtSoul Marketplace
+// Created: 2026-04-26
+
+const SUPABASE_URL = 'https://bexigvqrunomwtjsxlej.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_vAsIoKcLD1D9blJA6Kwy0Q__LrKsAj6';
+
+// Initialize Supabase client
+let supabaseClient = null;
+
+async function initSupabase() {
+    if (supabaseClient) return supabaseClient;
+
+    // Import Supabase from CDN
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    console.log('✅ Supabase initialized');
+    return supabaseClient;
+}
+
+// Profile Functions
+async function createProfile(walletAddress, profileData) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .insert([{
+            wallet_address: walletAddress,
+            username: profileData.username,
+            bio: profileData.bio,
+            avatar_url: profileData.avatar_url,
+            twitter_handle: profileData.twitter,
+            discord_username: profileData.discord,
+            vk_username: profileData.vk
+        }])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating profile:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function getProfile(walletAddress) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('wallet_address', walletAddress)
+        .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 = not found
+        console.error('Error fetching profile:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function updateProfile(walletAddress, updates) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('wallet_address', walletAddress)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+// Artwork Functions
+async function createArtwork(artworkData) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .insert([artworkData])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating artwork:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function getArtworks(filters = {}) {
+    const supabase = await initSupabase();
+
+    let query = supabase
+        .from('artworks')
+        .select(`
+            *,
+            creator:profiles!creator_id(*)
+        `)
+        .order('created_at', { ascending: false });
+
+    if (filters.creator_id) {
+        query = query.eq('creator_id', filters.creator_id);
+    }
+
+    if (filters.file_type) {
+        query = query.eq('file_type', filters.file_type);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        console.error('Error fetching artworks:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function getArtwork(artworkId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .select(`
+            *,
+            creator:profiles!creator_id(*),
+            auctions(*)
+        `)
+        .eq('id', artworkId)
+        .single();
+
+    if (error) {
+        console.error('Error fetching artwork:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+// Auction Functions
+async function createAuction(artworkId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('auctions')
+        .insert([{
+            artwork_id: artworkId,
+            status: 'active'
+        }])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating auction:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function getActiveAuctions() {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('auctions')
+        .select(`
+            *,
+            artwork:artworks(*,
+                creator:profiles!creator_id(*)
+            ),
+            winner:profiles!winner_id(*),
+            bids(count)
+        `)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching auctions:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function getAuction(auctionId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('auctions')
+        .select(`
+            *,
+            artwork:artworks(*,
+                creator:profiles!creator_id(*)
+            ),
+            winner:profiles!winner_id(*),
+            bids(*,
+                bidder:profiles!bidder_id(*)
+            )
+        `)
+        .eq('id', auctionId)
+        .single();
+
+    if (error) {
+        console.error('Error fetching auction:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function endAuction(auctionId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('auctions')
+        .update({ status: 'ended' })
+        .eq('id', auctionId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error ending auction:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+// Bid Functions
+async function placeBid(auctionId, bidderId, amount, maxLimit = null) {
+    const supabase = await initSupabase();
+
+    // Check if user already has a bid on this auction
+    const { data: existingBid } = await supabase
+        .from('bids')
+        .select('*')
+        .eq('auction_id', auctionId)
+        .eq('bidder_id', bidderId)
+        .single();
+
+    if (existingBid) {
+        // Update existing bid
+        const { data, error } = await supabase
+            .from('bids')
+            .update({
+                amount: amount,
+                max_bid_limit: maxLimit
+            })
+            .eq('id', existingBid.id)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error updating bid:', error);
+            throw error;
+        }
+
+        return data;
+    } else {
+        // Create new bid
+        const { data, error } = await supabase
+            .from('bids')
+            .insert([{
+                auction_id: auctionId,
+                bidder_id: bidderId,
+                amount: amount,
+                max_bid_limit: maxLimit
+            }])
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error placing bid:', error);
+            throw error;
+        }
+
+        return data;
+    }
+}
+
+async function getAuctionBids(auctionId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('bids')
+        .select(`
+            *,
+            bidder:profiles!bidder_id(*)
+        `)
+        .eq('auction_id', auctionId)
+        .order('amount', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching bids:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function getUserBid(auctionId, bidderId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('bids')
+        .select('*')
+        .eq('auction_id', auctionId)
+        .eq('bidder_id', bidderId)
+        .single();
+
+    if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching user bid:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+// Real-time subscriptions
+function subscribeToAuction(auctionId, callback) {
+    initSupabase().then(supabase => {
+        const subscription = supabase
+            .channel(`auction:${auctionId}`)
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'bids',
+                filter: `auction_id=eq.${auctionId}`
+            }, callback)
+            .subscribe();
+
+        return subscription;
+    });
+}
+
+// Export functions
+window.ArtSoulDB = {
+    initSupabase,
+    // Profiles
+    createProfile,
+    getProfile,
+    updateProfile,
+    // Artworks
+    createArtwork,
+    getArtworks,
+    getArtwork,
+    // Auctions
+    createAuction,
+    getActiveAuctions,
+    getAuction,
+    endAuction,
+    // Bids
+    placeBid,
+    getAuctionBids,
+    getUserBid,
+    // Real-time
+    subscribeToAuction
+};
+
+console.log('📦 ArtSoul Database Client loaded');
