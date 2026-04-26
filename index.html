@@ -1194,7 +1194,12 @@
                 let processingConnection = false;
 
                 modal.subscribeState(async (state) => {
-                    console.log('📊 Wallet state changed:', state);
+                    console.log('📊 Wallet state changed:', {
+                        address: state?.address,
+                        isConnected: state?.isConnected,
+                        chainId: state?.chainId,
+                        open: state?.open
+                    });
 
                     // Check for connection
                     if (state?.address && !processingConnection && state.address !== lastAddress) {
