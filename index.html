@@ -1219,21 +1219,6 @@
                     }
                 });
 
-                // Also listen to provider events
-                modal.subscribeProvider(async (provider) => {
-                    if (provider?.session) {
-                        console.log('🔗 Provider session detected:', provider.session);
-
-                        // Get current state
-                        const currentState = modal.getState();
-                        if (currentState?.address && !processingConnection) {
-                            processingConnection = true;
-                            await handleSuccessfulLogin(currentState);
-                            processingConnection = false;
-                        }
-                    }
-                });
-
                 console.log('✅ AppKit 1.7.11 initialized (bundled)');
                 console.log('📊 Networks:', networks.map(n => n.name).join(', '));
                 console.log('🔧 Features: Social (Google, X, Apple, Discord), Email, Onramp, Swaps');
