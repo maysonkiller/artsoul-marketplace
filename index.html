@@ -614,7 +614,7 @@
                     </div>
                     <div id="networkBadge"></div>
                     <div class="flex items-center gap-3" id="navButtons">
-                        <button onclick="window.connectWallet()" class="btn-main">Get Started</button>
+                        <button id="connectBtn" class="btn-main">Get Started</button>
                     </div>
                 </div>
             </div>
@@ -1037,19 +1037,44 @@
             if (!navButtons) return;
 
             navButtons.innerHTML = `
-                <button onclick="window.connectWallet()" class="btn-main">Get Started</button>
+                <button id="connectBtn" class="btn-main">Get Started</button>
             `;
+
+            // Re-attach event listener
+            const connectBtn = document.getElementById('connectBtn');
+            if (connectBtn) {
+                connectBtn.addEventListener('click', async () => {
+                    if (window.web3Modal) {
+                        await window.web3Modal.open();
+                    }
+                });
+            }
 
             if (networkBadge) {
                 networkBadge.innerHTML = '';
             }
         }
 
+        // Setup connect button handler
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectBtn = document.getElementById('connectBtn');
+            if (connectBtn) {
+                connectBtn.addEventListener('click', async () => {
+                    console.log('Connect button clicked');
+                    if (window.web3Modal) {
+                        await window.web3Modal.open();
+                    } else {
+                        console.error('AppKit not initialized yet');
+                    }
+                });
+            }
+        });
+
         // CRITICAL: Define window.connectWallet FIRST with fallback
         window.connectWallet = async () => {
             console.log('Wallet connection initializing...');
-            if (modal) {
-                await modal.open();
+            if (window.web3Modal) {
+                await window.web3Modal.open();
             }
         };
 
