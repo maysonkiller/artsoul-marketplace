@@ -1194,12 +1194,32 @@
                 let processingConnection = false;
 
                 modal.subscribeState(async (state) => {
-                    console.log('📊 Wallet state changed:', {
+                    console.log('📊 Wallet state changed (FULL):', state);
+                    console.log('📊 Wallet state details:', {
                         address: state?.address,
                         isConnected: state?.isConnected,
                         chainId: state?.chainId,
-                        open: state?.open
+                        open: state?.open,
+                        selectedNetworkId: state?.selectedNetworkId
                     });
+
+                    // If modal just closed, check state directly
+                    if (state?.open === false && !processingConnection) {
+                        console.log('🔍 Modal closed, checking for connection...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+
+                        const currentState = modal.getState();
+                        console.log('🔍 Current state after modal close:', currentState);
+
+                        if (currentState?.address && currentState.address !== lastAddress) {
+                            processingConnection = true;
+                            lastAddress = currentState.address;
+                            console.log('✅ Wallet connected via modal close:', currentState.address);
+                            await handleSuccessfulLogin(currentState);
+                            processingConnection = false;
+                            return;
+                        }
+                    }
 
                     // Check for connection
                     if (state?.address && !processingConnection && state.address !== lastAddress) {
