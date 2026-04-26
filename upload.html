@@ -3,37 +3,481 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload - ArtSoul</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Upload Artwork - ArtSoul</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brutal: {
+                            bg: '#f5f5f5',
+                            text: '#1a1a1a',
+                            accent: '#0066cc',
+                        },
+                        future: {
+                            bg: '#0a0a0f',
+                            text: '#e0e0ff',
+                            neon: '#00ffff',
+                            pink: '#ff00ff',
+                            purple: '#8b00ff',
+                        },
+                    },
+                },
+            },
+        }
+    </script>
     <style>
-        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #010101; color: #e8e3d5; }
-        header { background: rgba(1, 1, 1, 0.95); border-bottom: 1px solid #a9ddd3; }
-        .btn-main { background: #e8e3d5; color: #010101; padding: 0.75rem 2rem; border-radius: 0.375rem; width: 100%; }
-        .form-input { width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(232, 227, 213, 0.05); border: 1px solid #a9ddd3; color: #e8e3d5; }
-        .upload-zone { border: 2px dashed #a9ddd3; background: rgba(232, 227, 213, 0.03); cursor: pointer; }
+        /* Animations */
+        @keyframes glow-pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+        .neon-border {
+            box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .animate-slideIn {
+            animation: slideIn 0.6s ease-out forwards;
+        }
+
+        /* Drag and drop zone */
+        .drop-zone {
+            border: 2px dashed;
+            transition: all 0.3s ease;
+        }
+        .drop-zone.drag-over {
+            transform: scale(1.02);
+            border-style: solid;
+        }
+
+        /* File preview */
+        .file-preview {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
     </style>
 </head>
-<body>
-    <header>
-        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="index.html" class="text-2xl font-light">ArtSoul</a>
-            <a href="index.html" class="opacity-70 hover:opacity-100">Back</a>
-        </div>
-    </header>
-    <main class="container mx-auto px-4 py-12 max-w-3xl">
-        <h1 class="text-4xl font-light mb-8">Upload Masterpiece</h1>
-        <div class="space-y-8">
-            <div class="upload-zone rounded-xl p-12 text-center" onclick="document.getElementById('fileInput').click()">
-                <input type="file" id="fileInput" accept="image/*,video/*,audio/*" style="display: none;">
-                <p class="text-xl opacity-70 mb-2">Click to upload your artwork</p>
-                <p class="text-sm opacity-40">Supports JPG, PNG, MP4, GIF, MP3</p>
-            </div>
-            <div><label class="block mb-2">Title</label><input type="text" id="artTitle" class="form-input" placeholder="Name of your piece"></div>
-            <div><label class="block mb-2">Price (ETH)</label><input type="number" id="artPrice" step="0.01" class="form-input" placeholder="0.5"></div>
-            <button onclick="alert('Minting coming soon!')" class="btn-main">List on Marketplace</button>
-        </div>
-    </main>
+<body class="min-h-screen transition-colors duration-500">
+    <div id="app"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+
+    <script type="text/babel" data-type="module" data-presets="react">
+        const { useState, useEffect } = React;
+
+        // File type detection
+        const detectFileType = (file) => {
+            const type = file.type;
+            if (type.startsWith('image/')) return 'Image';
+            if (type.startsWith('video/')) return 'Video';
+            if (type.startsWith('audio/')) return 'Music';
+            if (type === 'image/gif') return 'GIF';
+            return 'Other';
+        };
+
+        // Get form fields based on file type
+        const getFormFields = (fileType) => {
+            const baseFields = {
+                title: { label: 'Title', placeholder: 'Enter artwork title', required: true },
+                description: { label: 'Description', placeholder: 'Tell the story behind your work', multiline: true, required: true },
+                artistEstimate: { label: 'Your Estimated Value (ETH)', placeholder: '0.5', type: 'number', info: 'This is just for reference, community will set the floor price' },
+            };
+
+            const typeSpecific = {
+                'Image': {
+                    medium: { label: 'Medium', placeholder: 'Digital, Oil, Watercolor, etc.', required: true },
+                    dimensions: { label: 'Dimensions', placeholder: 'e.g., 1920x1080 or 30x40cm' },
+                    year: { label: 'Year Created', placeholder: '2026', type: 'number' },
+                },
+                'Video': {
+                    duration: { label: 'Duration', placeholder: 'e.g., 2:30' },
+                    resolution: { label: 'Resolution', placeholder: 'e.g., 1920x1080' },
+                    fps: { label: 'FPS', placeholder: '30', type: 'number' },
+                },
+                'Music': {
+                    genre: { label: 'Genre', placeholder: 'Electronic, Classical, etc.' },
+                    duration: { label: 'Duration', placeholder: 'e.g., 3:45' },
+                    bpm: { label: 'BPM', placeholder: '120', type: 'number' },
+                },
+                'GIF': {
+                    duration: { label: 'Loop Duration', placeholder: 'e.g., 5s' },
+                    frames: { label: 'Frame Count', placeholder: '60', type: 'number' },
+                },
+            };
+
+            return { ...baseFields, ...(typeSpecific[fileType] || {}) };
+        };
+
+        function UploadPage() {
+            const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'classic');
+            const [file, setFile] = useState(null);
+            const [fileType, setFileType] = useState(null);
+            const [preview, setPreview] = useState(null);
+            const [formData, setFormData] = useState({});
+            const [dragOver, setDragOver] = useState(false);
+            const [uploading, setUploading] = useState(false);
+            const [uploadProgress, setUploadProgress] = useState(0);
+
+            const isClassic = theme === 'classic';
+
+            // Save theme to localStorage
+            useEffect(() => {
+                localStorage.setItem('theme', theme);
+            }, [theme]);
+
+            // Handle file selection
+            const handleFileSelect = (selectedFile) => {
+                if (!selectedFile) return;
+
+                setFile(selectedFile);
+                const type = detectFileType(selectedFile);
+                setFileType(type);
+
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = (e) => setPreview(e.target.result);
+                reader.readAsDataURL(selectedFile);
+
+                // Initialize form data
+                setFormData({
+                    title: selectedFile.name.replace(/\.[^/.]+$/, ''),
+                    description: '',
+                    artistEstimate: '',
+                });
+            };
+
+            // Drag and drop handlers
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                setDragOver(true);
+            };
+
+            const handleDragLeave = () => {
+                setDragOver(false);
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setDragOver(false);
+                const droppedFile = e.dataTransfer.files[0];
+                handleFileSelect(droppedFile);
+            };
+
+            // Form submission
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setUploading(true);
+                setUploadProgress(0);
+
+                // Simulate upload with progress
+                for (let i = 0; i <= 100; i += 10) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    setUploadProgress(i);
+                }
+
+                // Save to localStorage (for prototype)
+                const artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
+                const newArtwork = {
+                    id: Date.now(),
+                    ...formData,
+                    type: fileType,
+                    fileName: file.name,
+                    fileSize: file.size,
+                    preview: preview,
+                    image: preview,
+                    artist: formData.artist || 'Anonymous',
+                    uploadedAt: new Date().toISOString(),
+                    currentBid: parseFloat(formData.artistEstimate) || 0,
+                    bids: [],
+                };
+                artworks.push(newArtwork);
+                localStorage.setItem('artworks', JSON.stringify(artworks));
+
+                setUploading(false);
+                setUploadProgress(0);
+                alert('Artwork uploaded successfully! Redirecting to gallery...');
+                window.location.href = 'index.html';
+            };
+
+            const formFields = fileType ? getFormFields(fileType) : {};
+
+            const bgClass = isClassic
+                ? 'bg-gray-100 text-gray-900'
+                : 'bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-purple-100';
+
+            return (
+                <div className={`min-h-screen ${bgClass} transition-all duration-500`}>
+                    {/* Header */}
+                    <header className={`sticky top-0 z-50 backdrop-blur-md ${isClassic ? 'bg-white/90 border-b border-gray-300' : 'bg-black/50 border-b border-cyan-500/30'}`}>
+                        <div className="container mx-auto px-4 py-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex flex-col">
+                                    <div className="flex items-center gap-3">
+                                        <a href="index.html" className={`text-2xl font-bold ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                            ArtSoul
+                                        </a>
+                                        <div className={`flex gap-2 p-1 rounded-lg ${isClassic ? 'bg-gray-200' : 'bg-gray-800/50'}`}>
+                                            <button
+                                                onClick={() => setTheme('classic')}
+                                                className={`px-3 py-1 rounded-md font-medium text-sm transform hover:scale-105 ${
+                                                    theme === 'classic'
+                                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
+                                                        : isClassic ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
+                                                }`}
+                                            >
+                                                {isClassic ? '📋 Classic' : '📋'}
+                                            </button>
+                                            <button
+                                                onClick={() => setTheme('future')}
+                                                className={`px-3 py-1 rounded-md font-medium text-sm transform hover:scale-105 ${
+                                                    theme === 'future'
+                                                        ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg neon-border'
+                                                        : isClassic ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-400 hover:bg-gray-700'
+                                                }`}
+                                            >
+                                                {theme === 'future' ? '🚀 Future' : '🚀'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <a
+                                        href="docs.html#vision"
+                                        className={`text-xs mt-1 hover:underline ${isClassic ? 'text-gray-600 hover:text-blue-600' : 'text-purple-300 hover:text-cyan-400'}`}
+                                    >
+                                        Decentralized Art Marketplace
+                                    </a>
+                                </div>
+
+                                <a href="index.html" className={`px-6 py-2 rounded-lg font-medium transform hover:scale-105 ${
+                                    isClassic ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-gray-700 text-white hover:bg-gray-600'
+                                }`}>
+                                    Back to Gallery
+                                </a>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="container mx-auto px-4 py-8">
+                        <div className="max-w-4xl mx-auto">
+                            <h1 className={`text-4xl font-bold mb-2 animate-fadeIn ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                Upload Your Artwork
+                            </h1>
+                            <p className={`text-lg mb-8 animate-fadeIn ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
+                                Share your art with the world. Community will discover its true value.
+                            </p>
+
+                            {/* Upload Zone */}
+                            {!file ? (
+                                <div
+                                    className={`drop-zone rounded-xl p-12 text-center animate-fadeIn ${
+                                        dragOver
+                                            ? isClassic
+                                                ? 'border-blue-600 bg-blue-50'
+                                                : 'border-cyan-400 bg-cyan-900/20 neon-border'
+                                            : isClassic
+                                                ? 'border-gray-300 bg-white'
+                                                : 'border-cyan-500/30 bg-gray-900/50'
+                                    }`}
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={handleDrop}
+                                >
+                                    <div className={`text-6xl mb-4 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>
+                                        📤
+                                    </div>
+                                    <h3 className={`text-2xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-300'}`}>
+                                        Drag & Drop Your File
+                                    </h3>
+                                    <p className={`mb-6 ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                        or click to browse
+                                    </p>
+                                    <input
+                                        type="file"
+                                        id="fileInput"
+                                        className="hidden"
+                                        accept="image/*,video/*,audio/*"
+                                        onChange={(e) => handleFileSelect(e.target.files[0])}
+                                    />
+                                    <label
+                                        htmlFor="fileInput"
+                                        className={`inline-block px-8 py-3 rounded-lg font-bold cursor-pointer transform hover:scale-105 ${
+                                            isClassic
+                                                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50'
+                                                : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl neon-border'
+                                        }`}
+                                    >
+                                        Choose File
+                                    </label>
+                                    <p className={`mt-4 text-sm ${isClassic ? 'text-gray-500' : 'text-gray-500'}`}>
+                                        Supported: Images, Videos, GIFs, Music (Max 100MB)
+                                    </p>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="space-y-6 animate-fadeIn">
+                                    {/* File Preview */}
+                                    <div className={`rounded-xl p-6 ${isClassic ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
+                                        <div className="flex flex-col md:flex-row items-start gap-6">
+                                            <div className="w-full md:w-auto flex-shrink-0">
+                                                {fileType === 'Image' || fileType === 'GIF' ? (
+                                                    <img src={preview} alt="Preview" className="w-full md:max-w-md max-h-96 object-contain rounded-lg" />
+                                                ) : fileType === 'Video' ? (
+                                                    <video src={preview} controls className="w-full md:max-w-md max-h-96 rounded-lg" />
+                                                ) : fileType === 'Music' ? (
+                                                    <div className={`w-full md:w-64 h-64 rounded-lg flex items-center justify-center ${isClassic ? 'bg-gray-100' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'}`}>
+                                                        <div className="text-center p-4">
+                                                            <div className={`text-6xl mb-4 ${isClassic ? 'text-gray-400' : 'text-cyan-400'}`}>🎵</div>
+                                                            <audio src={preview} controls className="w-full" />
+                                                        </div>
+                                                    </div>
+                                                ) : null}
+                                            </div>
+
+                                            <div className="flex-1">
+                                                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-3 ${
+                                                    isClassic ? 'bg-blue-100 text-blue-700' : 'bg-cyan-900/50 text-cyan-300'
+                                                }`}>
+                                                    {fileType}
+                                                </div>
+                                                <h3 className={`text-xl font-bold mb-2 ${isClassic ? 'text-gray-900' : 'text-cyan-300'}`}>
+                                                    {file.name}
+                                                </h3>
+                                                <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-gray-400'}`}>
+                                                    Size: {(file.size / 1024 / 1024).toFixed(2)} MB
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setFile(null);
+                                                        setFileType(null);
+                                                        setPreview(null);
+                                                        setFormData({});
+                                                    }}
+                                                    className={`mt-4 px-4 py-2 rounded-lg text-sm font-medium ${
+                                                        isClassic
+                                                            ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                                            : 'bg-red-900/50 text-red-300 hover:bg-red-900/70'
+                                                    }`}
+                                                >
+                                                    Remove File
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Dynamic Form Fields */}
+                                    <div className={`rounded-xl p-6 ${isClassic ? 'bg-white shadow-lg' : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'}`}>
+                                        <h3 className={`text-2xl font-bold mb-6 ${isClassic ? 'text-gray-900' : 'text-cyan-400 neon-glow'}`}>
+                                            Artwork Details
+                                        </h3>
+
+                                        <div className="space-y-4">
+                                            {Object.entries(formFields).map(([key, field]) => (
+                                                <div key={key} className="animate-slideIn">
+                                                    <label className={`block text-sm font-semibold mb-2 ${isClassic ? 'text-gray-700' : 'text-cyan-300'}`}>
+                                                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                                                    </label>
+                                                    {field.multiline ? (
+                                                        <textarea
+                                                            value={formData[key] || ''}
+                                                            onChange={(e) => setFormData({...formData, [key]: e.target.value})}
+                                                            placeholder={field.placeholder}
+                                                            required={field.required}
+                                                            rows={4}
+                                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                                isClassic
+                                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-600'
+                                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100 focus:ring-2 focus:ring-cyan-400'
+                                                            } outline-none transition-all`}
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            type={field.type || 'text'}
+                                                            value={formData[key] || ''}
+                                                            onChange={(e) => setFormData({...formData, [key]: e.target.value})}
+                                                            placeholder={field.placeholder}
+                                                            required={field.required}
+                                                            step={field.type === 'number' ? '0.01' : undefined}
+                                                            className={`w-full px-4 py-3 rounded-lg ${
+                                                                isClassic
+                                                                    ? 'bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-600'
+                                                                    : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100 focus:ring-2 focus:ring-cyan-400'
+                                                            } outline-none transition-all`}
+                                                        />
+                                                    )}
+                                                    {field.info && (
+                                                        <p className={`mt-1 text-xs ${isClassic ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                            ℹ️ {field.info}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Upload Progress */}
+                                    {uploading && (
+                                        <div className="mb-4">
+                                            <div className="flex justify-between mb-2">
+                                                <span className={`text-sm ${isClassic ? 'text-gray-700' : 'text-gray-300'}`}>Uploading...</span>
+                                                <span className={`text-sm ${isClassic ? 'text-gray-700' : 'text-gray-300'}`}>{uploadProgress}%</span>
+                                            </div>
+                                            <div className={`w-full h-2 rounded-full overflow-hidden ${isClassic ? 'bg-gray-200' : 'bg-gray-700'}`}>
+                                                <div
+                                                    className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-300"
+                                                    style={{width: `${uploadProgress}%`}}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Submit Button */}
+                                    <button
+                                        type="submit"
+                                        disabled={uploading}
+                                        className={`w-full py-4 rounded-lg font-bold text-lg transform hover:scale-105 ${
+                                            uploading
+                                                ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                                                : isClassic
+                                                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50'
+                                                    : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:shadow-2xl neon-border'
+                                        }`}
+                                    >
+                                        {uploading ? 'Uploading...' : 'Submit to Auction'}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="mt-16 pb-8 text-center">
+                        <p className={`text-sm ${isClassic ? 'text-gray-600' : 'text-purple-300'}`}>
+                            ArtSoul Marketplace - Built by <a href="https://twitter.com/maysonkiller23" target="_blank" className={isClassic ? 'text-blue-600 hover:underline' : 'text-cyan-400 hover:underline'}>@maysonkiller23</a>
+                        </p>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<UploadPage />, document.getElementById('app'));
+    </script>
 </body>
 </html>
