@@ -1811,18 +1811,6 @@
                     }
                 }, 2000);
 
-                        const stateWithAddress = {
-                            address: addr,
-                            chainId: null,
-                            isConnected: true
-                        };
-
-                        updateNavButtons(stateWithAddress);
-                        updateNetworkBadge(stateWithAddress);
-                        localStorage.setItem('artsoul_wallet', addr);
-                    }
-                }, 2000);
-
                 console.log('✅ AppKit initialized on index.html');
             } catch (error) {
                 console.error('⚠️ AppKit init failed:', error);
