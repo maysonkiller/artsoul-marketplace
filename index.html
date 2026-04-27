@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArtSoul - Decentralized Art Marketplace</title>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="supabase-client.js"></script>
@@ -385,23 +385,22 @@
 
         .future .gallery .card {
             position: absolute;
-            width: 250px;
+            width: 220px;
             top: 0;
-            animation: slideCardsFlow 40s linear infinite;
-            margin-right: 20px;
+            animation: slideCardsFlow 50s linear infinite;
         }
 
         .future .gallery .card:hover {
-            transform: translateY(-12px) scale(1.05);
+            transform: translateY(-12px) scale(1.1);
             z-index: 10;
         }
 
         @keyframes slideCardsFlow {
             0% {
-                transform: translateX(-270px);
+                transform: translateX(-240px);
             }
             100% {
-                transform: translateX(calc(100vw + 270px));
+                transform: translateX(calc(100vw + 240px));
             }
         }
 
@@ -410,58 +409,47 @@
         }
 
         .future .gallery .card:nth-child(2) {
-            animation-delay: -3.33s;
-            left: 270px;
+            animation-delay: -4.16s;
         }
 
         .future .gallery .card:nth-child(3) {
-            animation-delay: -6.66s;
-            left: 540px;
+            animation-delay: -8.32s;
         }
 
         .future .gallery .card:nth-child(4) {
-            animation-delay: -10s;
-            left: 810px;
+            animation-delay: -12.48s;
         }
 
         .future .gallery .card:nth-child(5) {
-            animation-delay: -13.33s;
-            left: 1080px;
+            animation-delay: -16.64s;
         }
 
         .future .gallery .card:nth-child(6) {
-            animation-delay: -16.66s;
-            left: 1350px;
+            animation-delay: -20.8s;
         }
 
         .future .gallery .card:nth-child(7) {
-            animation-delay: -20s;
-            left: 1620px;
+            animation-delay: -24.96s;
         }
 
         .future .gallery .card:nth-child(8) {
-            animation-delay: -23.33s;
-            left: 1890px;
+            animation-delay: -29.12s;
         }
 
         .future .gallery .card:nth-child(9) {
-            animation-delay: -26.66s;
-            left: 2160px;
+            animation-delay: -33.28s;
         }
 
         .future .gallery .card:nth-child(10) {
-            animation-delay: -30s;
-            left: 2430px;
+            animation-delay: -37.44s;
         }
 
         .future .gallery .card:nth-child(11) {
-            animation-delay: -33.33s;
-            left: 2700px;
+            animation-delay: -41.6s;
         }
 
         .future .gallery .card:nth-child(12) {
-            animation-delay: -36.66s;
-            left: 2970px;
+            animation-delay: -45.76s;
         }
 
         /* Mode Transition Effect */
@@ -505,6 +493,11 @@
             top: 0;
             z-index: 50;
             backdrop-filter: blur(12px);
+        }
+
+        header .container {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
         }
 
         .btn-main {
@@ -1211,7 +1204,7 @@
                     </div>
                     <div id="networkBadge"></div>
                     <div class="flex items-center gap-3" id="navButtons">
-                        <button id="connectBtn" class="btn-main">Get Started</button>
+                        <button id="connectBtn" class="btn-main" onclick="if(window.connectWallet) window.connectWallet()">Get Started</button>
                     </div>
                 </div>
             </div>
