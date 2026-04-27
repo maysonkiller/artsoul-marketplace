@@ -381,73 +381,65 @@
             position: relative;
         }
 
+        .future .gallery .card {
+            position: absolute;
+            animation: slideCardsFlow 25s linear infinite;
+        }
+
         .future .gallery .card:nth-child(1) {
-            animation: slideCards 30s linear infinite;
+            animation-delay: 0s;
         }
 
         .future .gallery .card:nth-child(2) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -2.5s;
+            animation-delay: -4.16s;
         }
 
         .future .gallery .card:nth-child(3) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -5s;
+            animation-delay: -8.32s;
         }
 
         .future .gallery .card:nth-child(4) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -7.5s;
+            animation-delay: -12.48s;
         }
 
         .future .gallery .card:nth-child(5) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -10s;
+            animation-delay: -16.64s;
         }
 
         .future .gallery .card:nth-child(6) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -12.5s;
+            animation-delay: -20.8s;
         }
 
         .future .gallery .card:nth-child(7) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -15s;
+            animation-delay: -2.08s;
         }
 
         .future .gallery .card:nth-child(8) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -17.5s;
+            animation-delay: -6.24s;
         }
 
         .future .gallery .card:nth-child(9) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -20s;
+            animation-delay: -10.4s;
         }
 
         .future .gallery .card:nth-child(10) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -22.5s;
+            animation-delay: -14.56s;
         }
 
         .future .gallery .card:nth-child(11) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -25s;
+            animation-delay: -18.72s;
         }
 
         .future .gallery .card:nth-child(12) {
-            animation: slideCards 30s linear infinite;
-            animation-delay: -27.5s;
+            animation-delay: -22.88s;
         }
 
-        @keyframes slideCards {
+        @keyframes slideCardsFlow {
             0% {
-                transform: translateX(-100vw);
-                opacity: 1;
+                transform: translateX(-100%);
             }
             100% {
-                transform: translateX(100vw);
-                opacity: 1;
+                transform: translateX(calc(100vw + 100%));
             }
         }
 
@@ -621,6 +613,19 @@
             gap: 1rem;
             max-width: 1400px;
             margin: 0 auto 150px;
+        }
+
+        /* In Future mode, override grid to show all cards in a single flowing row */
+        .future .gallery {
+            display: flex;
+            gap: 1rem;
+            max-width: none;
+            width: 100%;
+        }
+
+        .future .gallery .card {
+            flex: 0 0 calc((100vw - 5rem) / 6);
+            min-width: calc((100vw - 5rem) / 6);
         }
 
         @media (max-width: 1200px) {
