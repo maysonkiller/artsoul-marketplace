@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation - ArtSoul</title>
-    <link rel="icon" type="image/jpeg" href="https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg">
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="supabase-client.js"></script>
@@ -85,6 +85,46 @@
             50% {
                 box-shadow: 0 0 20px var(--accent-future), 0 0 40px var(--neon-purple);
             }
+        }
+
+        /* Logo styles */
+        .site-logo {
+            height: 100px;
+            width: auto;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .classic .site-logo {
+            filter: drop-shadow(0 0 8px rgba(169, 221, 211, 0.4));
+        }
+
+        .future .site-logo {
+            filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 20px rgba(191, 0, 255, 0.4));
+        }
+
+        .logo-link:hover .site-logo {
+            transform: scale(1.05);
+        }
+
+        .classic .logo-link:hover .site-logo {
+            filter: drop-shadow(0 0 12px rgba(169, 221, 211, 0.6));
+        }
+
+        .future .logo-link:hover .site-logo {
+            filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 30px rgba(191, 0, 255, 0.6));
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+
+        header .container {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
         }
 
         /* Button effects for Future mode */
@@ -439,7 +479,9 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between flex-wrap gap-4">
                 <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-2xl font-light tracking-wide">ArtSoul</a>
+                    <a href="index.html" class="logo-link">
+                        <img src="ARTSOULlogo.png" alt="ArtSoul" class="site-logo">
+                    </a>
                     <div class="theme-toggle">
                         <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
                             Classic
