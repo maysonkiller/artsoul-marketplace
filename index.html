@@ -928,7 +928,7 @@
 <body class="classic">
     <header>
         <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center justify-between flex-wrap gap-4" style="position: relative;">
                 <div class="flex items-center gap-4">
                     <a href="index.html" class="text-2xl font-light tracking-wide logo-interactive" onmouseenter="morphToAnagram()" onmouseleave="resetMorph()">ArtSoul</a>
                     <div class="theme-toggle">
@@ -940,6 +940,7 @@
                         </button>
                     </div>
                 </div>
+                <a href="docs.html#rialo" class="devnet-banner" style="position: absolute; left: 50%; transform: translateX(-50%);">Rialo Playground Devnet</a>
                 <div class="flex items-center gap-4">
                     <div class="tooltip-wrap">
                         <a href="docs.html" class="inline-block p-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
@@ -949,7 +950,6 @@
                         </a>
                         <div class="tooltip-text">Documentation</div>
                     </div>
-                    <a href="docs.html#rialo" class="devnet-banner">Rialo Playground Devnet</a>
                     <div id="networkBadge"></div>
                     <div class="flex items-center gap-3" id="navButtons">
                         <button id="connectBtn" class="btn-main">Get Started</button>
