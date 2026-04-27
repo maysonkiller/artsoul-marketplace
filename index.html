@@ -1922,10 +1922,12 @@
                         console.log('🔄 accountsChanged event:', accounts);
                         if (accounts[0]) {
                             window.currentWalletAddress = accounts[0];
+                            localStorage.setItem('artsoul_wallet', accounts[0]);
                             updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
                             updateNetworkBadge({address: accounts[0], chainId: null});
                         } else {
                             window.currentWalletAddress = null;
+                            localStorage.removeItem('artsoul_wallet');
                             resetNavButtons();
                         }
                     });
@@ -1936,12 +1938,38 @@
                         console.log('🔌 Existing accounts:', accounts);
                         if (accounts[0]) {
                             window.currentWalletAddress = accounts[0];
+                            localStorage.setItem('artsoul_wallet', accounts[0]);
                             updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
                             updateNetworkBadge({address: accounts[0], chainId: null});
                         }
                     } catch (error) {
                         console.log('⚠️ Could not get eth_accounts:', error);
                     }
+
+                    // Regular check every 3 seconds
+                    setInterval(async () => {
+                        try {
+                            const accounts = await window.ethereum.request({method: 'eth_accounts'});
+                            if (accounts[0] && accounts[0] !== window.currentWalletAddress) {
+                                console.log('🔄 Periodic check found address:', accounts[0]);
+                                window.currentWalletAddress = accounts[0];
+                                localStorage.setItem('artsoul_wallet', accounts[0]);
+                                updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
+                                updateNetworkBadge({address: accounts[0], chainId: null});
+                            }
+                        } catch (error) {
+                            // Silent fail
+                        }
+                    }, 3000);
+                }
+
+                // Restore from localStorage on page load
+                const savedWallet = localStorage.getItem('artsoul_wallet');
+                if (savedWallet) {
+                    console.log('💾 Restored wallet from localStorage:', savedWallet);
+                    window.currentWalletAddress = savedWallet;
+                    updateNavButtons({address: savedWallet, chainId: null, isConnected: true});
+                    updateNetworkBadge({address: savedWallet, chainId: null});
                 }
 
                 console.log('✅ AppKit 1.7.11 initialized (bundled)');
