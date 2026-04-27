@@ -1557,6 +1557,7 @@
     <!-- AppKit Integration -->
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
+        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
         import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
         const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
@@ -1570,13 +1571,16 @@
         };
 
         const networks = [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground];
-
         const metadata = {
             name: 'ArtSoul Marketplace',
-            description: 'Decentralized Art Marketplace - Where community determines value',
+            description: 'Decentralized Art Marketplace',
             url: 'https://maysonkiller.github.io/artsoul-marketplace',
             icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg']
         };
+
+        let modal = null;
+        let currentNetwork = null;
+        let currentBalance = '0.00';
 
         const networkMap = {
             1: { name: 'Ethereum', currency: 'ETH' },
@@ -1589,108 +1593,22 @@
             2025: { name: 'Rialo Playground', currency: 'RIA' }
         };
 
-        // Define functions first
-        let modal = null;
-        let currentNetwork = null;
-        let currentBalance = '0.00';
-
-        let isConnecting = false;
-        let currentWalletAddress = null;
-
-        async function handleSuccessfulLogin(state) {
-            console.log('🔄 Handling successful login...', state);
-
-            if (isConnecting) {
-                console.log('⏳ Already processing connection...');
-                return;
-            }
-
-            isConnecting = true;
-            currentWalletAddress = state.address.toLowerCase();
-
-            const theme = document.body.classList.contains('future') ? 'future' : 'classic';
-
-            if (theme === 'future' && window.showSuccessWave) {
-                window.showSuccessWave();
-            }
-
-            // First update UI immediately
-            updateNavButtons(state);
-            updateNetworkBadge(state);
-
-            // Then handle profile
-            try {
-                console.log('📝 Checking profile for:', currentWalletAddress);
-
-                // Wait for Supabase client to be ready
-                await window.ArtSoulDB.initSupabase();
-
-                let profile = await window.ArtSoulDB.getProfile(currentWalletAddress);
-
-                if (!profile) {
-                    console.log('👤 First time user - creating profile...');
-
-                    // Create basic profile
-                    profile = await window.ArtSoulDB.createProfile(currentWalletAddress, {
-                        username: `user_${currentWalletAddress.slice(2, 8)}`,
-                        bio: '',
-                        twitter_handle: '',
-                        discord_username: ''
-                    });
-
-                    console.log('✅ Profile created:', profile);
-
-                    // Show welcome message
-                    alert('Welcome to ArtSoul! Please complete your profile.');
-
-                    // Redirect to profile page
-                    setTimeout(() => {
-                        window.location.href = 'profile.html';
-                    }, 1000);
-                } else {
-                    console.log('✅ Welcome back!', profile.username);
-
-                    // Check if profile is incomplete
-                    if (!profile.username || profile.username.startsWith('user_')) {
-                        console.log('⚠️ Profile incomplete - redirecting...');
-                        alert('Please complete your profile.');
-                        setTimeout(() => {
-                            window.location.href = 'profile.html';
-                        }, 1000);
-                    } else {
-                        // Profile complete - stay on gallery
-                        console.log('🎨 Profile complete - showing gallery');
-                        isConnecting = false;
-                    }
-                }
-            } catch (error) {
-                console.error('❌ Error handling profile:', error);
-                alert('Error connecting to database: ' + error.message);
-                isConnecting = false;
-            }
-        }
-
         function updateNetworkBadge(state) {
             const networkBadgeContainer = document.getElementById('networkBadge');
             if (!networkBadgeContainer) return;
-
             if (state?.address && state?.chainId) {
                 const network = networkMap[state.chainId] || { name: 'Unknown', currency: 'ETH' };
                 currentNetwork = network;
-
-                // Get balance if available
                 if (window.ethereum) {
-                    window.ethereum.request({
-                        method: 'eth_getBalance',
-                        params: [state.address, 'latest']
-                    }).then(balance => {
-                        const balanceInEth = (parseInt(balance, 16) / 1e18).toFixed(4);
-                        currentBalance = balanceInEth;
-                        renderNetworkBadge();
-                    }).catch(() => {
-                        currentBalance = '0.00';
-                        renderNetworkBadge();
-                    });
+                    window.ethereum.request({ method: 'eth_getBalance', params: [state.address, 'latest'] })
+                        .then(balance => {
+                            currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
+                            renderNetworkBadge();
+                        })
+                        .catch(() => {
+                            currentBalance = '0.00';
+                            renderNetworkBadge();
+                        });
                 } else {
                     renderNetworkBadge();
                 }
@@ -1702,114 +1620,31 @@
         function renderNetworkBadge() {
             const networkBadgeContainer = document.getElementById('networkBadge');
             if (!networkBadgeContainer || !currentNetwork) return;
-
-            networkBadgeContainer.innerHTML = `
-                <div class="network-badge" onclick="window.web3Modal?.open({ view: 'Networks' })">
-                    <span class="network-name">${currentNetwork.name}</span>
-                    <span class="balance-amount">${currentBalance} ${currentNetwork.currency}</span>
-                </div>
-            `;
+            networkBadgeContainer.innerHTML = `<div class="network-badge" onclick="window.web3Modal?.open({ view: 'Networks' })"><span class="network-name">${currentNetwork.name}</span><span class="balance-amount">${currentBalance} ${currentNetwork.currency}</span></div>`;
         }
 
         function updateNavButtons(state) {
             const navButtons = document.getElementById('navButtons');
             if (!navButtons) return;
-
-            navButtons.innerHTML = `
-                <div class="tooltip-wrap">
-                    <button onclick="showSection('profile'); switchProfileTab('myworks')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
-                            <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/>
-                        </svg>
-                    </button>
-                    <div class="tooltip-text">Upload Artwork</div>
-                </div>
-                <div class="tooltip-wrap">
-                    <button onclick="showSection('profile')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
-                            <circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/>
-                            <path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/>
-                        </svg>
-                    </button>
-                    <div class="tooltip-text">My Profile</div>
-                </div>
-                <button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                    ${state.address.slice(0, 6)}...${state.address.slice(-4)}
-                </button>
-            `;
+            navButtons.innerHTML = `<div class="tooltip-wrap"><button onclick="showSection('profile'); switchProfileTab('myworks')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/></svg></button><div class="tooltip-text">Upload Artwork</div></div><div class="tooltip-wrap"><button onclick="showSection('profile')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/><path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/></svg></button><div class="tooltip-text">My Profile</div></div><button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
         }
 
         function resetNavButtons() {
             const navButtons = document.getElementById('navButtons');
             const networkBadge = document.getElementById('networkBadge');
-
             if (!navButtons) return;
-
-            navButtons.innerHTML = `
-                <button id="connectBtn" class="btn-main">Get Started</button>
-            `;
-
-            // Re-attach event listener
-            const connectBtn = document.getElementById('connectBtn');
-            if (connectBtn) {
-                connectBtn.addEventListener('click', async () => {
-                    if (window.web3Modal) {
-                        await window.web3Modal.open();
-                    }
-                });
-            }
-
-            if (networkBadge) {
-                networkBadge.innerHTML = '';
-            }
+            navButtons.innerHTML = '<button onclick="window.connectWallet()" class="btn-main">Get Started</button>';
+            if (networkBadge) networkBadge.innerHTML = '';
         }
 
-        // Setup connect button handler
-        document.addEventListener('DOMContentLoaded', () => {
-            const connectBtn = document.getElementById('connectBtn');
-            if (connectBtn) {
-                connectBtn.addEventListener('click', async () => {
-                    console.log('🔘 Connect button clicked');
-                    if (window.web3Modal) {
-                        try {
-                            await window.web3Modal.open();
-                        } catch (error) {
-                            console.error('Error opening modal:', error);
-                        }
-                    } else {
-                        console.error('AppKit not initialized yet');
-                    }
-                });
-            }
-
-            // Check if already connected on page load
-            setTimeout(async () => {
-                if (window.web3Modal) {
-                    const state = window.web3Modal.getState();
-                    console.log('🔍 Initial state check:', state);
-
-                    if (state?.address) {
-                        console.log('🔄 Already connected, processing...');
-                        await handleSuccessfulLogin(state);
-                    }
-                }
-            }, 1000);
-        });
-
-        // Make wallet address globally accessible
-        window.getCurrentWalletAddress = () => currentWalletAddress;
-
-        // CRITICAL: Define window.connectWallet FIRST with fallback
         window.connectWallet = async () => {
-            console.log('Wallet connection initializing...');
-            if (window.web3Modal) {
-                await window.web3Modal.open();
-            }
+            if (modal) await modal.open();
         };
 
         async function initializeAppKit() {
             try {
                 modal = createAppKit({
+                    adapters: [new EthersAdapter()],
                     networks,
                     metadata,
                     projectId,
@@ -1828,173 +1663,20 @@
                 });
 
                 window.web3Modal = modal;
-
-                // Update window.connectWallet after modal is ready
                 window.connectWallet = async () => {
-                    try {
-                        if (modal) {
-                            await modal.open();
-                        }
-                    } catch (err) {
-                        console.error('Connection error:', err);
-                    }
+                    if (modal) await modal.open();
                 };
 
-                // Subscribe to events for connection success
-                modal.subscribeEvents((event) => {
-                    console.log('🎯 AppKit Event:', event);
-                    if (event.data?.event === 'CONNECT_SUCCESS') {
-                        console.log('✅ CONNECT_SUCCESS event detected');
-                        setTimeout(() => {
-                            const state = modal.getState();
-                            if (state?.address) {
-                                console.log('🔄 Updating nav buttons after CONNECT_SUCCESS');
-                                updateNavButtons(state);
-                                updateNetworkBadge(state);
-                            }
-                        }, 500);
-                    }
-                });
-
-                // Subscribe to account changes
-                modal.subscribeAccount((account) => {
-                    console.log('📊 Account changed');
-                    console.log('Account keys:', Object.keys(account || {}));
-                    console.log('Account JSON:', JSON.stringify(account, null, 2));
-                    console.log('caipAddress:', account?.caipAddress);
-                    console.log('address:', account?.address);
-                    console.log('isConnected:', account?.isConnected);
-
-                    if (account?.address) {
-                        console.log('✅ Wallet connected:', account.address);
-                        window.currentWalletAddress = account.address;
-
-                        const stateWithAddress = {
-                            address: account.address,
-                            chainId: account.chainId,
-                            isConnected: account.isConnected
-                        };
-
-                        updateNavButtons(stateWithAddress);
-                        updateNetworkBadge(stateWithAddress);
-                    } else if (account?.caipAddress) {
-                        // Try to extract address from CAIP format
-                        const parts = account.caipAddress.split(':');
-                        const address = parts[parts.length - 1];
-                        console.log('✅ Extracted address from caipAddress:', address);
-                        window.currentWalletAddress = address;
-
-                        const stateWithAddress = {
-                            address: address,
-                            chainId: account.chainId,
-                            isConnected: account.isConnected
-                        };
-
-                        updateNavButtons(stateWithAddress);
-                        updateNetworkBadge(stateWithAddress);
+                modal.subscribeState((state) => {
+                    if (state?.address) {
+                        updateNavButtons(state);
+                        updateNetworkBadge(state);
+                        localStorage.setItem('artsoul_wallet', state.address);
                     } else {
-                        console.log('❌ Wallet disconnected or no address found');
-                        window.currentWalletAddress = null;
                         resetNavButtons();
+                        localStorage.removeItem('artsoul_wallet');
                     }
                 });
-
-                // Try to get provider and accounts
-                (async () => {
-                    try {
-                        const provider = await modal.getWalletProvider();
-                        console.log('🔌 Provider:', provider);
-                        if (provider) {
-                            const accounts = await provider.request({method: 'eth_accounts'});
-                            console.log('🔌 Provider accounts:', accounts);
-                        }
-                    } catch (error) {
-                        console.log('⚠️ Could not get provider:', error);
-                    }
-                })();
-
-                // Direct window.ethereum connection (primary method for desktop)
-                if (window.ethereum) {
-                    console.log('🔌 window.ethereum detected');
-
-                    // Listen for account changes
-                    window.ethereum.on('accountsChanged', (accounts) => {
-                        console.log('🔄 accountsChanged event:', accounts);
-                        if (accounts[0]) {
-                            window.currentWalletAddress = accounts[0];
-                            localStorage.setItem('artsoul_wallet', accounts[0]);
-                            updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
-                            updateNetworkBadge({address: accounts[0], chainId: null});
-                        } else {
-                            window.currentWalletAddress = null;
-                            localStorage.removeItem('artsoul_wallet');
-                            resetNavButtons();
-                        }
-                    });
-
-                    // Check for existing accounts
-                    try {
-                        const accounts = await window.ethereum.request({method: 'eth_accounts'});
-                        console.log('🔌 Existing accounts:', accounts);
-                        if (accounts[0]) {
-                            window.currentWalletAddress = accounts[0];
-                            localStorage.setItem('artsoul_wallet', accounts[0]);
-                            updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
-                            updateNetworkBadge({address: accounts[0], chainId: null});
-                        }
-                    } catch (error) {
-                        console.log('⚠️ Could not get eth_accounts:', error);
-                    }
-
-                    // Regular check every 3 seconds
-                    setInterval(async () => {
-                        try {
-                            const accounts = await window.ethereum.request({method: 'eth_accounts'});
-                            if (accounts[0] && accounts[0] !== window.currentWalletAddress) {
-                                console.log('🔄 Periodic check found address:', accounts[0]);
-                                window.currentWalletAddress = accounts[0];
-                                localStorage.setItem('artsoul_wallet', accounts[0]);
-                                updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
-                                updateNetworkBadge({address: accounts[0], chainId: null});
-                            }
-                        } catch (error) {
-                            // Silent fail
-                        }
-                    }, 3000);
-                }
-
-                // Restore from localStorage on page load
-                const savedWallet = localStorage.getItem('artsoul_wallet');
-                if (savedWallet) {
-                    console.log('💾 Restored wallet from localStorage:', savedWallet);
-                    window.currentWalletAddress = savedWallet;
-                    updateNavButtons({address: savedWallet, chainId: null, isConnected: true});
-                    updateNetworkBadge({address: savedWallet, chainId: null});
-                }
-
-                console.log('✅ AppKit 1.7.11 initialized (bundled)');
-                console.log('📊 Networks:', networks.map(n => n.name).join(', '));
-                console.log('🔧 Features: Social (Google, X, Apple, Discord), Email, Onramp, Swaps');
-
-                // Check if wallet is already connected from previous session
-                setTimeout(() => {
-                    const account = modal.getAccount ? modal.getAccount() : modal.getState();
-                    console.log('🔍 Checking for existing connection:', account);
-
-                    if (account?.address) {
-                        console.log('✅ Wallet already connected from previous session:', account.address);
-                        window.currentWalletAddress = account.address;
-
-                        const stateWithAddress = {
-                            address: account.address,
-                            chainId: account.chainId,
-                            isConnected: account.isConnected
-                        };
-
-                        updateNavButtons(stateWithAddress);
-                        updateNetworkBadge(stateWithAddress);
-                    }
-                }, 1000);
 
                 // Polling fallback for desktop wallet extensions
                 setInterval(() => {
@@ -2002,7 +1684,6 @@
 
                     let addr = null;
 
-                    // Try multiple methods to get address
                     if (modal.getAddress) {
                         addr = modal.getAddress();
                     } else if (modal.getAccount) {
@@ -2025,16 +1706,16 @@
 
                         updateNavButtons(stateWithAddress);
                         updateNetworkBadge(stateWithAddress);
+                        localStorage.setItem('artsoul_wallet', addr);
                     }
                 }, 2000);
 
+                console.log('✅ AppKit initialized on index.html');
             } catch (error) {
-                console.error('⚠️ AppKit initialization failed:', error);
-                console.log('📌 AppKit will handle wallet connection via modal');
+                console.error('⚠️ AppKit init failed:', error);
             }
         }
 
-        // Initialize on DOMContentLoaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeAppKit);
         } else {
