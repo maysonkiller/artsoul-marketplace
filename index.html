@@ -907,7 +907,6 @@
                         <div class="tooltip-text">Documentation</div>
                     </div>
                     <div class="devnet-banner">Working on Rialo Playground Devnet</div>
-                    <button onclick="showSection('profile')" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Profile (Test)</button>
                     <div id="networkBadge"></div>
                     <div class="flex items-center gap-3" id="navButtons">
                         <button id="connectBtn" class="btn-main">Get Started</button>
@@ -1783,6 +1782,22 @@
                     }
                 };
 
+                // Subscribe to events for connection success
+                modal.subscribeEvents((event) => {
+                    console.log('🎯 AppKit Event:', event);
+                    if (event.data?.event === 'CONNECT_SUCCESS') {
+                        console.log('✅ CONNECT_SUCCESS event detected');
+                        setTimeout(() => {
+                            const state = modal.getState();
+                            if (state?.address) {
+                                console.log('🔄 Updating nav buttons after CONNECT_SUCCESS');
+                                updateNavButtons(state);
+                                updateNetworkBadge(state);
+                            }
+                        }, 500);
+                    }
+                });
+
                 // Subscribe to state changes with debounce
                 let lastAddress = null;
                 let processingConnection = false;
@@ -1841,6 +1856,17 @@
                 console.log('✅ AppKit 1.7.11 initialized (bundled)');
                 console.log('📊 Networks:', networks.map(n => n.name).join(', '));
                 console.log('🔧 Features: Social (Google, X, Apple, Discord), Email, Onramp, Swaps');
+
+                // Check if wallet is already connected from previous session
+                setTimeout(() => {
+                    const state = modal.getState();
+                    console.log('🔍 Checking for existing connection:', state);
+                    if (state?.address) {
+                        console.log('✅ Wallet already connected from previous session');
+                        updateNavButtons(state);
+                        updateNetworkBadge(state);
+                    }
+                }, 1000);
 
             } catch (error) {
                 console.error('⚠️ AppKit initialization failed:', error);
