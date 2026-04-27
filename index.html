@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArtSoul - Decentralized Art Marketplace</title>
-    <link rel="icon" type="image/jpeg" href="https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg">
+    <link rel="icon" type="image/jpeg" href="ARTSOULlogo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="supabase-client.js"></script>
@@ -410,9 +410,39 @@
             animation-delay: -16.66s;
         }
 
+        .future .gallery .card:nth-child(7) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -1.66s;
+        }
+
+        .future .gallery .card:nth-child(8) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -5s;
+        }
+
+        .future .gallery .card:nth-child(9) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -8.33s;
+        }
+
+        .future .gallery .card:nth-child(10) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -11.66s;
+        }
+
+        .future .gallery .card:nth-child(11) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -15s;
+        }
+
+        .future .gallery .card:nth-child(12) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -18.33s;
+        }
+
         @keyframes slideCards {
             0% {
-                transform: translateX(100vw);
+                transform: translateX(-100vw);
                 opacity: 0;
             }
             5% {
@@ -422,7 +452,7 @@
                 opacity: 1;
             }
             100% {
-                transform: translateX(-100vw);
+                transform: translateX(100vw);
                 opacity: 0;
             }
         }
@@ -1099,7 +1129,9 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between flex-wrap gap-4" style="position: relative;">
                 <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-2xl font-light tracking-wide logo-interactive" onmouseenter="morphToAnagram()" onmouseleave="resetMorph()">ArtSoul</a>
+                    <a href="index.html">
+                        <img src="ARTSOULlogo.jpg" alt="ArtSoul" style="height: 40px; width: auto;">
+                    </a>
                     <div class="theme-toggle">
                         <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
                             Classic
@@ -1140,6 +1172,42 @@
         </div>
 
         <div class="gallery">
+            <div class="card rounded-xl overflow-hidden" data-letter="A">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
+                </div>
+            </div>
+
+            <div class="card rounded-xl overflow-hidden" data-letter="R">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
+                </div>
+            </div>
+
+            <div class="card rounded-xl overflow-hidden" data-letter="T">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
+                </div>
+            </div>
+
+            <div class="card rounded-xl overflow-hidden" data-letter="S">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
+                </div>
+            </div>
+
+            <div class="card rounded-xl overflow-hidden" data-letter="O">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
+                </div>
+            </div>
+
+            <div class="card rounded-xl overflow-hidden" data-letter="L">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
+                </div>
+            </div>
+
             <div class="card rounded-xl overflow-hidden" data-letter="A">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
                     <p class="text-2xl font-light">Coming Soon</p>
