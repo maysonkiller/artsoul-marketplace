@@ -1669,6 +1669,12 @@
                 return;
             }
 
+            // Ensure user is authenticated before saving
+            const isAuthenticated = await window.ensureAuthenticated();
+            if (!isAuthenticated) {
+                return;
+            }
+
             try {
                 let avatarUrl = document.getElementById('avatarPreview').src;
 
@@ -1905,6 +1911,41 @@
             if (modal) await modal.open();
         };
 
+        // Lazy authentication - only authenticate when needed
+        window.ensureAuthenticated = async () => {
+            // Check if already authenticated
+            if (window.SupabaseAuth) {
+                const isAuth = await window.SupabaseAuth.isAuthenticated();
+                if (isAuth) {
+                    console.log('✅ Already authenticated');
+                    return true;
+                }
+            }
+
+            // Check if wallet is connected
+            const walletAddress = window.currentWalletAddress || localStorage.getItem('artsoul_wallet');
+            if (!walletAddress) {
+                alert('Please connect your wallet first');
+                return false;
+            }
+
+            // Authenticate with signature
+            try {
+                console.log('🔐 Requesting signature for authentication...');
+                const provider = await modal.getWalletProvider();
+                const authResult = await window.SupabaseAuth.authenticateWithWallet(
+                    walletAddress,
+                    provider
+                );
+                console.log('✅ Authenticated:', authResult.user.id);
+                return true;
+            } catch (error) {
+                console.error('❌ Authentication failed:', error);
+                alert('Authentication failed. Please try again.');
+                return false;
+            }
+        };
+
         // Detect mobile device
         function isMobileDevice() {
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -1953,35 +1994,38 @@
                     return window.currentWalletAddress || localStorage.getItem('artsoul_wallet');
                 };
 
+                let lastProcessedAddress = null;
+
                 modal.subscribeAccount(async (account) => {
                     console.log('📊 Account update:', account?.address || 'disconnected', account?.status);
 
                     if (account?.address && account?.status === 'connected') {
+                        // Prevent duplicate processing
+                        if (lastProcessedAddress === account.address) {
+                            return;
+                        }
+                        lastProcessedAddress = account.address;
+
                         window.currentWalletAddress = account.address;
                         localStorage.setItem('artsoul_wallet', account.address);
 
-                        // Authenticate with Supabase using wallet signature
-                        try {
-                            const provider = await modal.getWalletProvider();
-                            const authResult = await window.SupabaseAuth.authenticateWithWallet(
-                                account.address,
-                                provider
-                            );
-                            console.log('✅ Supabase authenticated:', authResult.user.id);
-                        } catch (error) {
-                            console.error('⚠️ Supabase auth failed:', error);
-                            // Continue anyway - user can still browse
-                        }
+                        // DON'T authenticate immediately - wait until user needs it
+                        // This prevents the disconnect issue
+                        console.log('✅ Wallet connected, auth will happen on first upload');
 
                         updateNavButtons({address: account.address, chainId: account.chainId});
                         updateNetworkBadge({address: account.address, chainId: account.chainId});
                     } else if (account?.status === 'disconnected') {
+                        lastProcessedAddress = null;
                         window.currentWalletAddress = null;
                         localStorage.removeItem('artsoul_wallet');
 
-                        // Sign out from Supabase
+                        // Sign out from Supabase if authenticated
                         try {
-                            await window.SupabaseAuth.signOut();
+                            const isAuth = await window.SupabaseAuth?.isAuthenticated();
+                            if (isAuth) {
+                                await window.SupabaseAuth.signOut();
+                            }
                         } catch (error) {
                             console.error('⚠️ Supabase signout failed:', error);
                         }
