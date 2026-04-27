@@ -1920,6 +1920,38 @@
                     }
                 }, 1000);
 
+                // Polling fallback for desktop wallet extensions
+                setInterval(() => {
+                    if (!modal) return;
+
+                    let addr = null;
+
+                    // Try multiple methods to get address
+                    if (modal.getAddress) {
+                        addr = modal.getAddress();
+                    } else if (modal.getAccount) {
+                        const account = modal.getAccount();
+                        addr = account?.address;
+                    } else {
+                        const state = modal.getState();
+                        addr = state?.address;
+                    }
+
+                    if (addr && addr !== window.currentWalletAddress) {
+                        console.log('🔄 Polling detected address:', addr);
+                        window.currentWalletAddress = addr;
+
+                        const stateWithAddress = {
+                            address: addr,
+                            chainId: null,
+                            isConnected: true
+                        };
+
+                        updateNavButtons(stateWithAddress);
+                        updateNetworkBadge(stateWithAddress);
+                    }
+                }, 2000);
+
             } catch (error) {
                 console.error('⚠️ AppKit initialization failed:', error);
                 console.log('📌 AppKit will handle wallet connection via modal');
