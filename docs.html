@@ -677,10 +677,17 @@
             if (modal) await modal.open();
         };
 
+        // Detect mobile device
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
         async function initializeAppKit() {
             try {
-                modal = createAppKit({
-                    adapters: [new EthersAdapter()],
+                const isMobile = isMobileDevice();
+                console.log('📱 Device type:', isMobile ? 'Mobile' : 'Desktop');
+
+                const config = {
                     networks,
                     metadata,
                     projectId,
@@ -696,7 +703,14 @@
                         '--w3m-accent': '#00f5ff',
                         '--w3m-color-mix': '#bf00ff'
                     }
-                });
+                };
+
+                // Only add EthersAdapter on desktop for browser extensions
+                if (!isMobile) {
+                    config.adapters = [new EthersAdapter()];
+                }
+
+                modal = createAppKit(config);
 
                 window.web3Modal = modal;
                 window.connectWallet = async () => {
