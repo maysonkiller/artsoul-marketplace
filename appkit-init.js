@@ -1,19 +1,14 @@
 // ============================================
-// APPKIT INITIALIZATION MODULE
-// Centralized Web3 wallet connection for ArtSoul
+// APPKIT INITIALIZATION - FINAL FIXED VERSION
+// Centralized Wallet Connection for ArtSoul
 // ============================================
 
 import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
 import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
 import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
-// ============================================
-// CONFIGURATION
-// ============================================
-
 const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
 
-// Custom Rialo Playground network
 const rialoPlayground = {
     id: 2025,
     name: 'Rialo Playground',
@@ -31,7 +26,6 @@ const metadata = {
     icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg']
 };
 
-// Network display names and currencies
 const networkMap = {
     1: { name: 'Ethereum', currency: 'ETH' },
     137: { name: 'Polygon', currency: 'MATIC' },
@@ -43,30 +37,20 @@ const networkMap = {
     2025: { name: 'Rialo Playground', currency: 'RIA' }
 };
 
-// ============================================
-// STATE
-// ============================================
-
 let modal = null;
 let currentNetwork = null;
 let currentBalance = '0.00';
 let lastProcessedAddress = null;
 
 // ============================================
-// UI UPDATE FUNCTIONS
+// UI FUNCTIONS
 // ============================================
 
-/**
- * Update navigation buttons based on wallet connection state
- * Shows "Get Started" when disconnected
- * Shows "My Profile" + wallet address when connected
- */
 function updateNavButtons(state) {
     const navButtons = document.getElementById('navButtons');
     if (!navButtons) return;
 
     if (state?.address) {
-        // Connected: Show My Profile + short wallet address
         const shortAddress = `${state.address.slice(0, 6)}...${state.address.slice(-4)}`;
         navButtons.innerHTML = `
             <a href="profile.html" class="btn-main" style="background: transparent; border: 1px solid currentColor; color: inherit;">
@@ -76,34 +60,25 @@ function updateNavButtons(state) {
                 ${shortAddress}
             </button>
         `;
-
-        // Store wallet address
-        localStorage.setItem('artsoul_wallet', state.address);
         window.currentWalletAddress = state.address;
+        localStorage.setItem('artsoul_wallet', state.address);
     } else {
-        // Disconnected: Show Get Started button
         navButtons.innerHTML = `
             <button onclick="safeConnectWallet()" id="connectBtn" class="btn-main">Get Started</button>
         `;
-
-        // Clear wallet address
-        localStorage.removeItem('artsoul_wallet');
         window.currentWalletAddress = null;
+        localStorage.removeItem('artsoul_wallet');
     }
 }
 
-/**
- * Update network badge with current network and balance
- */
 function updateNetworkBadge(state) {
-    const networkBadgeContainer = document.getElementById('networkBadge');
-    if (!networkBadgeContainer) return;
+    const container = document.getElementById('networkBadge');
+    if (!container) return;
 
     if (state?.address && state?.chainId) {
         const network = networkMap[state.chainId] || { name: 'Unknown', currency: 'ETH' };
         currentNetwork = network;
 
-        // Fetch balance using AppKit provider
         if (modal?.getWalletProvider) {
             modal.getWalletProvider().then(provider => {
                 if (provider) {
@@ -112,33 +87,19 @@ function updateNetworkBadge(state) {
                             currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
                             renderNetworkBadge();
                         })
-                        .catch(() => {
-                            currentBalance = '0.00';
-                            renderNetworkBadge();
-                        });
-                } else {
-                    renderNetworkBadge();
+                        .catch(() => renderNetworkBadge());
                 }
-            }).catch(() => {
-                renderNetworkBadge();
             });
-        } else {
-            renderNetworkBadge();
         }
     } else {
-        // Clear badge when disconnected
-        networkBadgeContainer.innerHTML = '';
+        container.innerHTML = '';
     }
 }
 
-/**
- * Render network badge HTML
- */
 function renderNetworkBadge() {
-    const networkBadgeContainer = document.getElementById('networkBadge');
-    if (!networkBadgeContainer || !currentNetwork) return;
-
-    networkBadgeContainer.innerHTML = `
+    const container = document.getElementById('networkBadge');
+    if (!container || !currentNetwork) return;
+    container.innerHTML = `
         <div class="network-badge" onclick="window.web3Modal?.open({ view: 'Networks' })">
             <span class="network-name">${currentNetwork.name}</span>
             <span class="balance-amount">${currentBalance} ${currentNetwork.currency}</span>
@@ -150,10 +111,6 @@ function renderNetworkBadge() {
 // WALLET CONNECTION
 // ============================================
 
-/**
- * Safe wallet connection with error handling
- * Prevents duplicate connection attempts
- */
 window.safeConnectWallet = async () => {
     const btn = document.getElementById('connectBtn');
     if (btn) btn.disabled = true;
@@ -162,106 +119,70 @@ window.safeConnectWallet = async () => {
         if (window.web3Modal) {
             await window.web3Modal.open();
         } else {
-            alert('Подождите, приложение загружается...');
+            alert('Подождите, модал загружается...');
         }
     } catch (err) {
-        console.error('❌ Connection error:', err);
-
-        // Handle "previous request still pending" error
+        console.error('Connection error:', err);
         if (err.message?.includes('previous') || err.message?.includes('declined')) {
-            await resetWalletConnection();
+            await window.resetWalletConnection();
         }
     } finally {
         if (btn) btn.disabled = false;
     }
 };
 
-/**
- * Reset wallet connection state
- * Clears all WalletConnect/AppKit cache
- */
 window.resetWalletConnection = async () => {
-    if (window.web3Modal) {
-        await window.web3Modal.disconnect();
-    }
+    if (window.web3Modal) await window.web3Modal.disconnect();
 
-    // Clear all wallet-related localStorage
     Object.keys(localStorage)
-        .filter(k =>
-            k.includes('walletconnect') ||
-            k.includes('wc@') ||
-            k.includes('reown') ||
-            k.includes('appkit')
-        )
+        .filter(k => k.includes('walletconnect') || k.includes('wc@') || k.includes('reown') || k.includes('appkit'))
         .forEach(k => localStorage.removeItem(k));
 
     location.reload();
 };
 
 // ============================================
-// AUTHENTICATION
+// AUTH HELPERS
 // ============================================
 
-/**
- * Lazy authentication - only authenticate when needed
- * Prevents disconnect issues from immediate signature requests
- */
 window.ensureAuthenticated = async () => {
-    // Check if already authenticated
     if (window.SupabaseAuth) {
         const isAuth = await window.SupabaseAuth.isAuthenticated();
-        if (isAuth) {
-            console.log('✅ Already authenticated');
-            return true;
-        }
+        if (isAuth) return true;
     }
 
-    // Check if wallet is connected
     const walletAddress = window.currentWalletAddress || localStorage.getItem('artsoul_wallet');
     if (!walletAddress) {
         alert('Please connect your wallet first');
         return false;
     }
 
-    // Authenticate with signature
     try {
-        console.log('🔐 Requesting signature for authentication...');
-        const provider = await modal.getWalletProvider();
-        const authResult = await window.SupabaseAuth.authenticateWithWallet(
-            walletAddress,
-            provider
-        );
-        console.log('✅ Authenticated:', authResult.user.id);
+        const provider = await modal?.getWalletProvider();
+        const authResult = await window.SupabaseAuth.authenticateWithWallet(walletAddress, provider);
+        console.log('✅ Supabase authenticated');
         return true;
     } catch (error) {
-        console.error('❌ Authentication failed:', error);
+        console.error('Auth failed:', error);
         alert('Authentication failed. Please try again.');
         return false;
     }
 };
 
-/**
- * Get current wallet address
- */
 window.getCurrentWalletAddress = () => {
     return window.currentWalletAddress || localStorage.getItem('artsoul_wallet');
 };
 
 // ============================================
-// DEVICE DETECTION
-// ============================================
-
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-// ============================================
-// APPKIT INITIALIZATION
+// INITIALIZATION
 // ============================================
 
 async function initializeAppKit() {
     try {
-        const isMobile = isMobileDevice();
+        // Cleanup previous providers
+        delete window.ethereum;
+
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         console.log('📱 Device type:', isMobile ? 'Mobile' : 'Desktop');
 
         const config = {
@@ -285,80 +206,39 @@ async function initializeAppKit() {
             enableCoinbase: false
         };
 
-        // Only add EthersAdapter on desktop for browser extensions
-        if (!isMobile) {
-            config.adapters = [new EthersAdapter()];
-        }
+        // Temporarily disable EthersAdapter (fixes Phantom conflict)
+        // if (!isMobile) config.adapters = [new EthersAdapter()];
 
         modal = createAppKit(config);
         window.web3Modal = modal;
 
-        // Subscribe to account changes
         modal.subscribeAccount(async (account) => {
             console.log('📊 Account update:', account?.address || 'disconnected', account?.status);
-
+            
             if (account?.address && account?.status === 'connected') {
-                // Prevent duplicate processing
-                if (lastProcessedAddress === account.address) {
-                    return;
-                }
+                if (lastProcessedAddress === account.address) return;
                 lastProcessedAddress = account.address;
 
-                window.currentWalletAddress = account.address;
-                localStorage.setItem('artsoul_wallet', account.address);
-
-                // DON'T authenticate immediately - wait until user needs it
-                // This prevents the disconnect issue
-                console.log('✅ Wallet connected, auth will happen on first upload');
-
-                // Update UI
-                updateNavButtons({ address: account.address, chainId: account.chainId });
-                updateNetworkBadge({ address: account.address, chainId: account.chainId });
-
+                updateNavButtons(account);
+                updateNetworkBadge(account);
             } else if (account?.status === 'disconnected') {
                 lastProcessedAddress = null;
-                window.currentWalletAddress = null;
-                localStorage.removeItem('artsoul_wallet');
-
-                // Sign out from Supabase if authenticated
-                try {
-                    const isAuth = await window.SupabaseAuth?.isAuthenticated();
-                    if (isAuth) {
-                        await window.SupabaseAuth.signOut();
-                    }
-                } catch (error) {
-                    console.error('⚠️ Supabase signout failed:', error);
-                }
-
-                // Update UI
                 updateNavButtons(null);
                 updateNetworkBadge(null);
             }
         });
 
-        console.log('✅ AppKit initialized');
+        console.log('✅ AppKit initialized successfully');
     } catch (error) {
         console.error('⚠️ AppKit init failed:', error);
     }
 }
 
-// ============================================
-// AUTO-INITIALIZE
-// ============================================
-
+// Auto start
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', async () => {
-        // Check for OAuth callback first
         if (window.SupabaseAuth) {
-            const oauthResult = await window.SupabaseAuth.handleOAuthCallback();
-            if (oauthResult) {
-                console.log('✅ OAuth callback handled:', oauthResult.provider);
-                // Update UI with social login info
-                if (oauthResult.user.user_metadata?.wallet_address) {
-                    window.currentWalletAddress = oauthResult.user.user_metadata.wallet_address;
-                    localStorage.setItem('artsoul_wallet', window.currentWalletAddress);
-                }
-            }
+            await window.SupabaseAuth.handleOAuthCallback();
         }
         initializeAppKit();
     });
