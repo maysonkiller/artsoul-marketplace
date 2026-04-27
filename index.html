@@ -485,8 +485,10 @@
             transition: all 0.3s;
         }
 
-        .logo-interactive:hover {
-            transform: scale(1.05);
+        @media (min-width: 769px) {
+            .logo-interactive:hover {
+                transform: scale(1.05);
+            }
         }
 
         /* Network Badge & Balance */
@@ -546,6 +548,56 @@
 
         .balance-amount {
             opacity: 0.8;
+        }
+
+        /* Devnet Banner */
+        .devnet-banner {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .classic .devnet-banner {
+            background: rgba(169, 221, 211, 0.15);
+            border: 1px solid var(--accent-classic);
+            color: var(--accent-classic);
+        }
+
+        .future .devnet-banner {
+            background: rgba(0, 245, 255, 0.15);
+            border: 1px solid var(--accent-future);
+            color: var(--accent-future);
+        }
+
+        /* Mobile fixes */
+        @media (max-width: 768px) {
+            .tooltip-text {
+                position: fixed;
+                top: auto;
+                bottom: 1rem;
+                left: 50%;
+                transform: translateX(-50%);
+                margin-top: 0;
+            }
+
+            .balance-amount {
+                display: none;
+            }
+
+            .devnet-banner {
+                font-size: 0.65rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            /* Disable card levitation on mobile */
+            .classic .card,
+            .future .card {
+                animation: none;
+            }
         }
 
         @media (max-width: 640px) {
@@ -613,6 +665,7 @@
                         </a>
                         <div class="tooltip-text">Documentation</div>
                     </div>
+                    <div class="devnet-banner">Working on Rialo Playground Devnet</div>
                     <div id="networkBadge"></div>
                     <div class="flex items-center gap-3" id="navButtons">
                         <button id="connectBtn" class="btn-main">Get Started</button>
