@@ -312,6 +312,16 @@
             animation: gradientFlow 3s linear infinite;
         }
 
+        /* Roadmap stage headings glow effect */
+        .future h4 {
+            background: linear-gradient(90deg, var(--accent-future), var(--neon-purple), var(--accent-future));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 3s linear infinite;
+        }
+
         @keyframes gradientFlow {
             0% { background-position: 0% 50%; }
             100% { background-position: 200% 50%; }
