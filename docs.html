@@ -355,7 +355,14 @@
                             return (
                                 <div key={index} id={section.id || ''} className={`p-6 rounded-xl ${isClassic ? 'bg-gray-900/30 border border-gray-700' : 'bg-cyan-900/10 border border-cyan-500/30'} animate-fadeIn`} style={{animationDelay: `${index * 0.1}s`}}>
                                     <h2 className="text-2xl font-semibold mb-4">{section.title}</h2>
-                                    <p className="opacity-80 leading-relaxed" dangerouslySetInnerHTML={{__html: formattedContent}}></p>
+                                    {section.id === 'rialo' ? (
+                                        <div className="flex flex-col md:flex-row gap-6 items-start">
+                                            <p className="opacity-80 leading-relaxed flex-1" dangerouslySetInnerHTML={{__html: formattedContent}}></p>
+                                            <img src="1080x360.png" alt="Rialo Playground" className="w-full md:max-w-[40%] rounded-xl object-cover" />
+                                        </div>
+                                    ) : (
+                                        <p className="opacity-80 leading-relaxed" dangerouslySetInnerHTML={{__html: formattedContent}}></p>
+                                    )}
                                 </div>
                             );
                         })}
