@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArtSoul - Decentralized Art Marketplace</title>
-    <link rel="icon" type="image/png" href="ARTSOULlogo.png" sizes="64x64">
+    <link rel="icon" type="image/png" href="ARTSOULlogo.png" sizes="128x128">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="supabase-client.js"></script>
@@ -379,11 +379,15 @@
         .future .gallery {
             overflow: hidden;
             position: relative;
+            display: block;
+            height: 300px;
         }
 
         .future .gallery .card {
             position: absolute;
-            animation: slideCardsFlow 25s linear infinite;
+            width: 250px;
+            top: 0;
+            animation: slideCardsFlow 40s linear infinite;
         }
 
         .future .gallery .card:nth-child(1) {
@@ -391,55 +395,55 @@
         }
 
         .future .gallery .card:nth-child(2) {
-            animation-delay: -4.16s;
+            animation-delay: -3.33s;
         }
 
         .future .gallery .card:nth-child(3) {
-            animation-delay: -8.32s;
+            animation-delay: -6.66s;
         }
 
         .future .gallery .card:nth-child(4) {
-            animation-delay: -12.48s;
+            animation-delay: -10s;
         }
 
         .future .gallery .card:nth-child(5) {
-            animation-delay: -16.64s;
+            animation-delay: -13.33s;
         }
 
         .future .gallery .card:nth-child(6) {
-            animation-delay: -20.8s;
+            animation-delay: -16.66s;
         }
 
         .future .gallery .card:nth-child(7) {
-            animation-delay: -2.08s;
+            animation-delay: -20s;
         }
 
         .future .gallery .card:nth-child(8) {
-            animation-delay: -6.24s;
+            animation-delay: -23.33s;
         }
 
         .future .gallery .card:nth-child(9) {
-            animation-delay: -10.4s;
+            animation-delay: -26.66s;
         }
 
         .future .gallery .card:nth-child(10) {
-            animation-delay: -14.56s;
+            animation-delay: -30s;
         }
 
         .future .gallery .card:nth-child(11) {
-            animation-delay: -18.72s;
+            animation-delay: -33.33s;
         }
 
         .future .gallery .card:nth-child(12) {
-            animation-delay: -22.88s;
+            animation-delay: -36.66s;
         }
 
         @keyframes slideCardsFlow {
             0% {
-                transform: translateX(-100%);
+                transform: translateX(-270px);
             }
             100% {
-                transform: translateX(calc(100vw + 100%));
+                transform: translateX(calc(100vw + 270px));
             }
         }
 
@@ -606,26 +610,13 @@
             opacity: 0.6;
         }
 
-        /* Gallery Grid - 6 in one row */
+        /* Gallery Grid - 6 in one row, 2 rows total (12 cards) */
         .gallery {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 1rem;
             max-width: 1400px;
             margin: 0 auto 150px;
-        }
-
-        /* In Future mode, override grid to show all cards in a single flowing row */
-        .future .gallery {
-            display: flex;
-            gap: 1rem;
-            max-width: none;
-            width: 100%;
-        }
-
-        .future .gallery .card {
-            flex: 0 0 calc((100vw - 5rem) / 6);
-            min-width: calc((100vw - 5rem) / 6);
         }
 
         @media (max-width: 1200px) {
