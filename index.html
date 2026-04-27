@@ -330,6 +330,103 @@
             }
         }
 
+        /* Floating animation for roadmap items in Future mode */
+        .future .relative.mb-12:nth-child(2) {
+            animation: floatItem1 8s ease-in-out infinite;
+        }
+
+        .future .relative.mb-12:nth-child(3) {
+            animation: floatItem2 10s ease-in-out infinite;
+        }
+
+        .future .relative.mb-12:nth-child(4) {
+            animation: floatItem3 12s ease-in-out infinite;
+        }
+
+        .future .relative:nth-child(5) {
+            animation: floatItem4 9s ease-in-out infinite;
+        }
+
+        @keyframes floatItem1 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-15px) translateX(10px); }
+            50% { transform: translateY(-8px) translateX(-5px); }
+            75% { transform: translateY(-20px) translateX(8px); }
+        }
+
+        @keyframes floatItem2 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-12px) translateX(-8px); }
+            50% { transform: translateY(-18px) translateX(12px); }
+            75% { transform: translateY(-5px) translateX(-10px); }
+        }
+
+        @keyframes floatItem3 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-10px) translateX(15px); }
+            50% { transform: translateY(-22px) translateX(-8px); }
+            75% { transform: translateY(-12px) translateX(10px); }
+        }
+
+        @keyframes floatItem4 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-18px) translateX(-12px); }
+            50% { transform: translateY(-10px) translateX(15px); }
+            75% { transform: translateY(-15px) translateX(-5px); }
+        }
+
+        /* Gallery cards sliding animation in Future mode */
+        .future .gallery {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .future .gallery .card:nth-child(1) {
+            animation: slideCards 20s linear infinite;
+        }
+
+        .future .gallery .card:nth-child(2) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -3.33s;
+        }
+
+        .future .gallery .card:nth-child(3) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -6.66s;
+        }
+
+        .future .gallery .card:nth-child(4) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -10s;
+        }
+
+        .future .gallery .card:nth-child(5) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -13.33s;
+        }
+
+        .future .gallery .card:nth-child(6) {
+            animation: slideCards 20s linear infinite;
+            animation-delay: -16.66s;
+        }
+
+        @keyframes slideCards {
+            0% {
+                transform: translateX(100vw);
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+        }
+
         /* Mode Transition Effect */
         @keyframes modeTransition {
             0% { filter: brightness(1); }
@@ -1017,7 +1114,8 @@
                     <div class="tooltip-wrap">
                         <a href="docs.html" class="inline-block p-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                             <svg viewBox="0 0 24 24" fill="none" class="w-7 h-7" style="color: currentColor;">
-                                <path d="M9 2L9 22M15 2L15 22M4 9L20 9M4 15L20 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M6 2H14L20 8V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V4C4 2.9 4.9 2 6 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M14 2V8H20M8 13H16M8 17H16M8 9H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                             </svg>
                         </a>
                         <div class="tooltip-text">Documentation</div>
