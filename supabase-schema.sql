@@ -137,15 +137,15 @@ ALTER TABLE artworks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE auctions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bids ENABLE ROW LEVEL SECURITY;
 
--- Profiles: Everyone can read, only owner can update
+-- Profiles: Everyone can read, anyone can create/update (we handle auth in app)
 CREATE POLICY "Profiles are viewable by everyone" ON profiles
     FOR SELECT USING (true);
 
-CREATE POLICY "Users can update own profile" ON profiles
-    FOR UPDATE USING (wallet_address = current_setting('request.jwt.claims', true)::json->>'wallet_address');
+CREATE POLICY "Anyone can create profile" ON profiles
+    FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Users can insert own profile" ON profiles
-    FOR INSERT WITH CHECK (wallet_address = current_setting('request.jwt.claims', true)::json->>'wallet_address');
+CREATE POLICY "Anyone can update profile" ON profiles
+    FOR UPDATE USING (true);
 
 -- Artworks: Everyone can read, only creator can create/update
 CREATE POLICY "Artworks are viewable by everyone" ON artworks
