@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - ArtSoul</title>
-    <link rel="icon" type="image/jpeg" href="https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg">
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="supabase-client.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
-            --text-classic: #e8e3d5;
+            --text-classic: #a9ddd3;
             --accent-classic: #a9ddd3;
             --accent-future: #00f5ff;
             --neon-purple: #bf00ff;
@@ -24,6 +24,25 @@
             box-sizing: border-box;
         }
 
+        @keyframes glow-pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .gallery-item {
+            transition: all 0.3s ease;
+        }
+
+        /* Classic Mode */
         body.classic {
             background: var(--bg-classic);
             color: var(--text-classic);
@@ -35,11 +54,11 @@
         }
 
         .classic .btn-main {
-            background: var(--text-classic);
+            background: var(--accent-classic);
             color: var(--bg-classic);
-            border: 1px solid var(--text-classic);
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.375rem;
+            border: 1px solid var(--accent-classic);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
@@ -47,9 +66,15 @@
 
         .classic .btn-main:hover {
             background: transparent;
-            color: var(--text-classic);
+            color: var(--accent-classic);
         }
 
+        .classic .gallery-item:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-classic);
+        }
+
+        /* Future Mode */
         body.future {
             background: #000000;
             color: var(--accent-future);
@@ -67,24 +92,28 @@
             clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
             border: none;
             font-weight: 600;
-            padding: 0.5rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .future .btn-main:hover {
-            animation: neonPulse 0.3s infinite;
             transform: scale(1.05);
             filter: brightness(1.3);
         }
 
-        @keyframes neonPulse {
-            0%, 100% {
-                box-shadow: 0 0 10px var(--accent-future), 0 0 20px var(--neon-purple);
-            }
-            50% {
-                box-shadow: 0 0 20px var(--accent-future), 0 0 40px var(--neon-purple);
-            }
+        .future .neon-glow {
+            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        .future .neon-border {
+            box-shadow: 0 0 10px var(--accent-future), 0 0 20px var(--accent-future);
+        }
+
+        .future .gallery-item:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 15px var(--neon-purple), 0 0 30px var(--neon-purple);
         }
 
         .theme-toggle {
@@ -95,7 +124,7 @@
         }
 
         .classic .theme-toggle {
-            background: rgba(232, 227, 213, 0.1);
+            background: rgba(169, 221, 211, 0.1);
         }
 
         .future .theme-toggle {
@@ -104,421 +133,543 @@
 
         .theme-btn {
             padding: 0.5rem 1rem;
-            border: none;
-            background: transparent;
-            cursor: pointer;
             border-radius: 0.375rem;
             font-weight: 500;
+            cursor: pointer;
             transition: all 0.3s;
-            color: currentColor;
+            border: none;
         }
 
-        .classic .theme-btn.active-classic {
+        .classic .theme-btn.active {
             background: var(--accent-classic);
             color: var(--bg-classic);
         }
 
-        .future .theme-btn.active-future {
-            background: linear-gradient(135deg, var(--accent-future), var(--neon-purple));
-            color: #000000;
+        .classic .theme-btn:not(.active) {
+            background: transparent;
+            color: var(--text-classic);
+            opacity: 0.6;
         }
 
-        .network-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            white-space: nowrap;
+        .future .theme-btn.active {
+            background: linear-gradient(to right, var(--accent-future), var(--neon-purple));
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
         }
 
-        .classic .network-badge {
-            background: rgba(232, 227, 213, 0.1);
-            border: 1px solid var(--accent-classic);
+        .future .theme-btn:not(.active) {
+            background: transparent;
+            color: var(--accent-future);
+            opacity: 0.6;
         }
 
-        .future .network-badge {
-            background: rgba(0, 245, 255, 0.1);
-            border: 1px solid var(--accent-future);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .future .network-badge::before {
-            content: '';
-            position: absolute;
+        header {
+            position: sticky;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.3), transparent);
-            animation: scanning 3s linear infinite;
+            z-index: 50;
+            backdrop-filter: blur(12px);
         }
 
-        @keyframes scanning {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        header .container {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
         }
 
-        @media (max-width: 640px) {
-            .network-badge {
-                padding: 0.375rem 0.75rem;
-                font-size: 0.75rem;
-            }
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            color: inherit;
-            margin-top: 0.5rem;
+        .site-logo {
+            height: 100px;
+            width: auto;
+            display: block;
             transition: all 0.3s;
         }
 
-        .classic .form-input {
-            background: rgba(232, 227, 213, 0.05);
-            border: 1px solid var(--accent-classic);
+        .classic .site-logo {
+            filter: drop-shadow(0 0 8px rgba(169, 221, 211, 0.4));
         }
 
-        .classic .form-input:focus {
-            outline: none;
-            border-color: var(--text-classic);
-            background: rgba(232, 227, 213, 0.1);
+        .future .site-logo {
+            filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 20px rgba(191, 0, 255, 0.4));
         }
 
-        .future .form-input {
-            background: rgba(0, 245, 255, 0.05);
-            border: 1px solid var(--accent-future);
+        .logo-link:hover .site-logo {
+            transform: scale(1.05);
         }
 
-        .future .form-input:focus {
-            outline: none;
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 15px rgba(191, 0, 255, 0.3);
+        .classic .logo-link:hover .site-logo {
+            filter: drop-shadow(0 0 12px rgba(169, 221, 211, 0.6));
         }
 
-        .icon-svg {
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .tooltip-wrap {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip-text {
-            visibility: hidden;
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .classic .tooltip-text {
-            background: var(--text-classic);
-            color: var(--bg-classic);
-        }
-
-        .future .tooltip-text {
-            background: var(--accent-future);
-            color: #000000;
-        }
-
-        .tooltip-wrap:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        .profile-notification-dot {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 8px;
-            height: 8px;
-            background: #ff4444;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-            .network-badge {
-                font-size: 0.75rem;
-                padding: 0.375rem 0.75rem;
-            }
-            .balance-amount {
-                display: none;
-            }
+        .future .logo-link:hover .site-logo {
+            filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 30px rgba(191, 0, 255, 0.6));
         }
     </style>
 </head>
 <body class="classic">
-    <header>
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-2xl font-light tracking-wide">ArtSoul</a>
-                    <div class="theme-toggle">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
-                            Classic
-                        </button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
-                            Future
-                        </button>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="tooltip-wrap">
-                        <a href="docs.html" class="p-2 inline-block">
-                            <svg viewBox="0 0 24 24" fill="none" class="w-7 h-7" style="color: currentColor;">
-                                <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>
-                            </svg>
-                        </a>
-                        <div class="tooltip-text">Documentation</div>
-                    </div>
-                    <div id="networkBadge"></div>
-                    <div class="flex items-center gap-3" id="navButtons">
-                        <button onclick="window.connectWallet()" class="btn-main">Get Started</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div id="app"></div>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <main class="container mx-auto px-4 py-12 max-w-2xl">
-        <h1 class="text-4xl font-light mb-8">Complete Your Profile</h1>
-        <form id="profileForm" class="space-y-6">
-            <div>
-                <label class="block mb-2 font-medium">Username</label>
-                <input type="text" id="username" class="form-input" placeholder="@artist_name" required>
-            </div>
-            <div>
-                <label class="block mb-2 font-medium">Bio</label>
-                <textarea id="bio" class="form-input h-32" placeholder="Tell the community about your art..."></textarea>
-            </div>
-            <div>
-                <label class="block mb-2 font-medium">X (Twitter) Handle</label>
-                <input type="text" id="twitter" class="form-input" placeholder="@handle">
-            </div>
-            <div>
-                <label class="block mb-2 font-medium">Discord Username</label>
-                <input type="text" id="discord" class="form-input" placeholder="username#1234">
-            </div>
-            <div class="mt-6 p-4 rounded-lg" style="background: rgba(169, 221, 211, 0.1); border: 1px solid currentColor;">
-                <p class="text-sm opacity-70 mb-2">📱 Social Integration</p>
-                <p class="text-xs opacity-60">Link your social accounts to share artworks with beautiful preview cards directly to X (Twitter) and Discord.</p>
-            </div>
-            <button type="submit" class="btn-main w-full">Save Profile</button>
-        </form>
-    </main>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-    <script>
-        function setTheme(theme) {
-            document.body.className = theme;
-            localStorage.setItem('theme', theme);
-            const classicBtn = document.getElementById('classicBtn');
-            const futureBtn = document.getElementById('futureBtn');
-            if (theme === 'classic') {
-                classicBtn.className = 'theme-btn active-classic';
-                futureBtn.className = 'theme-btn';
-            } else {
-                classicBtn.className = 'theme-btn';
-                futureBtn.className = 'theme-btn active-future';
-            }
-        }
+        const GALLERY_TYPES = [
+            { id: 'nft', label: 'NFT Gallery', icon: '🎨', fileType: 'image' },
+            { id: 'video', label: 'Video Gallery', icon: '🎬', fileType: 'video' },
+            { id: 'music', label: 'Music Gallery', icon: '🎵', fileType: 'music' },
+            { id: 'gif', label: 'GIF Gallery', icon: '🎞️', fileType: 'gif' },
+        ];
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'classic';
-            setTheme(savedTheme);
+        function ProfilePage() {
+            const [theme, setTheme] = useState('classic');
+            const [profile, setProfile] = useState(null);
+            const [editMode, setEditMode] = useState(false);
+            const [selectedGallery, setSelectedGallery] = useState('nft');
+            const [myArtworks, setMyArtworks] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const fileInputRef = useRef(null);
 
-            // Load profile from Supabase when wallet is connected
-            loadProfileFromSupabase();
-        });
+            const isClassic = theme === 'classic';
 
-        async function loadProfileFromSupabase() {
-            try {
-                // Wait for wallet connection
-                await new Promise(resolve => setTimeout(resolve, 1000));
+            // Load profile and artworks
+            useEffect(() => {
+                loadProfile();
+            }, []);
 
-                // Get wallet address from AppKit state
-                if (window.web3Modal) {
-                    const state = window.web3Modal.getState();
-                    if (state?.address) {
-                        const walletAddress = state.address.toLowerCase();
-                        console.log('Loading profile for:', walletAddress);
-
-                        await window.ArtSoulDB.initSupabase();
-                        const profile = await window.ArtSoulDB.getProfile(walletAddress);
-
-                        if (profile) {
-                            document.getElementById('username').value = profile.username || '';
-                            document.getElementById('bio').value = profile.bio || '';
-                            document.getElementById('twitter').value = profile.twitter_handle || '';
-                            document.getElementById('discord').value = profile.discord_username || '';
-                        }
-                    }
+            useEffect(() => {
+                if (profile) {
+                    loadMyArtworks();
                 }
-            } catch (error) {
-                console.error('Error loading profile:', error);
+            }, [profile, selectedGallery]);
+
+            async function loadProfile() {
+                const walletAddress = window.getCurrentWalletAddress?.();
+                if (!walletAddress) {
+                    setLoading(false);
+                    return;
+                }
+
+                try {
+                    let profileData = await window.ArtSoulDB.getProfile(walletAddress);
+                    if (!profileData) {
+                        profileData = {
+                            wallet_address: walletAddress,
+                            username: '',
+                            bio: '',
+                            avatar_url: '',
+                            twitter_handle: '',
+                            discord_username: ''
+                        };
+                        setEditMode(true);
+                    }
+                    setProfile(profileData);
+                } catch (error) {
+                    console.error('Error loading profile:', error);
+                }
+                setLoading(false);
             }
-        }
 
-        document.getElementById('profileForm').onsubmit = async (e) => {
-            e.preventDefault();
+            async function loadMyArtworks() {
+                if (!profile?.id) return;
 
-            try {
-                // Get wallet address
-                if (!window.web3Modal) {
+                try {
+                    const artworks = await window.ArtSoulDB.getArtworksByCreator(profile.id);
+                    const filtered = artworks.filter(art => {
+                        if (selectedGallery === 'nft') return art.file_type === 'image';
+                        if (selectedGallery === 'video') return art.file_type === 'video';
+                        if (selectedGallery === 'music') return art.file_type === 'music';
+                        if (selectedGallery === 'gif') return art.file_type === 'gif';
+                        return false;
+                    });
+                    setMyArtworks(filtered);
+                } catch (error) {
+                    console.error('Error loading artworks:', error);
+                }
+            }
+
+            async function handleAvatarUpload(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                try {
+                    const walletAddress = window.getCurrentWalletAddress?.();
+                    const fileName = `avatar_${walletAddress}_${Date.now()}.${file.name.split('.').pop()}`;
+                    const avatarUrl = await window.ArtSoulDB.uploadFile(file, fileName);
+                    setProfile({...profile, avatar_url: avatarUrl});
+                } catch (error) {
+                    console.error('Error uploading avatar:', error);
+                    alert('Error uploading avatar: ' + error.message);
+                }
+            }
+
+            async function saveProfile() {
+                const walletAddress = window.getCurrentWalletAddress?.();
+                if (!walletAddress) {
                     alert('Please connect your wallet first');
                     return;
                 }
 
-                const state = window.web3Modal.getState();
-                if (!state?.address) {
-                    alert('Wallet not connected');
-                    return;
+                try {
+                    const profileData = {
+                        username: profile.username,
+                        bio: profile.bio,
+                        twitter_handle: profile.twitter_handle,
+                        discord_username: profile.discord_username,
+                        avatar_url: profile.avatar_url
+                    };
+
+                    if (profile.id) {
+                        await window.ArtSoulDB.updateProfile(walletAddress, profileData);
+                    } else {
+                        const newProfile = await window.ArtSoulDB.createProfile(walletAddress, profileData);
+                        setProfile(newProfile);
+                    }
+
+                    setEditMode(false);
+                    alert('Profile saved!');
+                } catch (error) {
+                    console.error('Error saving profile:', error);
+                    alert('Error saving profile: ' + error.message);
                 }
-
-                const walletAddress = state.address.toLowerCase();
-
-                const profileData = {
-                    username: document.getElementById('username').value,
-                    bio: document.getElementById('bio').value,
-                    twitter_handle: document.getElementById('twitter').value,
-                    discord_username: document.getElementById('discord').value
-                };
-
-                console.log('Saving profile:', profileData);
-
-                await window.ArtSoulDB.initSupabase();
-
-                // Check if profile exists
-                const existing = await window.ArtSoulDB.getProfile(walletAddress);
-
-                if (existing) {
-                    // Update existing profile
-                    await window.ArtSoulDB.updateProfile(walletAddress, profileData);
-                } else {
-                    // Create new profile
-                    await window.ArtSoulDB.createProfile(walletAddress, profileData);
-                }
-
-                // Show success message
-                const successMsg = document.createElement('div');
-                successMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 245, 255, 0.95); color: #000; padding: 2rem 3rem; border-radius: 1rem; font-weight: 600; z-index: 9999; box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);';
-                successMsg.textContent = '✓ Profile saved! Redirecting to gallery...';
-                document.body.appendChild(successMsg);
-
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            } catch (error) {
-                console.error('Error saving profile:', error);
-                alert('Error saving profile: ' + error.message);
             }
-        };
-    </script>
 
-    <script type="module">
-        import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
-        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
-        import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
+            function handleQuickUpload() {
+                window.location.href = 'upload.html';
+            }
 
-        const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
+            if (loading) {
+                return (
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-2xl">Loading...</div>
+                    </div>
+                );
+            }
 
-        const rialoPlayground = {
-            id: 2025,
-            name: 'Rialo Playground',
-            nativeCurrency: { name: 'RIA', symbol: 'RIA', decimals: 18 },
-            rpcUrls: { default: { http: ['https://playground.rialo.io/rpc'] } },
-            blockExplorers: { default: { name: 'Rialo Explorer', url: 'https://playground.rialo.io' } }
-        };
+            const bgClass = isClassic ? 'bg-gray-900 text-gray-100' : 'bg-black text-cyan-100';
 
-        const networks = [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground];
-        const metadata = { name: 'ArtSoul Marketplace', description: 'Decentralized Art Marketplace', url: 'https://maysonkiller.github.io/artsoul-marketplace', icons: ['https://maysonkiller.github.io/artsoul-marketplace/artwork-sample.jpg'] };
+            return (
+                <div className={`min-h-screen ${bgClass} transition-all duration-500`}>
+                    {/* Header */}
+                    <header>
+                        <div className="container mx-auto px-4">
+                            <div className="flex items-center justify-between flex-wrap gap-4">
+                                <div className="flex items-center gap-4">
+                                    <a href="index.html" className="logo-link">
+                                        <img src="ARTSOULlogo.png" alt="ArtSoul" className="site-logo" />
+                                    </a>
+                                    <div className="theme-toggle">
+                                        <button
+                                            onClick={() => setTheme('classic')}
+                                            className={`theme-btn ${theme === 'classic' ? 'active' : ''}`}
+                                        >
+                                            Classic
+                                        </button>
+                                        <button
+                                            onClick={() => setTheme('future')}
+                                            className={`theme-btn ${theme === 'future' ? 'active' : ''}`}
+                                        >
+                                            Future
+                                        </button>
+                                    </div>
+                                </div>
+                                <a href="index.html" className="btn-main">
+                                    Back to Gallery
+                                </a>
+                            </div>
+                        </div>
+                    </header>
 
-        const networkMap = {
-            1: { name: 'Ethereum', currency: 'ETH' },
-            137: { name: 'Polygon', currency: 'MATIC' },
-            56: { name: 'BSC', currency: 'BNB' },
-            8453: { name: 'Base', currency: 'ETH' },
-            42161: { name: 'Arbitrum', currency: 'ETH' },
-            10: { name: 'Optimism', currency: 'ETH' },
-            11155111: { name: 'Sepolia', currency: 'ETH' },
-            2025: { name: 'Rialo Playground', currency: 'RIA' }
-        };
+                    {/* Main Content */}
+                    <main className="container mx-auto px-4 py-8">
+                        {/* Profile Header */}
+                        <div className={`rounded-xl p-8 mb-8 animate-fadeIn ${
+                            isClassic
+                                ? 'bg-gray-800/50 border border-gray-700'
+                                : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30 neon-border'
+                        }`}>
+                            <div className="flex items-start gap-8 flex-wrap">
+                                {/* Avatar */}
+                                <div className="flex-shrink-0">
+                                    <div className={`w-32 h-32 rounded-full overflow-hidden ${
+                                        isClassic
+                                            ? 'bg-gray-700 border-4 border-gray-600'
+                                            : 'bg-gradient-to-br from-purple-900 to-cyan-900 border-4 border-cyan-400 neon-border'
+                                    }`}>
+                                        {profile?.avatar_url ? (
+                                            <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-5xl">
+                                                👤
+                                            </div>
+                                        )}
+                                    </div>
+                                    {editMode && (
+                                        <label className={`block mt-3 text-center text-sm cursor-pointer ${
+                                            isClassic ? 'text-gray-300 hover:underline' : 'text-cyan-400 hover:underline'
+                                        }`}>
+                                            <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+                                            Change Avatar
+                                        </label>
+                                    )}
+                                </div>
 
-        let modal = null;
-        let currentNetwork = null;
-        let currentBalance = '0.00';
+                                {/* Profile Info */}
+                                <div className="flex-1 min-w-0">
+                                    {editMode ? (
+                                        <div className="space-y-4">
+                                            <input
+                                                type="text"
+                                                value={profile?.username || ''}
+                                                onChange={(e) => setProfile({...profile, username: e.target.value})}
+                                                placeholder="Your Name"
+                                                className={`w-full px-4 py-3 rounded-lg text-2xl font-bold ${
+                                                    isClassic
+                                                        ? 'bg-gray-700 border border-gray-600 text-gray-100'
+                                                        : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                                } outline-none`}
+                                            />
+                                            <textarea
+                                                value={profile?.bio || ''}
+                                                onChange={(e) => setProfile({...profile, bio: e.target.value})}
+                                                placeholder="Tell us about yourself..."
+                                                rows={3}
+                                                className={`w-full px-4 py-3 rounded-lg ${
+                                                    isClassic
+                                                        ? 'bg-gray-700 border border-gray-600 text-gray-100'
+                                                        : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                                } outline-none`}
+                                            />
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <input
+                                                    type="text"
+                                                    value={profile?.twitter_handle || ''}
+                                                    onChange={(e) => setProfile({...profile, twitter_handle: e.target.value})}
+                                                    placeholder="Twitter/X handle"
+                                                    className={`px-4 py-2 rounded-lg ${
+                                                        isClassic
+                                                            ? 'bg-gray-700 border border-gray-600 text-gray-100'
+                                                            : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                                    } outline-none`}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={profile?.discord_username || ''}
+                                                    onChange={(e) => setProfile({...profile, discord_username: e.target.value})}
+                                                    placeholder="Discord username"
+                                                    className={`px-4 py-2 rounded-lg ${
+                                                        isClassic
+                                                            ? 'bg-gray-700 border border-gray-600 text-gray-100'
+                                                            : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
+                                                    } outline-none`}
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <h1 className={`text-4xl font-bold mb-3 ${
+                                                isClassic ? 'text-gray-100' : 'text-cyan-400 neon-glow'
+                                            }`}>
+                                                {profile?.username || 'Anonymous Artist'}
+                                            </h1>
+                                            <p className={`text-lg mb-4 ${
+                                                isClassic ? 'text-gray-400' : 'text-purple-300'
+                                            }`}>
+                                                {profile?.bio || 'No bio yet'}
+                                            </p>
+                                            <div className="flex gap-4 flex-wrap">
+                                                {profile?.twitter_handle && (
+                                                    <a
+                                                        href={`https://twitter.com/${profile.twitter_handle}`}
+                                                        target="_blank"
+                                                        className={`px-4 py-2 rounded-lg ${
+                                                            isClassic ? 'bg-gray-700 text-gray-200' : 'bg-cyan-900/50 text-cyan-300'
+                                                        }`}
+                                                    >
+                                                        🐦 Twitter
+                                                    </a>
+                                                )}
+                                                {profile?.discord_username && (
+                                                    <span className={`px-4 py-2 rounded-lg ${
+                                                        isClassic ? 'bg-gray-700 text-gray-200' : 'bg-purple-900/50 text-purple-300'
+                                                    }`}>
+                                                        💬 {profile.discord_username}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
 
-        function updateNetworkBadge(state) {
-            const networkBadgeContainer = document.getElementById('networkBadge');
-            if (!networkBadgeContainer) return;
-            if (state?.address && state?.chainId) {
-                const network = networkMap[state.chainId] || { name: 'Unknown', currency: 'ETH' };
-                currentNetwork = network;
-                if (window.ethereum) {
-                    window.ethereum.request({ method: 'eth_getBalance', params: [state.address, 'latest'] }).then(balance => { currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4); renderNetworkBadge(); }).catch(() => { currentBalance = '0.00'; renderNetworkBadge(); });
-                } else { renderNetworkBadge(); }
-            } else { networkBadgeContainer.innerHTML = ''; }
+                                    <div className="mt-6 flex gap-4 flex-wrap">
+                                        {editMode ? (
+                                            <>
+                                                <button onClick={saveProfile} className="btn-main">
+                                                    Save Profile
+                                                </button>
+                                                <button
+                                                    onClick={() => setEditMode(false)}
+                                                    className={`px-6 py-2 rounded-lg font-medium ${
+                                                        isClassic ? 'bg-gray-700 text-gray-300' : 'bg-gray-700 text-gray-300'
+                                                    }`}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button onClick={() => setEditMode(true)} className="btn-main">
+                                                Edit Profile
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Gallery Tabs */}
+                        <div className={`rounded-xl p-6 mb-6 ${
+                            isClassic
+                                ? 'bg-gray-800/50 border border-gray-700'
+                                : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'
+                        }`}>
+                            <h2 className={`text-2xl font-bold mb-4 ${
+                                isClassic ? 'text-gray-100' : 'text-cyan-400 neon-glow'
+                            }`}>
+                                My Galleries
+                            </h2>
+                            <div className="flex flex-wrap gap-3">
+                                {GALLERY_TYPES.map(gallery => (
+                                    <button
+                                        key={gallery.id}
+                                        onClick={() => setSelectedGallery(gallery.id)}
+                                        className={`px-6 py-3 rounded-lg font-medium transform hover:scale-105 transition-all ${
+                                            selectedGallery === gallery.id
+                                                ? isClassic
+                                                    ? 'bg-gray-600 text-white'
+                                                    : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white neon-border'
+                                                : isClassic
+                                                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                                    : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+                                        }`}
+                                    >
+                                        {gallery.icon} {gallery.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Gallery Content */}
+                        <div className={`rounded-xl p-6 ${
+                            isClassic
+                                ? 'bg-gray-800/50 border border-gray-700'
+                                : 'bg-gray-900/50 backdrop-blur-md border border-cyan-500/30'
+                        }`}>
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className={`text-xl font-bold ${
+                                    isClassic ? 'text-gray-100' : 'text-cyan-300'
+                                }`}>
+                                    {GALLERY_TYPES.find(g => g.id === selectedGallery)?.label}
+                                </h3>
+                                <span className={`text-sm ${
+                                    isClassic ? 'text-gray-400' : 'text-purple-300'
+                                }`}>
+                                    {myArtworks.length} items
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {/* Add New Button */}
+                                <div
+                                    onClick={handleQuickUpload}
+                                    className={`aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer gallery-item ${
+                                        isClassic
+                                            ? 'bg-gray-700 border-2 border-dashed border-gray-600 hover:bg-gray-600 hover:border-gray-500'
+                                            : 'bg-gray-800/30 border-2 border-dashed border-cyan-500/30 hover:bg-gray-700/50 hover:border-cyan-400 neon-border'
+                                    }`}
+                                >
+                                    <div className={`text-5xl mb-2 ${
+                                        isClassic ? 'text-gray-400' : 'text-cyan-400'
+                                    }`}>
+                                        ➕
+                                    </div>
+                                    <div className={`text-sm font-medium ${
+                                        isClassic ? 'text-gray-300' : 'text-cyan-300'
+                                    }`}>
+                                        Add New
+                                    </div>
+                                </div>
+
+                                {/* Existing Artworks */}
+                                {myArtworks.map(artwork => (
+                                    <div
+                                        key={artwork.id}
+                                        className={`aspect-square rounded-lg overflow-hidden cursor-pointer gallery-item border ${
+                                            isClassic ? 'bg-gray-700 border-gray-600' : 'bg-gray-800/50 backdrop-blur-sm border-cyan-500/20'
+                                        }`}
+                                    >
+                                        {artwork.file_url ? (
+                                            <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className={`w-full h-full flex items-center justify-center ${
+                                                isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
+                                            }`}>
+                                                <div className="text-center p-4">
+                                                    <div className={`text-4xl mb-2 ${
+                                                        isClassic ? 'text-gray-400' : 'text-cyan-400'
+                                                    }`}>
+                                                        {GALLERY_TYPES.find(g => g.id === selectedGallery)?.icon}
+                                                    </div>
+                                                    <div className={`text-xs ${
+                                                        isClassic ? 'text-gray-400' : 'text-purple-300'
+                                                    }`}>
+                                                        {artwork.title}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+
+                                {/* Empty Placeholders */}
+                                {myArtworks.length === 0 && (
+                                    <>
+                                        {[...Array(7)].map((_, i) => (
+                                            <div
+                                                key={i}
+                                                onClick={handleQuickUpload}
+                                                className={`aspect-square rounded-lg flex items-center justify-center cursor-pointer gallery-item border ${
+                                                    isClassic
+                                                        ? 'bg-gray-700/30 border-gray-600 hover:bg-gray-700'
+                                                        : 'bg-gray-800/30 border-cyan-500/10 hover:bg-gray-700/50'
+                                                }`}
+                                            >
+                                                <div className={`text-4xl ${
+                                                    isClassic ? 'text-gray-600' : 'text-cyan-400/30'
+                                                }`}>
+                                                    {GALLERY_TYPES.find(g => g.id === selectedGallery)?.icon}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
         }
 
-        function renderNetworkBadge() {
-            const networkBadgeContainer = document.getElementById('networkBadge');
-            if (!networkBadgeContainer || !currentNetwork) return;
-            networkBadgeContainer.innerHTML = `<div class="network-badge" onclick="window.web3Modal?.open({ view: 'Networks' })"><span class="network-name">${currentNetwork.name}</span><span class="balance-amount">${currentBalance} ${currentNetwork.currency}</span></div>`;
+        // Apply theme to body
+        function applyTheme() {
+            const app = document.getElementById('app');
+            if (app && app.querySelector('[class*="classic"]')) {
+                document.body.className = 'classic';
+            } else if (app && app.querySelector('[class*="future"]')) {
+                document.body.className = 'future';
+            }
         }
 
-        function updateNavButtons(state) {
-            const navButtons = document.getElementById('navButtons');
-            if (!navButtons) return;
-            navButtons.innerHTML = `<div class="tooltip-wrap"><a href="upload.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/></svg></a><div class="tooltip-text">Upload NFT</div></div><button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
-        }
+        ReactDOM.render(<ProfilePage />, document.getElementById('app'));
 
-        function resetNavButtons() {
-            const navButtons = document.getElementById('navButtons');
-            const networkBadge = document.getElementById('networkBadge');
-            if (!navButtons) return;
-            navButtons.innerHTML = '<button onclick="window.connectWallet()" class="btn-main">Get Started</button>';
-            if (networkBadge) networkBadge.innerHTML = '';
-        }
-
-        window.connectWallet = async () => { if (modal) await modal.open(); };
-
-        async function initializeAppKit() {
-            try {
-                modal = createAppKit({ adapters: [new EthersAdapter()], networks, metadata, projectId, features: { socials: ['google', 'x', 'apple', 'discord'], email: true, onramp: true, swaps: true, analytics: true }, themeMode: 'dark', themeVariables: { '--w3m-accent': '#00f5ff', '--w3m-color-mix': '#bf00ff' } });
-                window.web3Modal = modal;
-                window.connectWallet = async () => { if (modal) await modal.open(); };
-                modal.subscribeState((state) => { if (state?.address) { updateNavButtons(state); updateNetworkBadge(state); } else resetNavButtons(); });
-                console.log('✅ AppKit initialized on profile.html');
-            } catch (error) { console.error('⚠️ AppKit init failed:', error); }
-        }
-
-        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initializeAppKit); } else { initializeAppKit(); }
+        // Watch for theme changes
+        setInterval(applyTheme, 100);
     </script>
 </body>
 </html>
