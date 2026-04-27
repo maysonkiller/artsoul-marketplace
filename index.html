@@ -260,6 +260,96 @@
             }
         }
 
+        /* Button effects for Future mode */
+        .future .btn-main:active {
+            animation: glitchButton 0.3s;
+        }
+
+        .future .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent-future);
+            color: var(--accent-future);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .future .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .future .btn-secondary:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 15px var(--accent-future), 0 0 30px var(--neon-purple);
+            animation: neonPulse 0.3s infinite;
+        }
+
+        .future .btn-secondary:hover::before {
+            left: 100%;
+        }
+
+        @keyframes glitchButton {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+        }
+
+        /* Gradient text animation for headings in Future mode */
+        .future h1, .future h2 {
+            background: linear-gradient(90deg, var(--accent-future), var(--neon-purple), var(--accent-future));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 3s linear infinite;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* Roadmap timeline gradient flow */
+        .future .timeline-line {
+            background: linear-gradient(90deg,
+                var(--accent-future) 0%,
+                var(--neon-purple) 25%,
+                var(--accent-future) 50%,
+                var(--neon-purple) 75%,
+                var(--accent-future) 100%);
+            background-size: 200% 100%;
+            animation: lineGlow 3s linear infinite;
+        }
+
+        @keyframes lineGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* Pulsing dots on roadmap */
+        .future .timeline-dot {
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                box-shadow: 0 0 10px var(--accent-future), 0 0 20px var(--neon-purple);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--accent-future), 0 0 40px var(--neon-purple);
+                transform: scale(1.2);
+            }
+        }
+
         /* Mode Transition Effect */
         @keyframes modeTransition {
             0% { filter: brightness(1); }

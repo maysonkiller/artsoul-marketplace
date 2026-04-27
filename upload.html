@@ -87,6 +87,34 @@
             }
         }
 
+        /* Button effects for Future mode */
+        .future .btn-main:active {
+            animation: glitchButton 0.3s;
+        }
+
+        @keyframes glitchButton {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+        }
+
+        /* Gradient text animation for headings in Future mode */
+        .future h1, .future h2 {
+            background: linear-gradient(90deg, var(--accent-future), var(--neon-purple), var(--accent-future));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 3s linear infinite;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
         .theme-toggle {
             display: flex;
             gap: 0.5rem;
