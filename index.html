@@ -388,11 +388,13 @@
             width: 220px;
             top: 0;
             animation: slideCardsFlow 50s linear infinite;
+            transition: transform 0.3s ease, z-index 0s;
         }
 
         .future .gallery .card:hover {
-            transform: translateY(-12px) scale(1.1);
-            z-index: 10;
+            transform: translateY(-30px) scale(1.05) !important;
+            z-index: 100 !important;
+            animation-play-state: paused;
         }
 
         @keyframes slideCardsFlow {
