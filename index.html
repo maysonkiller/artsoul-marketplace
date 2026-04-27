@@ -1800,15 +1800,45 @@
 
                 // Subscribe to state changes
                 modal.subscribeState((state) => {
-                    console.log('📊 Wallet state changed:', state);
+                    console.log('📊 Full state:', JSON.stringify(state, null, 2));
 
-                    if (state?.selectedNetworkId && state?.address) {
-                        console.log('✅ Wallet connected:', state.address);
-                        window.currentWalletAddress = state.address;
-                        updateNavButtons(state);
-                        updateNetworkBadge(state);
-                    } else if (!state?.address) {
-                        console.log('❌ Wallet disconnected');
+                    const account = modal.getState();
+                    console.log('📊 getState():', JSON.stringify(account, null, 2));
+
+                    // Try different ways to get address
+                    let address = null;
+
+                    if (state?.address) {
+                        address = state.address;
+                        console.log('✅ Got address from state.address:', address);
+                    } else if (account?.address) {
+                        address = account.address;
+                        console.log('✅ Got address from getState().address:', address);
+                    } else if (modal.getAddress) {
+                        address = modal.getAddress();
+                        console.log('✅ Got address from getAddress():', address);
+                    } else if (account?.caipAddress) {
+                        // CAIP format: "eip155:1:0x..."
+                        const parts = account.caipAddress.split(':');
+                        address = parts[parts.length - 1];
+                        console.log('✅ Got address from caipAddress:', address);
+                    }
+
+                    if (address) {
+                        console.log('✅ Wallet connected:', address);
+                        window.currentWalletAddress = address;
+
+                        // Create state object with address
+                        const stateWithAddress = {
+                            address: address,
+                            chainId: state?.chainId || account?.chainId,
+                            selectedNetworkId: state?.selectedNetworkId || account?.selectedNetworkId
+                        };
+
+                        updateNavButtons(stateWithAddress);
+                        updateNetworkBadge(stateWithAddress);
+                    } else {
+                        console.log('❌ Wallet disconnected or no address found');
                         window.currentWalletAddress = null;
                         resetNavButtons();
                     }
@@ -1821,11 +1851,31 @@
                 // Check if wallet is already connected from previous session
                 setTimeout(() => {
                     const state = modal.getState();
-                    console.log('🔍 Checking for existing connection:', state);
+                    console.log('🔍 Checking for existing connection:', JSON.stringify(state, null, 2));
+
+                    let address = null;
+
                     if (state?.address) {
-                        console.log('✅ Wallet already connected from previous session');
-                        updateNavButtons(state);
-                        updateNetworkBadge(state);
+                        address = state.address;
+                    } else if (state?.caipAddress) {
+                        const parts = state.caipAddress.split(':');
+                        address = parts[parts.length - 1];
+                    } else if (modal.getAddress) {
+                        address = modal.getAddress();
+                    }
+
+                    if (address) {
+                        console.log('✅ Wallet already connected from previous session:', address);
+                        window.currentWalletAddress = address;
+
+                        const stateWithAddress = {
+                            address: address,
+                            chainId: state?.chainId,
+                            selectedNetworkId: state?.selectedNetworkId
+                        };
+
+                        updateNavButtons(stateWithAddress);
+                        updateNetworkBadge(stateWithAddress);
                     }
                 }, 1000);
 
