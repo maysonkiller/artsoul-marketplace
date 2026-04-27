@@ -639,6 +639,247 @@
                 gap: 0.5rem;
             }
         }
+
+        /* Profile Section */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .profile-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid;
+        }
+
+        .classic .profile-tabs {
+            border-color: var(--accent-classic);
+        }
+
+        .future .profile-tabs {
+            border-color: var(--accent-future);
+        }
+
+        .profile-tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: inherit;
+            opacity: 0.5;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .profile-tab.active {
+            opacity: 1;
+        }
+
+        .classic .profile-tab.active {
+            border-bottom-color: var(--text-classic);
+        }
+
+        .future .profile-tab.active {
+            border-bottom-color: var(--accent-future);
+        }
+
+        .profile-card {
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .classic .profile-card {
+            background: rgba(232, 227, 213, 0.03);
+            border: 1px solid var(--accent-classic);
+        }
+
+        .future .profile-card {
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid var(--accent-future);
+        }
+
+        .avatar-upload {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            margin: 0 auto 2rem;
+        }
+
+        .classic .avatar-upload {
+            border: 2px solid var(--accent-classic);
+        }
+
+        .future .avatar-upload {
+            border: 2px solid var(--accent-future);
+        }
+
+        .avatar-upload img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload:hover::after {
+            content: 'Change';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            font-size: 0.875rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+            background: transparent;
+            color: inherit;
+            transition: all 0.3s;
+        }
+
+        .classic .form-control {
+            border-color: var(--accent-classic);
+        }
+
+        .classic .form-control:focus {
+            outline: none;
+            border-color: var(--text-classic);
+            background: rgba(232, 227, 213, 0.05);
+        }
+
+        .future .form-control {
+            border-color: var(--accent-future);
+        }
+
+        .future .form-control:focus {
+            outline: none;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 15px rgba(191, 0, 255, 0.3);
+        }
+
+        .artwork-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .artwork-card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .classic .artwork-card {
+            background: rgba(232, 227, 213, 0.03);
+            border: 1px solid var(--accent-classic);
+        }
+
+        .classic .artwork-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(169, 221, 211, 0.3);
+        }
+
+        .future .artwork-card {
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid var(--accent-future);
+        }
+
+        .future .artwork-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+        }
+
+        .artwork-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+
+        .artwork-info {
+            padding: 1rem;
+        }
+
+        .upload-area {
+            border: 2px dashed;
+            border-radius: 1rem;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .classic .upload-area {
+            border-color: var(--accent-classic);
+            background: rgba(232, 227, 213, 0.03);
+        }
+
+        .classic .upload-area:hover {
+            border-color: var(--text-classic);
+            background: rgba(232, 227, 213, 0.08);
+        }
+
+        .future .upload-area {
+            border-color: var(--accent-future);
+            background: rgba(0, 245, 255, 0.05);
+        }
+
+        .future .upload-area:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(191, 0, 255, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .classic .btn-secondary {
+            border-color: var(--accent-classic);
+            color: var(--text-classic);
+        }
+
+        .classic .btn-secondary:hover {
+            background: var(--accent-classic);
+            color: var(--bg-classic);
+        }
+
+        .future .btn-secondary {
+            border-color: var(--accent-future);
+            color: var(--accent-future);
+        }
+
+        .future .btn-secondary:hover {
+            background: var(--accent-future);
+            color: #000;
+        }
     </style>
 </head>
 <body class="classic">
@@ -678,7 +919,8 @@
     <!-- Morph Backdrop -->
     <div id="morphBackdrop" class="morph-backdrop"></div>
 
-    <main class="container mx-auto px-4 py-12 relative z-10">
+    <!-- Home Section -->
+    <main id="homeSection" class="section active container mx-auto px-4 py-12 relative z-10">
         <div class="text-center mb-12">
             <h1 class="text-5xl font-light mb-4">Decentralized Art Marketplace</h1>
             <p class="text-xl font-light opacity-80">Where community determines value</p>
@@ -828,6 +1070,100 @@
         </div>
     </main>
 
+    <!-- Profile Section -->
+    <section id="profileSection" class="section container mx-auto px-4 py-12 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-4xl font-light">Profile</h2>
+                <button onclick="showSection('home')" class="btn-secondary">Back to Gallery</button>
+            </div>
+
+            <div class="profile-tabs">
+                <button class="profile-tab active" onclick="switchProfileTab('edit')">Edit Profile</button>
+                <button class="profile-tab" onclick="switchProfileTab('myworks')">My Artworks</button>
+                <button class="profile-tab" onclick="switchProfileTab('allworks')">All Artworks</button>
+            </div>
+
+            <!-- Edit Profile Tab -->
+            <div id="editTab" class="profile-tab-content">
+                <div class="profile-card">
+                    <div class="avatar-upload" onclick="document.getElementById('avatarInput').click()">
+                        <img id="avatarPreview" src="https://via.placeholder.com/120" alt="Avatar">
+                        <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" id="profileUsername" class="form-control" placeholder="Your username">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <textarea id="profileBio" class="form-control" rows="4" placeholder="Tell us about yourself"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">X (Twitter)</label>
+                        <input type="text" id="profileTwitter" class="form-control" placeholder="@username">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Discord</label>
+                        <input type="text" id="profileDiscord" class="form-control" placeholder="username#0000">
+                    </div>
+
+                    <button onclick="saveProfile()" class="btn-main w-full">Save Profile</button>
+                </div>
+            </div>
+
+            <!-- My Artworks Tab -->
+            <div id="myworksTab" class="profile-tab-content" style="display: none;">
+                <div class="upload-area mb-8" onclick="document.getElementById('artworkInput').click()">
+                    <input type="file" id="artworkInput" accept="image/*,video/*,audio/*,.gif" style="display: none;" onchange="handleArtworkSelect(event)">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-16 h-16 mx-auto mb-4 opacity-50">
+                        <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/>
+                    </svg>
+                    <p class="text-lg opacity-70 mb-2">Upload New Artwork</p>
+                    <p class="text-sm opacity-40">Images, Videos, Music, GIFs (Max 100MB)</p>
+                </div>
+
+                <div id="myArtworksGrid" class="artwork-grid"></div>
+            </div>
+
+            <!-- All Artworks Tab -->
+            <div id="allworksTab" class="profile-tab-content" style="display: none;">
+                <div id="allArtworksGrid" class="artwork-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="profile-card" style="max-width: 500px; width: 90%;">
+            <h3 class="text-2xl font-light mb-6">Upload Artwork</h3>
+
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" id="artworkTitle" class="form-control" placeholder="Artwork title">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea id="artworkDescription" class="form-control" rows="3" placeholder="Describe your artwork"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Starting Price (ETH)</label>
+                <input type="number" id="artworkPrice" class="form-control" step="0.01" placeholder="0.5">
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="uploadArtwork()" class="btn-main flex-1">Upload</button>
+                <button onclick="closeUploadModal()" class="btn-secondary flex-1">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="py-8 text-center relative z-10">
         <p class="text-xs opacity-70">
             Built by <a href="https://twitter.com/maysonkiller23" target="_blank" class="hover:underline">@maysonkiller23</a>
@@ -947,6 +1283,215 @@
             const savedTheme = localStorage.getItem('theme') || 'classic';
             setTheme(savedTheme);
         });
+
+        // Profile Section Functions
+        let selectedArtworkFile = null;
+        let selectedAvatarFile = null;
+
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            if (section === 'home') {
+                document.getElementById('homeSection').classList.add('active');
+            } else if (section === 'profile') {
+                document.getElementById('profileSection').classList.add('active');
+                loadProfileData();
+            }
+        }
+
+        function switchProfileTab(tab) {
+            document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.profile-tab-content').forEach(c => c.style.display = 'none');
+
+            if (tab === 'edit') {
+                document.querySelector('.profile-tab:nth-child(1)').classList.add('active');
+                document.getElementById('editTab').style.display = 'block';
+            } else if (tab === 'myworks') {
+                document.querySelector('.profile-tab:nth-child(2)').classList.add('active');
+                document.getElementById('myworksTab').style.display = 'block';
+                loadMyArtworks();
+            } else if (tab === 'allworks') {
+                document.querySelector('.profile-tab:nth-child(3)').classList.add('active');
+                document.getElementById('allworksTab').style.display = 'block';
+                loadAllArtworks();
+            }
+        }
+
+        async function loadProfileData() {
+            const walletAddress = window.getCurrentWalletAddress?.();
+            if (!walletAddress) return;
+
+            try {
+                const profile = await window.ArtSoulDB.getProfile(walletAddress);
+                if (profile) {
+                    document.getElementById('profileUsername').value = profile.username || '';
+                    document.getElementById('profileBio').value = profile.bio || '';
+                    document.getElementById('profileTwitter').value = profile.twitter_handle || '';
+                    document.getElementById('profileDiscord').value = profile.discord_username || '';
+                    if (profile.avatar_url) {
+                        document.getElementById('avatarPreview').src = profile.avatar_url;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedAvatarFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('avatarPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function saveProfile() {
+            const walletAddress = window.getCurrentWalletAddress?.();
+            if (!walletAddress) {
+                alert('Please connect your wallet first');
+                return;
+            }
+
+            try {
+                let avatarUrl = document.getElementById('avatarPreview').src;
+
+                if (selectedAvatarFile) {
+                    const fileName = `avatar_${walletAddress}_${Date.now()}.${selectedAvatarFile.name.split('.').pop()}`;
+                    avatarUrl = await window.ArtSoulDB.uploadFile(selectedAvatarFile, fileName);
+                }
+
+                const profileData = {
+                    username: document.getElementById('profileUsername').value,
+                    bio: document.getElementById('profileBio').value,
+                    twitter_handle: document.getElementById('profileTwitter').value,
+                    discord_username: document.getElementById('profileDiscord').value,
+                    avatar_url: avatarUrl
+                };
+
+                await window.ArtSoulDB.updateProfile(walletAddress, profileData);
+                alert('Profile saved successfully!');
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('Error saving profile: ' + error.message);
+            }
+        }
+
+        function handleArtworkSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedArtworkFile = file;
+            const modal = document.getElementById('uploadModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeUploadModal() {
+            const modal = document.getElementById('uploadModal');
+            modal.style.display = 'none';
+            selectedArtworkFile = null;
+            document.getElementById('artworkTitle').value = '';
+            document.getElementById('artworkDescription').value = '';
+            document.getElementById('artworkPrice').value = '';
+        }
+
+        async function uploadArtwork() {
+            const walletAddress = window.getCurrentWalletAddress?.();
+            if (!walletAddress || !selectedArtworkFile) return;
+
+            const title = document.getElementById('artworkTitle').value;
+            const description = document.getElementById('artworkDescription').value;
+            const price = document.getElementById('artworkPrice').value;
+
+            if (!title || !price) {
+                alert('Please fill in title and price');
+                return;
+            }
+
+            try {
+                const profile = await window.ArtSoulDB.getProfile(walletAddress);
+                if (!profile) {
+                    alert('Profile not found');
+                    return;
+                }
+
+                const fileName = `artwork_${walletAddress}_${Date.now()}.${selectedArtworkFile.name.split('.').pop()}`;
+                const fileUrl = await window.ArtSoulDB.uploadFile(selectedArtworkFile, fileName);
+
+                const fileType = selectedArtworkFile.type.startsWith('image/') ? 'image' :
+                                selectedArtworkFile.type.startsWith('video/') ? 'video' :
+                                selectedArtworkFile.type.startsWith('audio/') ? 'music' : 'gif';
+
+                const artwork = await window.ArtSoulDB.createArtwork({
+                    title,
+                    description,
+                    file_url: fileUrl,
+                    file_type: fileType,
+                    creator_id: profile.id,
+                    creator_estimated_value: parseFloat(price)
+                });
+
+                await window.ArtSoulDB.createAuction(artwork.id);
+
+                closeUploadModal();
+                alert('Artwork uploaded successfully!');
+                loadMyArtworks();
+            } catch (error) {
+                console.error('Error uploading artwork:', error);
+                alert('Error uploading artwork: ' + error.message);
+            }
+        }
+
+        async function loadMyArtworks() {
+            const walletAddress = window.getCurrentWalletAddress?.();
+            if (!walletAddress) return;
+
+            try {
+                const profile = await window.ArtSoulDB.getProfile(walletAddress);
+                if (!profile) return;
+
+                const artworks = await window.ArtSoulDB.getArtworksByCreator(profile.id);
+                renderArtworks(artworks, 'myArtworksGrid');
+            } catch (error) {
+                console.error('Error loading artworks:', error);
+            }
+        }
+
+        async function loadAllArtworks() {
+            try {
+                const artworks = await window.ArtSoulDB.getArtworks();
+                renderArtworks(artworks, 'allArtworksGrid');
+            } catch (error) {
+                console.error('Error loading all artworks:', error);
+            }
+        }
+
+        function renderArtworks(artworks, containerId) {
+            const container = document.getElementById(containerId);
+            if (!artworks || artworks.length === 0) {
+                container.innerHTML = '<p class="text-center opacity-50">No artworks yet</p>';
+                return;
+            }
+
+            container.innerHTML = artworks.map(art => `
+                <div class="artwork-card" onclick="viewArtwork('${art.id}')">
+                    <img src="${art.file_url}" alt="${art.title}" class="artwork-image">
+                    <div class="artwork-info">
+                        <h4 class="font-medium mb-1">${art.title}</h4>
+                        <p class="text-sm opacity-70 mb-2">${art.description || ''}</p>
+                        <p class="text-sm font-medium">${art.creator_estimated_value} ETH</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewArtwork(id) {
+            alert(`Viewing artwork ${id}. Full viewer coming soon!`);
+        }
+
+        window.showSection = showSection;
     </script>
 
     <!-- AppKit Integration -->
@@ -1111,27 +1656,22 @@
             const navButtons = document.getElementById('navButtons');
             if (!navButtons) return;
 
-            // Check if user has profile (simplified check)
-            const hasProfile = localStorage.getItem('userProfile');
-            const profileNotification = hasProfile ? '' : '<div class="profile-notification-dot"></div>';
-
             navButtons.innerHTML = `
                 <div class="tooltip-wrap">
-                    <a href="upload.html" class="p-2 inline-block">
+                    <button onclick="showSection('profile'); switchProfileTab('myworks')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;">
                         <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
                             <path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/>
                         </svg>
-                    </a>
-                    <div class="tooltip-text">Upload NFT</div>
+                    </button>
+                    <div class="tooltip-text">Upload Artwork</div>
                 </div>
-                <div class="tooltip-wrap" style="position: relative;">
-                    <a href="profile.html" class="p-2 inline-block">
+                <div class="tooltip-wrap">
+                    <button onclick="showSection('profile')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;">
                         <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;">
                             <circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/>
                             <path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/>
                         </svg>
-                    </a>
-                    ${profileNotification}
+                    </button>
                     <div class="tooltip-text">My Profile</div>
                 </div>
                 <button onclick="window.web3Modal?.disconnect()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">

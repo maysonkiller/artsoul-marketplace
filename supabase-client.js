@@ -148,6 +148,51 @@ async function getArtwork(artworkId) {
     return data;
 }
 
+async function getArtworksByCreator(creatorId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .select(`
+            *,
+            creator:profiles!creator_id(*)
+        `)
+        .eq('creator_id', creatorId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching creator artworks:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+// Storage Functions
+async function uploadFile(file, fileName) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .storage
+        .from('artworks')
+        .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+        });
+
+    if (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+    }
+
+    const { data: urlData } = supabase
+        .storage
+        .from('artworks')
+        .getPublicUrl(fileName);
+
+    return urlData.publicUrl;
+}
+
 // Auction Functions
 async function createAuction(artworkId) {
     const supabase = await initSupabase();
@@ -355,6 +400,9 @@ window.ArtSoulDB = {
     createArtwork,
     getArtworks,
     getArtwork,
+    getArtworksByCreator,
+    // Storage
+    uploadFile,
     // Auctions
     createAuction,
     getActiveAuctions,
