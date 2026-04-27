@@ -1,10 +1,11 @@
 // Supabase Client Configuration for ArtSoul Marketplace
 // Created: 2026-04-26
+// Updated: 2026-04-28 - Added authentication support
 
 const SUPABASE_URL = 'https://bexigvqrunomwtjsxlej.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_vAsIoKcLD1D9blJA6Kwy0Q__LrKsAj6';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJleGlndnFydW5vbXd0anN4bGVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MjE0NzAsImV4cCI6MjA2MTE5NzQ3MH0.vAsIoKcLD1D9blJA6Kwy0Q__LrKsAj6';
 
-// Initialize Supabase client
+// Initialize Supabase client with auth support
 let supabaseClient = null;
 
 async function initSupabase() {
@@ -13,9 +14,15 @@ async function initSupabase() {
     // Import Supabase from CDN
     const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
 
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+            autoRefreshToken: true,
+            persistSession: true,
+            detectSessionInUrl: true
+        }
+    });
 
-    console.log('✅ Supabase initialized');
+    console.log('✅ Supabase initialized with auth support');
     return supabaseClient;
 }
 
