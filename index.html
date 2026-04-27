@@ -501,6 +501,28 @@
             transition: all 0.3s;
         }
 
+        /* Documentation button styles */
+        .classic .docs-btn {
+            border: 1px solid var(--accent-classic);
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .classic .docs-btn:hover {
+            background: rgba(169, 221, 211, 0.1);
+        }
+
+        .future .docs-btn {
+            border: 1px solid var(--accent-future);
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .future .docs-btn:hover {
+            background: rgba(0, 245, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+        }
+
         .card {
             transition: all 0.4s;
             cursor: pointer;
@@ -1138,7 +1160,7 @@
                 <a href="docs.html#rialo" class="devnet-banner" style="position: absolute; left: 50%; transform: translateX(-50%);">Rialo Playground Devnet</a>
                 <div class="flex items-center gap-4">
                     <div class="tooltip-wrap">
-                        <a href="docs.html" class="inline-block p-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                        <a href="docs.html" class="inline-block p-2 docs-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                             <svg viewBox="0 0 24 24" fill="none" class="w-7 h-7" style="color: currentColor;">
                                 <path d="M6 2H14L20 8V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V4C4 2.9 4.9 2 6 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                                 <path d="M14 2V8H20M8 13H16M8 17H16M8 9H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
