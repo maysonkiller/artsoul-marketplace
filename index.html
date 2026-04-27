@@ -1852,16 +1852,26 @@
             if (state?.address && state?.chainId) {
                 const network = networkMap[state.chainId] || { name: 'Unknown', currency: 'ETH' };
                 currentNetwork = network;
-                if (window.ethereum) {
-                    window.ethereum.request({ method: 'eth_getBalance', params: [state.address, 'latest'] })
-                        .then(balance => {
-                            currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
+
+                // Use AppKit's provider instead of window.ethereum to avoid conflicts
+                if (modal?.getWalletProvider) {
+                    modal.getWalletProvider().then(provider => {
+                        if (provider) {
+                            provider.request({ method: 'eth_getBalance', params: [state.address, 'latest'] })
+                                .then(balance => {
+                                    currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
+                                    renderNetworkBadge();
+                                })
+                                .catch(() => {
+                                    currentBalance = '0.00';
+                                    renderNetworkBadge();
+                                });
+                        } else {
                             renderNetworkBadge();
-                        })
-                        .catch(() => {
-                            currentBalance = '0.00';
-                            renderNetworkBadge();
-                        });
+                        }
+                    }).catch(() => {
+                        renderNetworkBadge();
+                    });
                 } else {
                     renderNetworkBadge();
                 }
@@ -1943,9 +1953,9 @@
                 };
 
                 modal.subscribeAccount((account) => {
-                    console.log('📊 Account update:', account?.address || 'disconnected');
+                    console.log('📊 Account update:', account?.address || 'disconnected', account?.status);
 
-                    if (account?.address) {
+                    if (account?.address && account?.status === 'connected') {
                         window.currentWalletAddress = account.address;
                         localStorage.setItem('artsoul_wallet', account.address);
                         updateNavButtons({address: account.address, chainId: account.chainId});
