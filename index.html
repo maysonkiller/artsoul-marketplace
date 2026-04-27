@@ -1413,6 +1413,11 @@
             const cards = document.querySelectorAll('.card');
             const backdrop = document.getElementById('morphBackdrop');
 
+            // Pause sliding animation
+            cards.forEach(card => {
+                card.style.animation = 'none';
+            });
+
             backdrop.classList.add('active');
 
             // Save original positions
@@ -1469,6 +1474,7 @@
                     card.style.height = '';
                     card.style.left = '';
                     card.style.top = '';
+                    card.style.animation = ''; // Restore sliding animation
                 }, 800);
             });
         }
