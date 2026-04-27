@@ -718,60 +718,31 @@
                 };
 
                 modal.subscribeAccount((account) => {
-                    console.log('Account:', JSON.stringify(account));
+                    console.log('📊 Account update:', account?.address || 'disconnected');
+
                     if (account?.address) {
                         window.currentWalletAddress = account.address;
                         localStorage.setItem('artsoul_wallet', account.address);
                         updateNavButtons({address: account.address, chainId: account.chainId});
                         updateNetworkBadge({address: account.address, chainId: account.chainId});
-                    } else if (!account?.isConnected) {
-                        const saved = localStorage.getItem('artsoul_wallet');
-                        if (!saved) {
-                            resetNavButtons();
-                            localStorage.removeItem('artsoul_wallet');
-                        }
+                    } else if (account?.status === 'disconnected') {
+                        window.currentWalletAddress = null;
+                        localStorage.removeItem('artsoul_wallet');
+                        resetNavButtons();
                     }
                 });
 
-                // Restore from localStorage on page load
-                const saved = localStorage.getItem('artsoul_wallet');
-                if (saved) {
-                    console.log('💾 Restored from localStorage:', saved);
-                    window.currentWalletAddress = saved;
-                    updateNavButtons({address: saved});
-                }
-
-                // Polling fallback for desktop wallet extensions
-                setInterval(() => {
-                    if (!modal) return;
-
-                    let addr = null;
-
-                    if (modal.getAddress) {
-                        addr = modal.getAddress();
-                    } else if (modal.getAccount) {
-                        const account = modal.getAccount();
-                        addr = account?.address;
-                    } else {
-                        const state = modal.getState();
-                        addr = state?.address;
+                // Check for existing connection on load
+                setTimeout(() => {
+                    const account = modal.getAccount?.();
+                    if (account?.address) {
+                        console.log('💾 Existing connection found:', account.address);
+                        window.currentWalletAddress = account.address;
+                        localStorage.setItem('artsoul_wallet', account.address);
+                        updateNavButtons({address: account.address, chainId: account.chainId});
+                        updateNetworkBadge({address: account.address, chainId: account.chainId});
                     }
-
-                    if (addr && addr !== window.currentWalletAddress) {
-                        console.log('🔄 Polling detected address:', addr);
-                        window.currentWalletAddress = addr;
-
-                        const stateWithAddress = {
-                            address: addr,
-                            chainId: null,
-                            isConnected: true
-                        };
-
-                        updateNavButtons(stateWithAddress);
-                        updateNetworkBadge(stateWithAddress);
-                        localStorage.setItem('artsoul_wallet', addr);
-                    }
-                }, 2000);
+                }, 500);
 
                 console.log('✅ AppKit initialized on docs.html');
             } catch (error) {
