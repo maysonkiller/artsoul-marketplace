@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArtSoul - Decentralized Art Marketplace</title>
-    <link rel="icon" type="image/png" href="ARTSOULlogo.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="supabase-client.js"></script>
@@ -388,54 +388,12 @@
             width: 250px;
             top: 0;
             animation: slideCardsFlow 40s linear infinite;
+            margin-right: 20px;
         }
 
-        .future .gallery .card:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .future .gallery .card:nth-child(2) {
-            animation-delay: -3.33s;
-        }
-
-        .future .gallery .card:nth-child(3) {
-            animation-delay: -6.66s;
-        }
-
-        .future .gallery .card:nth-child(4) {
-            animation-delay: -10s;
-        }
-
-        .future .gallery .card:nth-child(5) {
-            animation-delay: -13.33s;
-        }
-
-        .future .gallery .card:nth-child(6) {
-            animation-delay: -16.66s;
-        }
-
-        .future .gallery .card:nth-child(7) {
-            animation-delay: -20s;
-        }
-
-        .future .gallery .card:nth-child(8) {
-            animation-delay: -23.33s;
-        }
-
-        .future .gallery .card:nth-child(9) {
-            animation-delay: -26.66s;
-        }
-
-        .future .gallery .card:nth-child(10) {
-            animation-delay: -30s;
-        }
-
-        .future .gallery .card:nth-child(11) {
-            animation-delay: -33.33s;
-        }
-
-        .future .gallery .card:nth-child(12) {
-            animation-delay: -36.66s;
+        .future .gallery .card:hover {
+            transform: translateY(-12px) scale(1.05);
+            z-index: 10;
         }
 
         @keyframes slideCardsFlow {
@@ -445,6 +403,65 @@
             100% {
                 transform: translateX(calc(100vw + 270px));
             }
+        }
+
+        .future .gallery .card:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .future .gallery .card:nth-child(2) {
+            animation-delay: -3.33s;
+            left: 270px;
+        }
+
+        .future .gallery .card:nth-child(3) {
+            animation-delay: -6.66s;
+            left: 540px;
+        }
+
+        .future .gallery .card:nth-child(4) {
+            animation-delay: -10s;
+            left: 810px;
+        }
+
+        .future .gallery .card:nth-child(5) {
+            animation-delay: -13.33s;
+            left: 1080px;
+        }
+
+        .future .gallery .card:nth-child(6) {
+            animation-delay: -16.66s;
+            left: 1350px;
+        }
+
+        .future .gallery .card:nth-child(7) {
+            animation-delay: -20s;
+            left: 1620px;
+        }
+
+        .future .gallery .card:nth-child(8) {
+            animation-delay: -23.33s;
+            left: 1890px;
+        }
+
+        .future .gallery .card:nth-child(9) {
+            animation-delay: -26.66s;
+            left: 2160px;
+        }
+
+        .future .gallery .card:nth-child(10) {
+            animation-delay: -30s;
+            left: 2430px;
+        }
+
+        .future .gallery .card:nth-child(11) {
+            animation-delay: -33.33s;
+            left: 2700px;
+        }
+
+        .future .gallery .card:nth-child(12) {
+            animation-delay: -36.66s;
+            left: 2970px;
         }
 
         /* Mode Transition Effect */
@@ -517,6 +534,34 @@
         .future .docs-btn:hover {
             background: rgba(0, 245, 255, 0.1);
             box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+        }
+
+        /* Site logo styles */
+        .site-logo {
+            height: 100px;
+            width: auto;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .classic .site-logo {
+            filter: drop-shadow(0 0 8px rgba(169, 221, 211, 0.4));
+        }
+
+        .future .site-logo {
+            filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 20px rgba(191, 0, 255, 0.4));
+        }
+
+        .logo-link:hover .site-logo {
+            transform: scale(1.05);
+        }
+
+        .classic .logo-link:hover .site-logo {
+            filter: drop-shadow(0 0 12px rgba(169, 221, 211, 0.6));
+        }
+
+        .future .logo-link:hover .site-logo {
+            filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 30px rgba(191, 0, 255, 0.6));
         }
 
         .card {
@@ -1141,8 +1186,8 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between flex-wrap gap-4" style="position: relative;">
                 <div class="flex items-center gap-4">
-                    <a href="index.html">
-                        <img src="ARTSOULlogo.png" alt="ArtSoul" style="height: 80px; width: auto; display: block;">
+                    <a href="index.html" class="logo-link">
+                        <img src="ARTSOULlogo.png" alt="ArtSoul" class="site-logo">
                     </a>
                     <div class="theme-toggle">
                         <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
