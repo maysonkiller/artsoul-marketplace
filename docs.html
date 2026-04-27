@@ -11,7 +11,7 @@
     <style>
         :root {
             --bg-classic: #010101;
-            --text-classic: #e8e3d5;
+            --text-classic: #a9ddd3;
             --accent-classic: #a9ddd3;
             --accent-future: #00f5ff;
             --neon-purple: #bf00ff;
@@ -174,16 +174,15 @@
         /* Pulsing dots on roadmap */
         .future .timeline-dot {
             animation: dotPulse 2s ease-in-out infinite;
+            transform-origin: center center;
         }
 
         @keyframes dotPulse {
             0%, 100% {
                 box-shadow: 0 0 10px var(--accent-future), 0 0 20px var(--neon-purple);
-                transform: scale(1);
             }
             50% {
                 box-shadow: 0 0 20px var(--accent-future), 0 0 40px var(--neon-purple);
-                transform: scale(1.2);
             }
         }
 
@@ -662,7 +661,7 @@
             if (!navButtons) return;
             const hasProfile = localStorage.getItem('userProfile');
             const profileNotification = hasProfile ? '' : '<div style="position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: #ff4444; border-radius: 50%; animation: pulse 2s infinite;"></div>';
-            navButtons.innerHTML = `<div class="tooltip-wrap" style="position: relative;"><a href="profile.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/><path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/></svg></a>${profileNotification}<div class="tooltip-text">My Profile</div></div><div class="tooltip-wrap"><a href="upload.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/></svg></a><div class="tooltip-text">Upload NFT</div></div><button onclick="window.web3Modal?.open()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
+            navButtons.innerHTML = `<div class="tooltip-wrap" style="position: relative;"><a href="profile.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="2"/><path d="M6 21C6 17.686 8.686 15 12 15C15.314 15 18 17.686 18 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>${profileNotification}<div class="tooltip-text">My Profile</div></div><div class="tooltip-wrap"><a href="upload.html" class="p-2 inline-block"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 5L12 19M5 12L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a><div class="tooltip-text">Upload NFT</div></div><button onclick="window.web3Modal?.open()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
         }
 
         function resetNavButtons() {

@@ -11,7 +11,7 @@
     <style>
         :root {
             --bg-classic: #010101;
-            --text-classic: #e8e3d5;
+            --text-classic: #a9ddd3;
             --accent-classic: #a9ddd3;
             --accent-future: #00f5ff;
             --neon-purple: #bf00ff;
@@ -36,54 +36,25 @@
         }
 
         .classic .btn-main {
-            background: var(--text-classic);
+            background: var(--accent-classic);
             color: var(--bg-classic);
-            border: 1px solid var(--text-classic);
+            border: 1px solid var(--accent-classic);
         }
 
         .classic .btn-main:hover {
             background: transparent;
-            color: var(--text-classic);
+            color: var(--accent-classic);
         }
 
         .classic .card {
-            background: rgba(232, 227, 213, 0.03);
+            background: rgba(169, 221, 211, 0.05);
             border: 1px solid var(--accent-classic);
             position: relative;
-            transition: all 0.5s ease-out;
             overflow: hidden;
         }
 
         .classic .card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 20px 50px rgba(169, 221, 211, 0.4);
-            border-color: var(--text-classic);
-        }
-
-        /* Smoke effect for Classic mode */
-        .classic .card:hover::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to top, rgba(169, 221, 211, 0.2), transparent);
-            opacity: 0.5;
-            animation: smokeClassic 2.5s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        @keyframes smokeClassic {
-            0%, 100% {
-                transform: translateY(0) scaleX(1);
-                opacity: 0.2;
-            }
-            50% {
-                transform: translateY(-15px) scaleX(1.15);
-                opacity: 0.5;
-            }
+            border-color: var(--accent-classic);
         }
 
         /* Future Mode - 2030 Alien Interface */
@@ -347,16 +318,15 @@
         /* Pulsing dots on roadmap */
         .future .timeline-dot {
             animation: dotPulse 2s ease-in-out infinite;
+            transform-origin: center center;
         }
 
         @keyframes dotPulse {
             0%, 100% {
                 box-shadow: 0 0 10px var(--accent-future), 0 0 20px var(--neon-purple);
-                transform: scale(1);
             }
             50% {
                 box-shadow: 0 0 20px var(--accent-future), 0 0 40px var(--neon-purple);
-                transform: scale(1.2);
             }
         }
 
@@ -1047,7 +1017,7 @@
                     <div class="tooltip-wrap">
                         <a href="docs.html" class="inline-block p-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                             <svg viewBox="0 0 24 24" fill="none" class="w-7 h-7" style="color: currentColor;">
-                                <path d="M4 4L20 4L20 20L4 20L4 4M8 8L16 8M8 12L16 12M8 16L12 16" stroke="currentColor" class="icon-svg"/>
+                                <path d="M9 2L9 22M15 2L15 22M4 9L20 9M4 15L20 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                             </svg>
                         </a>
                         <div class="tooltip-text">Documentation</div>
@@ -1072,75 +1042,39 @@
         </div>
 
         <div class="gallery">
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(1)" data-letter="A">
-                <div class="aspect-square bg-gradient-to-br from-purple-900 to-blue-900"></div>
-                <div class="card-letter">A</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Abstract Dreams</h3>
-                    <p class="text-xs opacity-70 mb-2">by @artist_one</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
+            <div class="card rounded-xl overflow-hidden" data-letter="A">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(2)" data-letter="R">
-                <div class="aspect-square bg-gradient-to-br from-pink-900 to-orange-900"></div>
-                <div class="card-letter">R</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Digital Sunset</h3>
-                    <p class="text-xs opacity-70 mb-2">by @creator_two</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
+            <div class="card rounded-xl overflow-hidden" data-letter="R">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(3)" data-letter="T">
-                <div class="aspect-square bg-gradient-to-br from-green-900 to-teal-900"></div>
-                <div class="card-letter">T</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Cyber Nature</h3>
-                    <p class="text-xs opacity-70 mb-2">by @nature_artist</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
+            <div class="card rounded-xl overflow-hidden" data-letter="T">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(4)" data-letter="S">
-                <div class="aspect-square bg-gradient-to-br from-red-900 to-purple-900"></div>
-                <div class="card-letter">S</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Neon Nights</h3>
-                    <p class="text-xs opacity-70 mb-2">by @neon_creator</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
+            <div class="card rounded-xl overflow-hidden" data-letter="S">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(5)" data-letter="O">
-                <div class="aspect-square bg-gradient-to-br from-indigo-900 to-cyan-900"></div>
-                <div class="card-letter">O</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Ocean Depths</h3>
-                    <p class="text-xs opacity-70 mb-2">by @ocean_artist</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
+            <div class="card rounded-xl overflow-hidden" data-letter="O">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
                 </div>
             </div>
 
-            <div class="card rounded-xl overflow-hidden" onclick="viewArt(6)" data-letter="L">
-                <div class="aspect-square bg-gradient-to-br from-yellow-900 to-red-900"></div>
-                <div class="card-letter">L</div>
-                <div class="p-3">
-                    <h3 class="text-sm font-medium mb-1">Fire & Gold</h3>
-                    <p class="text-xs opacity-70 mb-2">by @gold_master</p>
-                    <button class="w-full py-1.5 rounded text-xs font-medium" style="background: rgba(169, 221, 211, 0.2); border: 1px solid currentColor;">
-                        View
-                    </button>
+            <div class="card rounded-xl overflow-hidden" data-letter="L">
+                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                    <p class="text-2xl font-light">Coming Soon</p>
                 </div>
             </div>
         </div>
@@ -1373,6 +1307,8 @@
         }
 
         function morphToAnagram() {
+            // Only work in Future mode
+            if (!document.body.classList.contains('future')) return;
             if (morphActive) return;
             morphActive = true;
 
@@ -1726,7 +1662,7 @@
         function updateNavButtons(state) {
             const navButtons = document.getElementById('navButtons');
             if (!navButtons) return;
-            navButtons.innerHTML = `<div class="tooltip-wrap"><button onclick="showSection('profile'); switchProfileTab('myworks')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 3L12 21M12 3L6 9M12 3L18 9M3 15L3 21L21 21L21 15" stroke="currentColor" class="icon-svg"/></svg></button><div class="tooltip-text">Upload Artwork</div></div><div class="tooltip-wrap"><button onclick="showSection('profile')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="12" r="9" stroke="currentColor" class="icon-svg"/><path d="M12 6L12 12L16 16" stroke="currentColor" class="icon-svg"/></svg></button><div class="tooltip-text">My Profile</div></div><button onclick="window.web3Modal?.open()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
+            navButtons.innerHTML = `<div class="tooltip-wrap"><button onclick="showSection('profile'); switchProfileTab('myworks')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><path d="M12 5L12 19M5 12L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="tooltip-text">Upload Artwork</div></div><div class="tooltip-wrap"><button onclick="showSection('profile')" class="p-2 inline-block" style="background: none; border: none; color: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" class="w-6 h-6" style="color: currentColor;"><circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="2"/><path d="M6 21C6 17.686 8.686 15 12 15C15.314 15 18 17.686 18 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="tooltip-text">My Profile</div></div><button onclick="window.web3Modal?.open()" class="btn-main" style="padding: 0.5rem 1rem; font-size: 0.875rem;">${state.address.slice(0, 6)}...${state.address.slice(-4)}</button>`;
         }
 
         function resetNavButtons() {
