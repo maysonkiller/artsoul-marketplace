@@ -1798,57 +1798,18 @@
                     }
                 });
 
-                // Subscribe to state changes with debounce
-                let lastAddress = null;
-                let processingConnection = false;
+                // Subscribe to state changes
+                modal.subscribeState((state) => {
+                    console.log('📊 Wallet state changed:', state);
 
-                modal.subscribeState(async (state) => {
-                    console.log('📊 Wallet state changed (FULL):', state);
-                    console.log('📊 Wallet state details:', {
-                        address: state?.address,
-                        isConnected: state?.isConnected,
-                        chainId: state?.chainId,
-                        open: state?.open,
-                        selectedNetworkId: state?.selectedNetworkId
-                    });
-
-                    // If modal just closed, check state directly
-                    if (state?.open === false && !processingConnection) {
-                        console.log('🔍 Modal closed, checking for connection...');
-                        await new Promise(resolve => setTimeout(resolve, 500));
-
-                        const currentState = modal.getState();
-                        console.log('🔍 Current state after modal close:', currentState);
-
-                        if (currentState?.address && currentState.address !== lastAddress) {
-                            processingConnection = true;
-                            lastAddress = currentState.address;
-                            console.log('✅ Wallet connected via modal close:', currentState.address);
-                            await handleSuccessfulLogin(currentState);
-                            processingConnection = false;
-                            return;
-                        }
-                    }
-
-                    // Check for connection
-                    if (state?.address && !processingConnection && state.address !== lastAddress) {
-                        processingConnection = true;
-                        lastAddress = state.address;
-
+                    if (state?.selectedNetworkId && state?.address) {
                         console.log('✅ Wallet connected:', state.address);
-
-                        // Wait a bit for state to stabilize
-                        await new Promise(resolve => setTimeout(resolve, 500));
-
-                        await handleSuccessfulLogin(state);
-
-                        processingConnection = false;
-                    } else if (!state?.address && lastAddress) {
-                        // Disconnected
+                        window.currentWalletAddress = state.address;
+                        updateNavButtons(state);
+                        updateNetworkBadge(state);
+                    } else if (!state?.address) {
                         console.log('❌ Wallet disconnected');
-                        lastAddress = null;
-                        processingConnection = false;
-                        isConnecting = false;
+                        window.currentWalletAddress = null;
                         resetNavButtons();
                     }
                 });

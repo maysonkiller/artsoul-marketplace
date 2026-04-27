@@ -30,9 +30,8 @@ async function createProfile(walletAddress, profileData) {
             username: profileData.username,
             bio: profileData.bio,
             avatar_url: profileData.avatar_url,
-            twitter_handle: profileData.twitter,
-            discord_username: profileData.discord,
-            vk_username: profileData.vk
+            twitter_handle: profileData.twitter_handle,
+            discord_username: profileData.discord_username
         }])
         .select()
         .single();
