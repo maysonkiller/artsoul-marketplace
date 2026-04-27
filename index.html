@@ -1758,15 +1758,18 @@
                     features: {
                         socials: ['google', 'x', 'apple', 'discord'],
                         email: true,
-                        onramp: true,
-                        swaps: true,
+                        onramp: false,
+                        swaps: false,
                         analytics: true
                     },
                     themeMode: 'dark',
                     themeVariables: {
                         '--w3m-accent': '#00f5ff',
                         '--w3m-color-mix': '#bf00ff'
-                    }
+                    },
+                    enableWalletConnect: true,
+                    enableInjected: true,
+                    enableCoinbase: false
                 };
 
                 // Only add EthersAdapter on desktop for browser extensions
