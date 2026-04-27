@@ -581,7 +581,6 @@
 
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
-        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
         import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
         const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
@@ -670,7 +669,6 @@
         async function initializeAppKit() {
             try {
                 modal = createAppKit({
-                    adapters: [new EthersAdapter()],
                     networks,
                     metadata,
                     projectId,
@@ -693,14 +691,29 @@
                     if (modal) await modal.open();
                 };
 
-                modal.subscribeState((state) => {
-                    if (state?.address) {
-                        updateNavButtons(state);
-                        updateNetworkBadge(state);
-                    } else {
-                        resetNavButtons();
+                modal.subscribeAccount((account) => {
+                    console.log('Account:', JSON.stringify(account));
+                    if (account?.address) {
+                        window.currentWalletAddress = account.address;
+                        localStorage.setItem('artsoul_wallet', account.address);
+                        updateNavButtons({address: account.address, chainId: account.chainId});
+                        updateNetworkBadge({address: account.address, chainId: account.chainId});
+                    } else if (!account?.isConnected) {
+                        const saved = localStorage.getItem('artsoul_wallet');
+                        if (!saved) {
+                            resetNavButtons();
+                            localStorage.removeItem('artsoul_wallet');
+                        }
                     }
                 });
+
+                // Restore from localStorage on page load
+                const saved = localStorage.getItem('artsoul_wallet');
+                if (saved) {
+                    console.log('💾 Restored from localStorage:', saved);
+                    window.currentWalletAddress = saved;
+                    updateNavButtons({address: saved});
+                }
 
                 // Polling fallback for desktop wallet extensions
                 setInterval(() => {
@@ -708,7 +721,6 @@
 
                     let addr = null;
 
-                    // Try multiple methods to get address
                     if (modal.getAddress) {
                         addr = modal.getAddress();
                     } else if (modal.getAccount) {
@@ -731,6 +743,7 @@
 
                         updateNavButtons(stateWithAddress);
                         updateNetworkBadge(stateWithAddress);
+                        localStorage.setItem('artsoul_wallet', addr);
                     }
                 }, 2000);
 
