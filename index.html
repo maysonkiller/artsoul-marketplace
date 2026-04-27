@@ -1944,6 +1944,11 @@
                     if (modal) await modal.open();
                 };
 
+                // Helper function to get current wallet address
+                window.getCurrentWalletAddress = () => {
+                    return window.currentWalletAddress || localStorage.getItem('artsoul_wallet');
+                };
+
                 modal.subscribeAccount((account) => {
                     console.log('📊 Account update:', account?.address || 'disconnected');
 
