@@ -1544,7 +1544,6 @@
     <!-- AppKit Integration -->
     <script type="module">
         import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
-        import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
         import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
         const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
@@ -1798,7 +1797,6 @@
         async function initializeAppKit() {
             try {
                 modal = createAppKit({
-                    adapters: [new EthersAdapter()],
                     networks,
                     metadata,
                     projectId,
