@@ -1796,18 +1796,6 @@
                     }
                 });
 
-                // Check for existing connection on load
-                setTimeout(() => {
-                    const account = modal.getAccount?.();
-                    if (account?.address) {
-                        console.log('💾 Existing connection found:', account.address);
-                        window.currentWalletAddress = account.address;
-                        localStorage.setItem('artsoul_wallet', account.address);
-                        updateNavButtons({address: account.address, chainId: account.chainId});
-                        updateNetworkBadge({address: account.address, chainId: account.chainId});
-                    }
-                }, 500);
-
                 console.log('✅ AppKit initialized on index.html');
             } catch (error) {
                 console.error('⚠️ AppKit init failed:', error);
