@@ -299,6 +299,11 @@
                 {
                     title: 'Supported Networks',
                     content: 'Ethereum, Polygon, BSC, Base, Arbitrum, Optimism, Sepolia, Rialo Playground. Switch networks anytime via the Network Badge.'
+                },
+                {
+                    id: 'rialo',
+                    title: 'Rialo Playground',
+                    content: 'Rialo Playground is a testnet devnet network designed for developers to build and test blockchain applications without using real money. All transactions are free, making it perfect for development and testing. Chain ID: 2025. Native Currency: RIA. RPC URL: https://playground.rialo.io/rpc. Block Explorer: https://playground.rialo.io. Follow Rialo on X: @RialoHQ'
                 }
             ];
 
@@ -311,7 +316,7 @@
 
                     <div className="max-w-4xl mx-auto space-y-8">
                         {sections.map((section, index) => (
-                            <div key={index} className={`p-6 rounded-xl ${isClassic ? 'bg-gray-900/30 border border-gray-700' : 'bg-cyan-900/10 border border-cyan-500/30'} animate-fadeIn`} style={{animationDelay: `${index * 0.1}s`}}>
+                            <div key={index} id={section.id || ''} className={`p-6 rounded-xl ${isClassic ? 'bg-gray-900/30 border border-gray-700' : 'bg-cyan-900/10 border border-cyan-500/30'} animate-fadeIn`} style={{animationDelay: `${index * 0.1}s`}}>
                                 <h2 className="text-2xl font-semibold mb-4">{section.title}</h2>
                                 <p className="opacity-80 leading-relaxed">{section.content}</p>
                             </div>

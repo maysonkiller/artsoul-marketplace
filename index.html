@@ -573,6 +573,49 @@
             color: var(--accent-future);
         }
 
+        /* Devnet Banner Main (centered, clickable) */
+        .devnet-banner-link {
+            display: block;
+            text-align: center;
+            padding: 1rem 0;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .devnet-banner-main {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .classic .devnet-banner-main {
+            background: rgba(169, 221, 211, 0.15);
+            border: 1px solid var(--accent-classic);
+            color: var(--accent-classic);
+        }
+
+        .classic .devnet-banner-link:hover .devnet-banner-main {
+            background: rgba(169, 221, 211, 0.25);
+            border-color: var(--text-classic);
+            transform: translateY(-2px);
+        }
+
+        .future .devnet-banner-main {
+            background: rgba(0, 245, 255, 0.15);
+            border: 1px solid var(--accent-future);
+            color: var(--accent-future);
+        }
+
+        .future .devnet-banner-link:hover .devnet-banner-main {
+            background: rgba(0, 245, 255, 0.25);
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
         /* Mobile fixes */
         @media (max-width: 768px) {
             .tooltip-text {
@@ -906,7 +949,6 @@
                         </a>
                         <div class="tooltip-text">Documentation</div>
                     </div>
-                    <div class="devnet-banner">Working on Rialo Playground Devnet</div>
                     <div id="networkBadge"></div>
                     <div class="flex items-center gap-3" id="navButtons">
                         <button id="connectBtn" class="btn-main">Get Started</button>
@@ -915,6 +957,11 @@
             </div>
         </div>
     </header>
+
+    <!-- Rialo Devnet Banner -->
+    <a href="docs.html#rialo" class="devnet-banner-link">
+        <div class="devnet-banner-main">Working on Rialo Playground Devnet</div>
+    </a>
 
     <!-- Morph Backdrop -->
     <div id="morphBackdrop" class="morph-backdrop"></div>
