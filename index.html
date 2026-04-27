@@ -1847,13 +1847,17 @@
 
                 // Subscribe to account changes
                 modal.subscribeAccount((account) => {
-                    console.log('📊 Account changed:', account);
+                    console.log('📊 Account changed');
+                    console.log('Account keys:', Object.keys(account || {}));
+                    console.log('Account JSON:', JSON.stringify(account, null, 2));
+                    console.log('caipAddress:', account?.caipAddress);
+                    console.log('address:', account?.address);
+                    console.log('isConnected:', account?.isConnected);
 
                     if (account?.address) {
                         console.log('✅ Wallet connected:', account.address);
                         window.currentWalletAddress = account.address;
 
-                        // Create state object with address
                         const stateWithAddress = {
                             address: account.address,
                             chainId: account.chainId,
@@ -1862,12 +1866,41 @@
 
                         updateNavButtons(stateWithAddress);
                         updateNetworkBadge(stateWithAddress);
+                    } else if (account?.caipAddress) {
+                        // Try to extract address from CAIP format
+                        const parts = account.caipAddress.split(':');
+                        const address = parts[parts.length - 1];
+                        console.log('✅ Extracted address from caipAddress:', address);
+                        window.currentWalletAddress = address;
+
+                        const stateWithAddress = {
+                            address: address,
+                            chainId: account.chainId,
+                            isConnected: account.isConnected
+                        };
+
+                        updateNavButtons(stateWithAddress);
+                        updateNetworkBadge(stateWithAddress);
                     } else {
-                        console.log('❌ Wallet disconnected');
+                        console.log('❌ Wallet disconnected or no address found');
                         window.currentWalletAddress = null;
                         resetNavButtons();
                     }
                 });
+
+                // Try to get provider and accounts
+                (async () => {
+                    try {
+                        const provider = await modal.getWalletProvider();
+                        console.log('🔌 Provider:', provider);
+                        if (provider) {
+                            const accounts = await provider.request({method: 'eth_accounts'});
+                            console.log('🔌 Provider accounts:', accounts);
+                        }
+                    } catch (error) {
+                        console.log('⚠️ Could not get provider:', error);
+                    }
+                })();
 
                 console.log('✅ AppKit 1.7.11 initialized (bundled)');
                 console.log('📊 Networks:', networks.map(n => n.name).join(', '));
