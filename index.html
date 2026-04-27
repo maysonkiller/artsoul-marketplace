@@ -1073,42 +1073,57 @@
             </div>
 
             <div class="mt-12">
-                <h3 class="text-2xl font-light mb-6 text-center">Roadmap</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                    <div>
-                        <h4 class="font-medium mb-2">Q2 2026</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>MVP platform</li>
-                            <li>Basic UI/UX</li>
-                            <li>Upload system</li>
-                            <li>Profiles</li>
-                        </ul>
+                <h3 class="text-2xl font-light mb-8 text-center">Roadmap</h3>
+                <div class="relative max-w-4xl mx-auto">
+                    <!-- Timeline line -->
+                    <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 opacity-30" style="background: currentColor;"></div>
+
+                    <!-- Q2 2026 -->
+                    <div class="relative mb-12 flex items-center">
+                        <div class="w-1/2 pr-8 text-right">
+                            <div class="inline-block p-4 rounded-lg" style="background: rgba(169, 221, 211, 0.1); border: 1px solid rgba(169, 221, 211, 0.3);">
+                                <h4 class="font-semibold mb-2">Q2 2026</h4>
+                                <p class="text-sm opacity-70">MVP platform, Basic UI/UX, Upload system, Profiles</p>
+                            </div>
+                        </div>
+                        <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full" style="background: currentColor;"></div>
+                        <div class="w-1/2 pl-8"></div>
                     </div>
-                    <div>
-                        <h4 class="font-medium mb-2">Q3 2026</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>Web3 integration</li>
-                            <li>Smart contracts</li>
-                            <li>Multi-chain</li>
-                            <li>IPFS</li>
-                        </ul>
+
+                    <!-- Q3 2026 -->
+                    <div class="relative mb-12 flex items-center">
+                        <div class="w-1/2 pr-8"></div>
+                        <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full" style="background: currentColor;"></div>
+                        <div class="w-1/2 pl-8">
+                            <div class="inline-block p-4 rounded-lg" style="background: rgba(169, 221, 211, 0.1); border: 1px solid rgba(169, 221, 211, 0.3);">
+                                <h4 class="font-semibold mb-2">Q3 2026</h4>
+                                <p class="text-sm opacity-70">Web3 integration, Smart contracts, Multi-chain, IPFS</p>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="font-medium mb-2">Q4 2026</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>Social features</li>
-                            <li>Music player</li>
-                            <li>Mobile version</li>
-                            <li>Developer API</li>
-                        </ul>
+
+                    <!-- Q4 2026 -->
+                    <div class="relative mb-12 flex items-center">
+                        <div class="w-1/2 pr-8 text-right">
+                            <div class="inline-block p-4 rounded-lg" style="background: rgba(169, 221, 211, 0.1); border: 1px solid rgba(169, 221, 211, 0.3);">
+                                <h4 class="font-semibold mb-2">Q4 2026</h4>
+                                <p class="text-sm opacity-70">Social features, Music player, Mobile version, Developer API</p>
+                            </div>
+                        </div>
+                        <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full" style="background: currentColor;"></div>
+                        <div class="w-1/2 pl-8"></div>
                     </div>
-                    <div>
-                        <h4 class="font-medium mb-2">2027</h4>
-                        <ul class="space-y-1 opacity-70">
-                            <li>DAO launch</li>
-                            <li>Governance</li>
-                            <li>Gallery partnerships</li>
-                        </ul>
+
+                    <!-- 2027 -->
+                    <div class="relative flex items-center">
+                        <div class="w-1/2 pr-8"></div>
+                        <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full" style="background: currentColor;"></div>
+                        <div class="w-1/2 pl-8">
+                            <div class="inline-block p-4 rounded-lg" style="background: rgba(169, 221, 211, 0.1); border: 1px solid rgba(169, 221, 211, 0.3);">
+                                <h4 class="font-semibold mb-2">2027</h4>
+                                <p class="text-sm opacity-70">DAO launch, Governance, Gallery partnerships</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1897,6 +1912,37 @@
                         console.log('⚠️ Could not get provider:', error);
                     }
                 })();
+
+                // Direct window.ethereum connection (primary method for desktop)
+                if (window.ethereum) {
+                    console.log('🔌 window.ethereum detected');
+
+                    // Listen for account changes
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        console.log('🔄 accountsChanged event:', accounts);
+                        if (accounts[0]) {
+                            window.currentWalletAddress = accounts[0];
+                            updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
+                            updateNetworkBadge({address: accounts[0], chainId: null});
+                        } else {
+                            window.currentWalletAddress = null;
+                            resetNavButtons();
+                        }
+                    });
+
+                    // Check for existing accounts
+                    try {
+                        const accounts = await window.ethereum.request({method: 'eth_accounts'});
+                        console.log('🔌 Existing accounts:', accounts);
+                        if (accounts[0]) {
+                            window.currentWalletAddress = accounts[0];
+                            updateNavButtons({address: accounts[0], chainId: null, isConnected: true});
+                            updateNetworkBadge({address: accounts[0], chainId: null});
+                        }
+                    } catch (error) {
+                        console.log('⚠️ Could not get eth_accounts:', error);
+                    }
+                }
 
                 console.log('✅ AppKit 1.7.11 initialized (bundled)');
                 console.log('📊 Networks:', networks.map(n => n.name).join(', '));
