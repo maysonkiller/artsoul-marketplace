@@ -4,6 +4,7 @@
 // ============================================
 
 import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
+import { WagmiAdapter } from 'https://esm.sh/@reown/appkit-adapter-wagmi@1.7.11?bundle'
 import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
 // ============================================
@@ -263,7 +264,14 @@ async function initializeAppKit() {
         const isMobile = isMobileDevice();
         console.log('📱 Device type:', isMobile ? 'Mobile' : 'Desktop');
 
+        // Create Wagmi adapter for better browser extension support
+        const wagmiAdapter = new WagmiAdapter({
+            networks,
+            projectId
+        });
+
         const config = {
+            adapters: [wagmiAdapter],
             networks,
             metadata,
             projectId,
@@ -278,15 +286,10 @@ async function initializeAppKit() {
             themeVariables: {
                 '--w3m-accent': '#00f5ff',
                 '--w3m-color-mix': '#bf00ff'
-            },
-            enableWalletConnect: true,
-            enableInjected: true,
-            enableCoinbase: false,
-            // Don't use any adapters - let AppKit handle everything natively
-            // This avoids conflicts with multiple wallet extensions
+            }
         };
 
-        console.log('🔌 Using AppKit native providers (no adapters)');
+        console.log('🔌 Using WagmiAdapter for browser extensions');
 
         modal = createAppKit(config);
         window.web3Modal = modal;
