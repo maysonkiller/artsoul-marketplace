@@ -226,7 +226,17 @@ window.ensureAuthenticated = async () => {
     // Authenticate with signature
     try {
         console.log('🔐 Requesting signature for authentication...');
-        const provider = await modal.getWalletProvider();
+
+        // Get provider - works with both WagmiAdapter and EthersAdapter
+        let provider;
+        if (window.ethereum) {
+            provider = window.ethereum;
+        } else if (modal?.getWalletProvider) {
+            provider = await modal.getWalletProvider();
+        } else {
+            throw new Error('No wallet provider available');
+        }
+
         const authResult = await window.SupabaseAuth.authenticateWithWallet(
             walletAddress,
             provider
