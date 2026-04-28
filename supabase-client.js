@@ -5,6 +5,9 @@
 const SUPABASE_URL = 'https://bexigvqrunomwtjsxlej.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJleGlndnFydW5vbXd0anN4bGVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjkwNDQsImV4cCI6MjA5MjgwNTA0NH0.ZU7cMhovwMk9JViY0OOq5-vwHBCpNWiMrlhk4ZKqQ5s';
 
+// Export for OAuth integration
+window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+
 // Initialize Supabase client with auth support
 let supabaseClient = null;
 

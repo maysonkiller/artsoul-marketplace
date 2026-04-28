@@ -648,7 +648,92 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 1rem;
             max-width: 1400px;
-            margin: 0 auto 150px;
+            margin: 0 auto 200px;
+        }
+
+        /* Gallery cards sliding animation in Future mode */
+        .future .gallery {
+            overflow: hidden;
+            position: relative;
+            display: block;
+            height: 350px;
+            margin-top: 80px;
+        }
+
+        .future .gallery .card {
+            position: absolute;
+            width: 260px;
+            top: 0;
+            animation: slideCardsFlow 50s linear infinite;
+        }
+
+        @keyframes slideCardsFlow {
+            0% {
+                transform: translateX(-300px);
+            }
+            100% {
+                transform: translateX(calc(100vw + 300px));
+            }
+        }
+
+        .future .gallery .card:nth-child(1) {
+            animation-delay: 0s;
+            left: calc(-300px + 0 * 300px);
+        }
+
+        .future .gallery .card:nth-child(2) {
+            animation-delay: 0s;
+            left: calc(-300px + 1 * 300px);
+        }
+
+        .future .gallery .card:nth-child(3) {
+            animation-delay: 0s;
+            left: calc(-300px + 2 * 300px);
+        }
+
+        .future .gallery .card:nth-child(4) {
+            animation-delay: 0s;
+            left: calc(-300px + 3 * 300px);
+        }
+
+        .future .gallery .card:nth-child(5) {
+            animation-delay: 0s;
+            left: calc(-300px + 4 * 300px);
+        }
+
+        .future .gallery .card:nth-child(6) {
+            animation-delay: 0s;
+            left: calc(-300px + 5 * 300px);
+        }
+
+        .future .gallery .card:nth-child(7) {
+            animation-delay: 0s;
+            left: calc(-300px + 6 * 300px);
+        }
+
+        .future .gallery .card:nth-child(8) {
+            animation-delay: 0s;
+            left: calc(-300px + 7 * 300px);
+        }
+
+        .future .gallery .card:nth-child(9) {
+            animation-delay: 0s;
+            left: calc(-300px + 8 * 300px);
+        }
+
+        .future .gallery .card:nth-child(10) {
+            animation-delay: 0s;
+            left: calc(-300px + 9 * 300px);
+        }
+
+        .future .gallery .card:nth-child(11) {
+            animation-delay: 0s;
+            left: calc(-300px + 10 * 300px);
+        }
+
+        .future .gallery .card:nth-child(12) {
+            animation-delay: 0s;
+            left: calc(-300px + 11 * 300px);
         }
 
         @media (max-width: 1200px) {

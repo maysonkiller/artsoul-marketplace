@@ -112,6 +112,7 @@ class OAuthIntegration {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
             },
             body: JSON.stringify({ code, state }),
         });
@@ -129,6 +130,7 @@ class OAuthIntegration {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
             },
             body: JSON.stringify({ code, state, code_verifier: codeVerifier }),
         });
