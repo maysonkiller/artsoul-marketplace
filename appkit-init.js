@@ -4,7 +4,6 @@
 // ============================================
 
 import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
-import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle'
 import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
 // ============================================
@@ -282,14 +281,12 @@ async function initializeAppKit() {
             },
             enableWalletConnect: true,
             enableInjected: true,
-            enableCoinbase: true
+            enableCoinbase: false  // Disable Coinbase to avoid SDK error
         };
 
-        // Add EthersAdapter for desktop browser extensions
-        if (!isMobile) {
-            config.adapters = [new EthersAdapter()];
-            console.log('🔌 EthersAdapter enabled for desktop');
-        }
+        // DON'T use EthersAdapter - it causes conflicts with multiple wallet extensions
+        // AppKit's built-in injected provider works better
+        console.log('🔌 Using AppKit built-in injected provider (no EthersAdapter)');
 
         modal = createAppKit(config);
         window.web3Modal = modal;
