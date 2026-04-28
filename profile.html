@@ -385,6 +385,19 @@
                                     <div ref={navButtonsRef} className="flex items-center gap-3">
                                         {/* AppKit will populate this */}
                                     </div>
+                                    <button
+                                        onClick={() => {
+                                            if (window.web3Modal) {
+                                                window.web3Modal.disconnect();
+                                                setTimeout(() => {
+                                                    window.location.href = 'index.html';
+                                                }, 500);
+                                            }
+                                        }}
+                                        className="btn-secondary"
+                                    >
+                                        Disconnect
+                                    </button>
                                     <a href="index.html" className="btn-secondary">
                                         Back to Gallery
                                     </a>
