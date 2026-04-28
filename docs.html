@@ -430,10 +430,10 @@
         function DocsApp() {
             const [isClassic, setIsClassic] = useState(true);
 
+            // Theme is now handled by theme-sync.js
             useEffect(() => {
-                const savedTheme = localStorage.getItem('theme') || 'classic';
+                const savedTheme = window.ThemeSync?.getTheme() || 'classic';
                 setIsClassic(savedTheme === 'classic');
-                document.body.className = savedTheme;
             }, []);
 
             const sections = [

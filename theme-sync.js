@@ -18,9 +18,8 @@
      * Save theme to localStorage
      */
     function saveTheme(theme) {
-        console.log(`🎨 Theme saved: ${theme}`);
-        console.trace('Theme save called from:');
         localStorage.setItem(THEME_KEY, theme);
+        console.log(`🎨 Theme saved: ${theme}`);
     }
 
     /**
