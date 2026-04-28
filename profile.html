@@ -686,20 +686,9 @@
             );
         }
 
-        // Apply theme to body
-        function applyTheme() {
-            const app = document.getElementById('app');
-            if (app && app.querySelector('[class*="classic"]')) {
-                document.body.className = 'classic';
-            } else if (app && app.querySelector('[class*="future"]')) {
-                document.body.className = 'future';
-            }
-        }
-
         ReactDOM.render(<ProfilePage />, document.getElementById('app'));
 
-        // Watch for theme changes
-        setInterval(applyTheme, 100);
+        // Theme is managed by theme-sync.js
     </script>
 </body>
 </html>
