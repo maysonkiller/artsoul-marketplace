@@ -7,7 +7,9 @@
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
+    <script type="module" src="appkit-init.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -371,9 +373,15 @@
                                         </button>
                                     </div>
                                 </div>
-                                <a href="index.html" className="btn-main">
-                                    Back to Gallery
-                                </a>
+                                <div className="flex items-center gap-3">
+                                    <div id="networkBadge"></div>
+                                    <div id="navButtons" className="flex items-center gap-3">
+                                        <button onclick="window.web3Modal?.open()" className="btn-main">Get Started</button>
+                                    </div>
+                                    <a href="index.html" className="btn-main">
+                                        Back to Gallery
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </header>
