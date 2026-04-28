@@ -28,6 +28,7 @@
     <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
     <script type="module" src="appkit-init.js"></script>
+    <script src="oauth-integration.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -237,6 +238,7 @@
             // Load profile and artworks
             useEffect(() => {
                 loadProfile();
+                handleOAuthCallback();
             }, []);
 
             useEffect(() => {
@@ -244,6 +246,18 @@
                     loadMyArtworks();
                 }
             }, [profile, selectedGallery]);
+
+            async function handleOAuthCallback() {
+                if (window.OAuthIntegration) {
+                    const result = await window.OAuthIntegration.handleCallback();
+                    if (result) {
+                        // Reload profile to show connected account
+                        setTimeout(() => {
+                            loadProfile();
+                        }, 1000);
+                    }
+                }
+            }
 
             async function loadProfile() {
                 const walletAddress = window.getCurrentWalletAddress?.();
@@ -475,28 +489,66 @@
                                                 } outline-none`}
                                             />
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <input
-                                                    type="text"
-                                                    value={profile?.twitter_handle || ''}
-                                                    onChange={(e) => setProfile({...profile, twitter_handle: e.target.value})}
-                                                    placeholder="Twitter/X handle"
-                                                    className={`px-4 py-2 rounded-lg ${
-                                                        isClassic
-                                                            ? 'bg-gray-700 border border-gray-600 text-gray-100'
-                                                            : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
-                                                    } outline-none`}
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={profile?.discord_username || ''}
-                                                    onChange={(e) => setProfile({...profile, discord_username: e.target.value})}
-                                                    placeholder="Discord username"
-                                                    className={`px-4 py-2 rounded-lg ${
-                                                        isClassic
-                                                            ? 'bg-gray-700 border border-gray-600 text-gray-100'
-                                                            : 'bg-gray-800/50 border border-cyan-500/30 text-cyan-100'
-                                                    } outline-none`}
-                                                />
+                                                {/* Twitter OAuth */}
+                                                <div>
+                                                    {profile?.twitter_username ? (
+                                                        <div className={`flex items-center justify-between px-4 py-2 rounded-lg ${
+                                                            isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-cyan-900/50 border border-cyan-500/30'
+                                                        }`}>
+                                                            <span>🐦 @{profile.twitter_username}</span>
+                                                            <button
+                                                                onClick={() => {
+                                                                    window.OAuthIntegration.disconnect('twitter', window.getCurrentWalletAddress?.());
+                                                                    setProfile({...profile, twitter_username: null, twitter_id: null});
+                                                                }}
+                                                                className="text-red-400 hover:text-red-300 text-sm"
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => window.OAuthIntegration.connectTwitter(window.getCurrentWalletAddress?.())}
+                                                            className={`w-full px-4 py-2 rounded-lg ${
+                                                                isClassic
+                                                                    ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                                                                    : 'bg-cyan-900/50 hover:bg-cyan-800/50 text-cyan-300 border border-cyan-500/30'
+                                                            }`}
+                                                        >
+                                                            🐦 Connect Twitter
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                {/* Discord OAuth */}
+                                                <div>
+                                                    {profile?.discord_username ? (
+                                                        <div className={`flex items-center justify-between px-4 py-2 rounded-lg ${
+                                                            isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-purple-900/50 border border-purple-500/30'
+                                                        }`}>
+                                                            <span>💬 {profile.discord_username}</span>
+                                                            <button
+                                                                onClick={() => {
+                                                                    window.OAuthIntegration.disconnect('discord', window.getCurrentWalletAddress?.());
+                                                                    setProfile({...profile, discord_username: null, discord_id: null});
+                                                                }}
+                                                                className="text-red-400 hover:text-red-300 text-sm"
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => window.OAuthIntegration.connectDiscord(window.getCurrentWalletAddress?.())}
+                                                            className={`w-full px-4 py-2 rounded-lg ${
+                                                                isClassic
+                                                                    ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                                                                    : 'bg-purple-900/50 hover:bg-purple-800/50 text-purple-300 border border-purple-500/30'
+                                                            }`}
+                                                        >
+                                                            💬 Connect Discord
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (
