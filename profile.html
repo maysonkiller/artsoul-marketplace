@@ -217,10 +217,10 @@
         const { useState, useEffect, useRef } = React;
 
         const GALLERY_TYPES = [
-            { id: 'nft', label: 'NFT', icon: '🖼️', fileType: 'image' },
-            { id: 'video', label: 'Video', icon: '🎬', fileType: 'video' },
-            { id: 'music', label: 'Music', icon: '🎵', fileType: 'music' },
-            { id: 'gif', label: 'GIF', icon: '🎞️', fileType: 'gif' },
+            { id: 'nft', label: 'NFT', icon: '', fileType: 'image' },
+            { id: 'video', label: 'Video', icon: '', fileType: 'video' },
+            { id: 'music', label: 'Music', icon: '', fileType: 'music' },
+            { id: 'gif', label: 'GIF', icon: '', fileType: 'gif' },
         ];
 
         function ProfilePage() {
@@ -393,13 +393,13 @@
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <a href="index.html" className="btn-secondary">
-                                        Back to Gallery
-                                    </a>
-                                    <div id="networkBadge"></div>
                                     <div id="navButtons" className="flex items-center gap-3">
                                         {/* AppKit will populate this */}
                                     </div>
+                                    <div id="networkBadge"></div>
+                                    <a href="index.html" className="btn-secondary">
+                                        Back to Gallery
+                                    </a>
                                 </div>
                             </div>
                         </div>

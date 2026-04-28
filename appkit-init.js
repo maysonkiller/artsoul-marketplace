@@ -352,6 +352,12 @@ async function initializeAppKit() {
                 // Update UI
                 updateNavButtons(null);
                 updateNetworkBadge(null);
+
+                // Redirect to home if on profile page
+                if (window.location.pathname.includes('profile.html')) {
+                    console.log('🏠 Redirecting to home page...');
+                    window.location.href = 'index.html';
+                }
             }
         });
 
