@@ -6,8 +6,8 @@
     <title>ArtSoul - Decentralized Art Marketplace</title>
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="unified-styles.css?v=3">
-    <link rel="stylesheet" href="button-effects.css?v=3">
+    <link rel="stylesheet" href="unified-styles.css?v=4">
+    <link rel="stylesheet" href="button-effects.css?v=4">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Apply theme immediately to prevent flash
@@ -138,14 +138,38 @@
         .future .card:hover {
             transform: translateY(-12px);
             box-shadow:
-                0 -15px 30px var(--neon-purple),
-                0 15px 30px var(--neon-purple),
-                -15px 0 30px var(--accent-future),
-                15px 0 30px var(--accent-future),
+                0 -20px 40px var(--neon-purple),
+                0 20px 40px var(--neon-purple),
+                -20px 0 40px var(--accent-future),
+                20px 0 40px var(--accent-future),
                 0 0 60px var(--accent-future),
                 0 0 90px var(--neon-purple);
             border-color: var(--neon-purple);
             z-index: 10;
+            animation: cardGlowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes cardGlowPulse {
+            0%, 100% {
+                box-shadow:
+                    0 -20px 40px rgba(0, 245, 255, 0.8),
+                    0 20px 40px rgba(0, 245, 255, 0.8),
+                    -20px 0 40px rgba(0, 245, 255, 0.6),
+                    20px 0 40px rgba(0, 245, 255, 0.6),
+                    0 0 60px rgba(0, 245, 255, 0.8),
+                    0 0 90px rgba(191, 0, 255, 0.6);
+                border-color: rgba(0, 245, 255, 0.6);
+            }
+            50% {
+                box-shadow:
+                    0 -20px 40px rgba(191, 0, 255, 0.8),
+                    0 20px 40px rgba(191, 0, 255, 0.8),
+                    -20px 0 40px rgba(191, 0, 255, 0.6),
+                    20px 0 40px rgba(191, 0, 255, 0.6),
+                    0 0 60px rgba(191, 0, 255, 0.8),
+                    0 0 90px rgba(0, 245, 255, 0.6);
+                border-color: rgba(191, 0, 255, 0.6);
+            }
         }
 
         /* Coming Soon text animation in Future mode */
@@ -653,59 +677,59 @@
 
         @keyframes slideCardsFlow {
             0% {
-                transform: translateX(calc(-450px * 12));
+                transform: translateX(0);
             }
             100% {
-                transform: translateX(0);
+                transform: translateX(calc(450px * 12));
             }
         }
 
         .future .gallery .card:nth-child(1) {
-            left: calc(0 * 450px);
+            left: calc(-450px);
         }
 
         .future .gallery .card:nth-child(2) {
-            left: calc(1 * 450px);
+            left: calc(0 * 450px);
         }
 
         .future .gallery .card:nth-child(3) {
-            left: calc(2 * 450px);
+            left: calc(1 * 450px);
         }
 
         .future .gallery .card:nth-child(4) {
-            left: calc(3 * 450px);
+            left: calc(2 * 450px);
         }
 
         .future .gallery .card:nth-child(5) {
-            left: calc(4 * 450px);
+            left: calc(3 * 450px);
         }
 
         .future .gallery .card:nth-child(6) {
-            left: calc(5 * 450px);
+            left: calc(4 * 450px);
         }
 
         .future .gallery .card:nth-child(7) {
-            left: calc(6 * 450px);
+            left: calc(5 * 450px);
         }
 
         .future .gallery .card:nth-child(8) {
-            left: calc(7 * 450px);
+            left: calc(6 * 450px);
         }
 
         .future .gallery .card:nth-child(9) {
-            left: calc(8 * 450px);
+            left: calc(7 * 450px);
         }
 
         .future .gallery .card:nth-child(10) {
-            left: calc(9 * 450px);
+            left: calc(8 * 450px);
         }
 
         .future .gallery .card:nth-child(11) {
-            left: calc(10 * 450px);
+            left: calc(9 * 450px);
         }
 
         .future .gallery .card:nth-child(12) {
-            left: calc(11 * 450px);
+            left: calc(10 * 450px);
         }
 
         @media (max-width: 1200px) {

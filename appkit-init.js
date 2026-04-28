@@ -198,7 +198,12 @@ window.resetWalletConnection = async () => {
         )
         .forEach(k => localStorage.removeItem(k));
 
-    location.reload();
+    // Clear ArtSoul auth
+    localStorage.removeItem('artsoul_wallet');
+    localStorage.removeItem('artsoul_auth_method');
+
+    // Redirect to home page
+    window.location.href = 'index.html';
 };
 
 // ============================================

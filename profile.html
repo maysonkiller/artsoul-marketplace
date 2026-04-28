@@ -412,21 +412,8 @@
                                 <div className="flex items-center gap-3">
                                     <div ref={networkBadgeRef}></div>
                                     <div ref={navButtonsRef} className="flex items-center gap-3">
-                                        {/* AppKit will populate wallet button with network switching */}
+                                        {/* AppKit will populate wallet button and disconnect button */}
                                     </div>
-                                    <button
-                                        onClick={async () => {
-                                            if (window.resetWalletConnection) {
-                                                await window.resetWalletConnection();
-                                            } else {
-                                                // Fallback if function not loaded yet
-                                                window.location.href = 'index.html';
-                                            }
-                                        }}
-                                        className="btn-secondary"
-                                    >
-                                        Disconnect
-                                    </button>
                                     <a href="index.html" className="btn-secondary">
                                         Back to Gallery
                                     </a>
