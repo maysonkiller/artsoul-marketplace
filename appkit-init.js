@@ -282,25 +282,11 @@ async function initializeAppKit() {
             enableWalletConnect: true,
             enableInjected: true,
             enableCoinbase: false,
-            // Explicitly configure injected wallets
-            featuredWalletIds: [
-                'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
-                'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393', // Phantom
-                '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'  // Trust Wallet
-            ]
+            // Don't use any adapters - let AppKit handle everything natively
+            // This avoids conflicts with multiple wallet extensions
         };
 
-        // Use EthersAdapter ONLY on desktop to properly handle injected wallets
-        if (!isMobile) {
-            // Import EthersAdapter dynamically to avoid conflicts
-            try {
-                const { EthersAdapter } = await import('https://esm.sh/@reown/appkit-adapter-ethers@1.7.11?bundle');
-                config.adapters = [new EthersAdapter()];
-                console.log('🔌 EthersAdapter enabled for desktop injected wallets');
-            } catch (error) {
-                console.warn('⚠️ EthersAdapter failed to load, using fallback:', error);
-            }
-        }
+        console.log('🔌 Using AppKit native providers (no adapters)');
 
         modal = createAppKit(config);
         window.web3Modal = modal;
