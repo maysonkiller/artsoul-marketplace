@@ -21,6 +21,22 @@
     font-size: 1rem;
 }
 
+/* Theme Toggle Container */
+.theme-toggle {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.classic .theme-toggle {
+    background: rgba(169, 221, 211, 0.1);
+}
+
+.future .theme-toggle {
+    background: rgba(0, 245, 255, 0.1);
+}
+
 /* Theme Toggle Buttons */
 .theme-btn {
     padding: 0.5rem 1rem;
@@ -30,6 +46,17 @@
     font-weight: 500;
     transition: all 0.3s;
     border-radius: 0.375rem;
+    color: currentColor;
+}
+
+.classic .theme-btn.active-classic {
+    background: var(--accent-classic);
+    color: var(--bg-classic);
+}
+
+.future .theme-btn.active-future {
+    background: linear-gradient(135deg, var(--accent-future), var(--neon-purple));
+    color: #000000;
 }
 
 /* Network Badge */

@@ -6,10 +6,7 @@
     <title>Documentation - ArtSoul</title>
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="unified-styles.css">
-    <link rel="stylesheet" href="button-effects.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="theme-sync.js"></script>
     <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
     <script type="module" src="appkit-init.js"></script>
@@ -39,7 +36,21 @@
             border-bottom: 1px solid var(--accent-classic);
         }
 
-        /* Button styles moved to unified-styles.css */
+        .classic .btn-main {
+            background: var(--text-classic);
+            color: var(--bg-classic);
+            border: 1px solid var(--text-classic);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .classic .btn-main:hover {
+            background: transparent;
+            color: var(--text-classic);
+        }
 
         body.future {
             background: #000000;
@@ -52,9 +63,31 @@
             box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
         }
 
-        /* Button hover effects moved to button-effects.css */
+        .future .btn-main {
+            background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%);
+            color: #000000;
+            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+            border: none;
+            font-weight: 600;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
 
-        /* Animation keyframes moved to button-effects.css */
+        .future .btn-main:hover {
+            animation: neonPulse 0.3s infinite;
+            transform: scale(1.05);
+            filter: brightness(1.3);
+        }
+
+        @keyframes neonPulse {
+            0%, 100% {
+                box-shadow: 0 0 10px var(--accent-future), 0 0 20px var(--neon-purple);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--accent-future), 0 0 40px var(--neon-purple);
+            }
+        }
 
         /* Logo styles */
         .site-logo {
@@ -130,9 +163,38 @@
             left: 100%;
         }
 
-        /* Glitch animation moved to button-effects.css */
+        @keyframes glitchButton {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+        }
 
-        /* Gradient flow animation moved to unified-styles.css */
+        /* Gradient text animation for headings in Future mode */
+        .future h1, .future h2, .future h3 {
+            background: linear-gradient(90deg, var(--accent-future), var(--neon-purple), var(--accent-future));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 3s linear infinite;
+        }
+
+        /* Roadmap stage headings glow effect */
+        .future h4 {
+            background: linear-gradient(90deg, var(--accent-future), var(--neon-purple), var(--accent-future));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 3s linear infinite;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
 
         /* Roadmap timeline gradient flow */
         .future .timeline-line {
@@ -211,7 +273,41 @@
             75% { transform: translateY(-15px) translateX(-5px); }
         }
 
-        /* Theme toggle styles moved to unified-styles.css */
+        .theme-toggle {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .classic .theme-toggle {
+            background: rgba(232, 227, 213, 0.1);
+        }
+
+        .future .theme-toggle {
+            background: rgba(0, 245, 255, 0.1);
+        }
+
+        .theme-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: currentColor;
+        }
+
+        .classic .theme-btn.active-classic {
+            background: var(--accent-classic);
+            color: var(--bg-classic);
+        }
+
+        .future .theme-btn.active-future {
+            background: linear-gradient(135deg, var(--accent-future), var(--neon-purple));
+            color: #000000;
+        }
 
         .network-badge {
             display: flex;
@@ -452,7 +548,7 @@
                 },
                 {
                     title: 'Supported Networks',
-                    content: 'Base, Ethereum, Rialo, Base Sepolia (testnet), Sepolia (testnet). Switch networks anytime via the Network Badge.'
+                    content: 'Ethereum, Polygon, BSC, Base, Arbitrum, Optimism, Sepolia, Rialo Playground. Switch networks anytime via the Network Badge.'
                 }
             ];
 
@@ -501,7 +597,7 @@
                                 <div className="w-1/2 pr-8 text-right">
                                     <div className={`inline-block p-4 rounded-lg ${isClassic ? 'bg-gray-900/30 border border-gray-700' : 'bg-cyan-900/10 border border-cyan-500/30'}`}>
                                         <h4 className="font-semibold mb-2">Q2 2026</h4>
-                                        <p className="text-sm opacity-70">MVP platform, Basic UI/UX, Upload system, Profiles, Wallet connection (Base, Ethereum, Rialo)</p>
+                                        <p className="text-sm opacity-70">MVP platform, Basic UI/UX, Upload system, Profiles</p>
                                     </div>
                                 </div>
                                 <div className={`timeline-dot absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full`} style={{background: 'currentColor'}}></div>
@@ -515,7 +611,7 @@
                                 <div className="w-1/2 pl-8">
                                     <div className={`inline-block p-4 rounded-lg ${isClassic ? 'bg-gray-900/30 border border-gray-700' : 'bg-cyan-900/10 border border-cyan-500/30'}`}>
                                         <h4 className="font-semibold mb-2">Q3 2026</h4>
-                                        <p className="text-sm opacity-70">Smart contracts (Base, Ethereum, Rialo), Lazy minting, 3-day auctions, AI valuation, IPFS integration, Triple Valuation System</p>
+                                        <p className="text-sm opacity-70">Web3 integration, Smart contracts, Multi-chain, IPFS</p>
                                     </div>
                                 </div>
                             </div>
@@ -525,7 +621,7 @@
                                 <div className="w-1/2 pr-8 text-right">
                                     <div className={`inline-block p-4 rounded-lg ${isClassic ? 'bg-gray-900/30 border border-gray-700' : 'bg-cyan-900/10 border border-cyan-500/30'}`}>
                                         <h4 className="font-semibold mb-2">Q4 2026</h4>
-                                        <p className="text-sm opacity-70">Direct sales, Floor price system, Royalties, Social features, Mobile responsive, Advanced analytics</p>
+                                        <p className="text-sm opacity-70">Social features, Mobile version, Developer API</p>
                                     </div>
                                 </div>
                                 <div className={`timeline-dot absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full`} style={{background: 'currentColor'}}></div>
@@ -558,6 +654,27 @@
         ReactDOM.render(<DocsApp />, document.getElementById('app'));
     </script>
 
-    <!-- Theme is now handled by theme-sync.js -->
+    <script>
+        function setTheme(theme) {
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
+
+            const classicBtn = document.getElementById('classicBtn');
+            const futureBtn = document.getElementById('futureBtn');
+
+            if (theme === 'classic') {
+                classicBtn.className = 'theme-btn active-classic';
+                futureBtn.className = 'theme-btn';
+            } else {
+                classicBtn.className = 'theme-btn';
+                futureBtn.className = 'theme-btn active-future';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'classic';
+            setTheme(savedTheme);
+        });
+    </script>
 </body>
 </html>
