@@ -31,43 +31,48 @@
     }
 
     /**
+     * Update theme toggle buttons state (old style with active-classic/active-future)
+     */
+    function updateThemeButtons(theme) {
+        const classicBtn = document.getElementById('classicBtn');
+        const futureBtn = document.getElementById('futureBtn');
+
+        if (classicBtn && futureBtn) {
+            classicBtn.classList.remove('active-classic', 'active-future');
+            futureBtn.classList.remove('active-classic', 'active-future');
+
+            if (theme === 'classic') {
+                classicBtn.classList.add('active-classic');
+            } else {
+                futureBtn.classList.add('active-future');
+            }
+        }
+    }
+
+    /**
      * Initialize theme on page load
      */
     function initTheme() {
         const savedTheme = getTheme();
         applyTheme(savedTheme);
-
-        // Update theme toggle buttons if they exist
         updateThemeButtons(savedTheme);
     }
 
     /**
-     * Update theme toggle buttons state
-     */
-    function updateThemeButtons(theme) {
-        const classicBtn = document.querySelector('[data-theme="classic"]');
-        const futureBtn = document.querySelector('[data-theme="future"]');
-
-        if (classicBtn && futureBtn) {
-            classicBtn.classList.toggle('active', theme === 'classic');
-            futureBtn.classList.toggle('active', theme === 'future');
-        }
-    }
-
-    /**
-     * Set up theme toggle listeners
+     * Set up theme toggle listeners (old onclick style)
      */
     function setupThemeToggle() {
-        const themeButtons = document.querySelectorAll('[data-theme]');
+        // Make setTheme function available globally
+        window.setTheme = function(theme) {
+            saveTheme(theme);
+            applyTheme(theme);
+            updateThemeButtons(theme);
 
-        themeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const theme = button.getAttribute('data-theme');
-                saveTheme(theme);
-                applyTheme(theme);
-                updateThemeButtons(theme);
-            });
-        });
+            // Sync with React component if exists
+            if (window.setThemeReact) {
+                window.setThemeReact(theme);
+            }
+        };
     }
 
     // Initialize on DOM ready

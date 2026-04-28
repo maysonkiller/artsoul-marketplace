@@ -233,12 +233,12 @@
 
             const isClassic = theme === 'classic';
 
-            // Sync theme with localStorage
-            const handleThemeChange = (newTheme) => {
-                setTheme(newTheme);
-                window.ThemeSync?.saveTheme(newTheme);
-                window.ThemeSync?.applyTheme(newTheme);
-            };
+            // Sync theme with global setTheme function
+            useEffect(() => {
+                window.setThemeReact = (newTheme) => {
+                    setTheme(newTheme);
+                };
+            }, []);
 
             // Load profile and artworks
             useEffect(() => {
@@ -259,14 +259,7 @@
                 }
 
                 try {
-                    // Authenticate first before loading profile
-                    const isAuthenticated = await window.ensureAuthenticated?.();
-                    if (!isAuthenticated) {
-                        console.log('⚠️ Authentication required to load profile');
-                        setLoading(false);
-                        return;
-                    }
-
+                    // Try to load profile without authentication first
                     let profileData = await window.ArtSoulDB.getProfile(walletAddress);
                     if (!profileData) {
                         profileData = {
@@ -327,6 +320,13 @@
                 }
 
                 try {
+                    // Authenticate before saving (only once)
+                    const isAuthenticated = await window.ensureAuthenticated?.();
+                    if (!isAuthenticated) {
+                        alert('Authentication required to save profile');
+                        return;
+                    }
+
                     const profileData = {
                         username: profile.username,
                         bio: profile.bio,
@@ -376,14 +376,16 @@
                                     </a>
                                     <div className="theme-toggle">
                                         <button
-                                            onClick={() => handleThemeChange('classic')}
-                                            className={`theme-btn ${theme === 'classic' ? 'active' : ''}`}
+                                            onClick={() => window.setTheme?.('classic')}
+                                            id="classicBtn"
+                                            className={`theme-btn ${theme === 'classic' ? 'active-classic' : ''}`}
                                         >
                                             Classic
                                         </button>
                                         <button
-                                            onClick={() => handleThemeChange('future')}
-                                            className={`theme-btn ${theme === 'future' ? 'active' : ''}`}
+                                            onClick={() => window.setTheme?.('future')}
+                                            id="futureBtn"
+                                            className={`theme-btn ${theme === 'future' ? 'active-future' : ''}`}
                                         >
                                             Future
                                         </button>
