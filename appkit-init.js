@@ -66,7 +66,7 @@ function updateNavButtons(state) {
     if (!navButtons) return;
 
     if (state?.address) {
-        // Connected: Show My Profile + short wallet address
+        // Connected: Show My Profile + short wallet address + Disconnect button
         const shortAddress = `${state.address.slice(0, 6)}...${state.address.slice(-4)}`;
         navButtons.innerHTML = `
             <a href="profile.html" class="btn-main" style="background: transparent; border: 1px solid currentColor; color: inherit;">
@@ -74,6 +74,9 @@ function updateNavButtons(state) {
             </a>
             <button onclick="window.web3Modal?.open()" class="btn-main">
                 ${shortAddress}
+            </button>
+            <button onclick="window.resetWalletConnection()" class="btn-secondary" style="padding: 0.5rem 1rem;">
+                Disconnect
             </button>
         `;
 
