@@ -66,21 +66,7 @@
             border-bottom: 1px solid var(--accent-classic);
         }
 
-        .classic .btn-main {
-            background: var(--accent-classic);
-            color: var(--bg-classic);
-            border: 1px solid var(--accent-classic);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .classic .btn-main:hover {
-            background: transparent;
-            color: var(--accent-classic);
-        }
+        /* Button styles moved to unified-styles.css */
 
         .classic .gallery-item:hover {
             transform: translateY(-8px);
@@ -99,21 +85,7 @@
             box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
         }
 
-        .future .btn-main {
-            background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%);
-            color: #000000;
-            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-            border: none;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .future .btn-main:hover {
-            transform: scale(1.05);
-            filter: brightness(1.3);
-        }
+        /* Button hover effects moved to button-effects.css */
 
         .future .neon-glow {
             text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
@@ -195,6 +167,8 @@
             const [myArtworks, setMyArtworks] = useState([]);
             const [loading, setLoading] = useState(true);
             const fileInputRef = useRef(null);
+            const navButtonsRef = useRef(null);
+            const networkBadgeRef = useRef(null);
 
             const isClassic = theme === 'classic';
 
@@ -205,22 +179,30 @@
                 };
             }, []);
 
-            // Preserve navButtons content after React render
+            // Preserve navButtons and networkBadge content after React render
             useEffect(() => {
-                const checkNavButtons = setInterval(() => {
-                    const navButtons = document.getElementById('navButtons');
-                    if (navButtons && navButtons.children.length === 0) {
-                        // Trigger AppKit to update nav buttons
-                        if (window.web3Modal) {
-                            const state = window.web3Modal.getState();
-                            if (state?.address && window.updateNavButtons) {
-                                window.updateNavButtons(state);
-                            }
+                // Set up refs for AppKit to use
+                if (navButtonsRef.current) {
+                    navButtonsRef.current.id = 'navButtons';
+                }
+                if (networkBadgeRef.current) {
+                    networkBadgeRef.current.id = 'networkBadge';
+                }
+
+                // Trigger AppKit to populate navButtons
+                const timer = setTimeout(() => {
+                    if (window.web3Modal) {
+                        const state = window.web3Modal.getState();
+                        if (state?.address && window.updateNavButtons) {
+                            window.updateNavButtons(state);
+                        }
+                        if (window.updateNetworkBadge) {
+                            window.updateNetworkBadge();
                         }
                     }
                 }, 500);
 
-                return () => clearInterval(checkNavButtons);
+                return () => clearTimeout(timer);
             }, []);
 
             // Load profile and artworks
@@ -375,8 +357,8 @@
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div id="networkBadge"></div>
-                                    <div id="navButtons" className="flex items-center gap-3">
+                                    <div ref={networkBadgeRef}></div>
+                                    <div ref={navButtonsRef} className="flex items-center gap-3">
                                         {/* AppKit will populate this */}
                                     </div>
                                     <a href="index.html" className="btn-secondary">

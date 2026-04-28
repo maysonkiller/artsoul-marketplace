@@ -98,7 +98,7 @@ window.updateNavButtons = function updateNavButtons(state) {
 /**
  * Update network badge with current network and balance
  */
-function updateNetworkBadge(state) {
+window.updateNetworkBadge = function updateNetworkBadge(state) {
     const networkBadgeContainer = document.getElementById('networkBadge');
     if (!networkBadgeContainer) return;
 
