@@ -320,22 +320,13 @@ async function initializeAppKit() {
                 window.currentWalletAddress = account.address;
                 localStorage.setItem('artsoul_wallet', account.address);
 
-                // Update UI first
+                // Update UI
                 updateNavButtons({ address: account.address, chainId: account.chainId });
                 updateNetworkBadge({ address: account.address, chainId: account.chainId });
 
-                // Authenticate with Supabase after UI update
-                console.log('🔐 Authenticating with Supabase...');
-                try {
-                    if (window.SupabaseAuth) {
-                        const provider = await modal.getWalletProvider();
-                        await window.SupabaseAuth.authenticateWithWallet(account.address, provider);
-                        console.log('✅ Supabase authenticated');
-                    }
-                } catch (error) {
-                    console.error('⚠️ Supabase auth failed:', error);
-                    // Don't disconnect on auth failure - user can retry later
-                }
+                // DON'T authenticate immediately - causes disconnect loop
+                // Authentication will happen when user tries to upload/save
+                console.log('✅ Wallet connected. Sign message when you upload/save profile.');
 
             } else if (account?.status === 'disconnected') {
                 console.log('🔌 Wallet disconnected');
