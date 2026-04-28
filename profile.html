@@ -14,7 +14,14 @@
         (function() {
             const theme = localStorage.getItem('artsoul_theme') || 'classic';
             document.documentElement.className = theme;
-            if (document.body) document.body.className = theme;
+            // Wait for body to be available
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.className = theme;
+                });
+            } else {
+                document.body.className = theme;
+            }
         })();
     </script>
     <script src="theme-sync.js"></script>
@@ -189,20 +196,27 @@
                     networkBadgeRef.current.id = 'networkBadge';
                 }
 
-                // Trigger AppKit to populate navButtons
-                const timer = setTimeout(() => {
+                // Continuously check and update navButtons
+                const interval = setInterval(() => {
                     if (window.web3Modal) {
                         const state = window.web3Modal.getState();
-                        if (state?.address && window.updateNavButtons) {
-                            window.updateNavButtons(state);
+                        const navButtons = document.getElementById('navButtons');
+
+                        // Only update if navButtons is empty but wallet is connected
+                        if (navButtons && navButtons.children.length === 0 && state?.address) {
+                            if (window.updateNavButtons) {
+                                window.updateNavButtons(state);
+                            }
                         }
+
+                        // Update network badge
                         if (window.updateNetworkBadge) {
-                            window.updateNetworkBadge();
+                            window.updateNetworkBadge(state);
                         }
                     }
-                }, 500);
+                }, 1000);
 
-                return () => clearTimeout(timer);
+                return () => clearInterval(interval);
             }, []);
 
             // Load profile and artworks

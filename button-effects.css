@@ -96,9 +96,9 @@
     animation: neonPulse 0.3s infinite, glitchButton 0.5s ease-in-out;
 }
 
-/* All clickable elements in Future mode */
-.future button:hover,
-.future a:hover {
+/* All clickable elements in Future mode (except devnet-banner) */
+.future button:hover:not(.devnet-banner),
+.future a:hover:not(.devnet-banner) {
     animation: glitchButton 0.5s ease-in-out;
 }
 
