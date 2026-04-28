@@ -6,8 +6,8 @@
     <title>ArtSoul - Decentralized Art Marketplace</title>
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="unified-styles.css?v=2">
-    <link rel="stylesheet" href="button-effects.css?v=2">
+    <link rel="stylesheet" href="unified-styles.css?v=3">
+    <link rel="stylesheet" href="button-effects.css?v=3">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Apply theme immediately to prevent flash
@@ -653,10 +653,10 @@
 
         @keyframes slideCardsFlow {
             0% {
-                transform: translateX(0);
+                transform: translateX(calc(-450px * 12));
             }
             100% {
-                transform: translateX(calc(-450px * 12));
+                transform: translateX(0);
             }
         }
 

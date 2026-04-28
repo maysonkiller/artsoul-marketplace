@@ -416,29 +416,10 @@
                                     </div>
                                     <button
                                         onClick={async () => {
-                                            try {
-                                                // Disconnect wallet
-                                                if (window.web3Modal) {
-                                                    await window.web3Modal.disconnect();
-                                                }
-
-                                                // Sign out from Supabase
-                                                if (window.SupabaseAuth) {
-                                                    await window.SupabaseAuth.signOut();
-                                                }
-
-                                                // Clear all local storage
-                                                localStorage.removeItem('artsoul_wallet');
-                                                localStorage.removeItem('artsoul_auth_method');
-
-                                                // Wait a bit for disconnect to complete
-                                                await new Promise(resolve => setTimeout(resolve, 500));
-
-                                                // Redirect to home
-                                                window.location.href = 'index.html';
-                                            } catch (error) {
-                                                console.error('Disconnect error:', error);
-                                                // Force redirect anyway
+                                            if (window.resetWalletConnection) {
+                                                await window.resetWalletConnection();
+                                            } else {
+                                                // Fallback if function not loaded yet
                                                 window.location.href = 'index.html';
                                             }
                                         }}
