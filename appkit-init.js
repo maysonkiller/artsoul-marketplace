@@ -336,20 +336,8 @@ async function initializeAppKit() {
                 updateNavButtons({ address: account.address, chainId: account.chainId });
                 updateNetworkBadge({ address: account.address, chainId: account.chainId });
 
-                // Authenticate with Supabase with delay to prevent disconnect
-                setTimeout(async () => {
-                    try {
-                        console.log('🔐 Authenticating with Supabase...');
-                        if (window.SupabaseAuth) {
-                            const provider = window.ethereum || await modal.getWalletProvider();
-                            await window.SupabaseAuth.authenticateWithWallet(account.address, provider);
-                            console.log('✅ Supabase authenticated - you can now use profile features');
-                        }
-                    } catch (error) {
-                        console.error('⚠️ Supabase auth failed:', error);
-                        console.log('💡 You can retry authentication when uploading/saving');
-                    }
-                }, 1000); // 1 second delay to let wallet connection stabilize
+                // Don't authenticate automatically - only when user needs it
+                console.log('✅ Wallet connected - authentication will happen when needed');
 
             } else if (account?.status === 'disconnected' && lastProcessedAddress) {
                 console.log('🔌 Wallet disconnected (was connected before)');

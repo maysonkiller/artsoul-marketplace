@@ -34,6 +34,17 @@ async function authenticateWithWallet(walletAddress, provider) {
     const supabase = await initSupabase();
 
     try {
+        // Check if already authenticated with this wallet
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.user_metadata?.wallet_address?.toLowerCase() === walletAddress.toLowerCase()) {
+            console.log('✅ Already authenticated with this wallet');
+            return {
+                user: session.user,
+                session: session,
+                walletAddress: walletAddress
+            };
+        }
+
         // 1. Generate nonce message
         const nonce = `ArtSoul Login\nWallet: ${walletAddress}\nNonce: ${Date.now()}`;
 
