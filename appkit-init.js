@@ -219,8 +219,18 @@ window.resetWalletConnection = async () => {
     localStorage.removeItem('artsoul_wallet');
     localStorage.removeItem('artsoul_auth_method');
 
-    // Redirect to home page
-    window.location.href = 'index.html';
+    // Check if we're already on index.html
+    const isIndexPage = window.location.pathname.endsWith('index.html') ||
+                        window.location.pathname === '/' ||
+                        window.location.pathname.endsWith('/');
+
+    if (isIndexPage) {
+        // Already on index, just reload
+        window.location.reload();
+    } else {
+        // Redirect to home page
+        window.location.href = 'index.html';
+    }
 };
 
 // ============================================
