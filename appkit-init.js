@@ -61,7 +61,7 @@ let lastProcessedAddress = null;
  * Shows "Get Started" when disconnected
  * Shows "My Profile" + wallet address when connected
  */
-function updateNavButtons(state) {
+window.updateNavButtons = function updateNavButtons(state) {
     const navButtons = document.getElementById('navButtons');
     if (!navButtons) return;
 

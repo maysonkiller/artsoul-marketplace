@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="unified-styles.css">
     <link rel="stylesheet" href="button-effects.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Apply theme immediately to prevent flash
+        (function() {
+            const theme = localStorage.getItem('artsoul_theme') || 'classic';
+            document.documentElement.className = theme;
+            if (document.body) document.body.className = theme;
+        })();
+    </script>
     <script src="theme-sync.js"></script>
     <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
