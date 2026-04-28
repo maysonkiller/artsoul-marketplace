@@ -291,9 +291,22 @@ async function initializeAppKit() {
         modal = createAppKit(config);
         window.web3Modal = modal;
 
-        // Subscribe to account changes
+        // Subscribe to account changes with detailed logging
+        let subscriptionCount = 0;
         modal.subscribeAccount(async (account) => {
-            console.log('📊 Account update:', account?.address || 'disconnected', account?.status);
+            subscriptionCount++;
+            console.log(`📊 [${subscriptionCount}] Account update:`, {
+                address: account?.address ? account.address.slice(0, 10) + '...' : 'none',
+                status: account?.status || 'undefined',
+                chainId: account?.chainId,
+                isConnected: account?.isConnected
+            });
+
+            // Ignore initial disconnected events during initialization
+            if (!account?.address && subscriptionCount < 5) {
+                console.log('⏭️ Ignoring initial disconnected event');
+                return;
+            }
 
             if (account?.address && account?.status === 'connected') {
                 // Prevent duplicate processing
@@ -314,8 +327,8 @@ async function initializeAppKit() {
                 // Authentication will happen when user tries to upload/save
                 console.log('✅ Wallet connected. Sign message when you upload/save profile.');
 
-            } else if (account?.status === 'disconnected') {
-                console.log('🔌 Wallet disconnected');
+            } else if (account?.status === 'disconnected' && lastProcessedAddress) {
+                console.log('🔌 Wallet disconnected (was connected before)');
                 lastProcessedAddress = null;
                 window.currentWalletAddress = null;
                 localStorage.removeItem('artsoul_wallet');
