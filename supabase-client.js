@@ -3,7 +3,7 @@
 // Updated: 2026-04-28 - Added authentication support
 
 const SUPABASE_URL = 'https://bexigvqrunomwtjsxlej.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJleGlndnFydW5vbXd0anN4bGVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MjE0NzAsImV4cCI6MjA2MTE5NzQ3MH0.vAsIoKcLD1D9blJA6Kwy0Q__LrKsAj6';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJleGlndnFydW5vbXd0anN4bGVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjkwNDQsImV4cCI6MjA5MjgwNTA0NH0.ZU7cMhovwMk9JViY0OOq5-vwHBCpNWiMrlhk4ZKqQ5s';
 
 // Initialize Supabase client with auth support
 let supabaseClient = null;
