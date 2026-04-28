@@ -5,6 +5,7 @@ const SUPABASE_URL = 'https://bexigvqrunomwtjsxlej.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJleGlndnFydW5vbXd0anN4bGVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjkwNDQsImV4cCI6MjA5MjgwNTA0NH0.ZU7cMhovwMk9JViY0OOq5-vwHBCpNWiMrlhk4ZKqQ5s';
 
 let supabaseClient = null;
+let authenticatedWallet = null; // Cache authenticated wallet to prevent repeated signature requests
 
 async function initSupabase() {
     if (supabaseClient) return supabaseClient;
@@ -34,10 +35,24 @@ async function authenticateWithWallet(walletAddress, provider) {
     const supabase = await initSupabase();
 
     try {
-        // Check if already authenticated with this wallet
+        // Check if already authenticated with this wallet in this session
+        if (authenticatedWallet?.toLowerCase() === walletAddress.toLowerCase()) {
+            console.log('✅ Already authenticated with this wallet (cached)');
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                return {
+                    user: session.user,
+                    session: session,
+                    walletAddress: walletAddress
+                };
+            }
+        }
+
+        // Check if already authenticated with this wallet in Supabase
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user?.user_metadata?.wallet_address?.toLowerCase() === walletAddress.toLowerCase()) {
             console.log('✅ Already authenticated with this wallet');
+            authenticatedWallet = walletAddress; // Cache it
             return {
                 user: session.user,
                 session: session,
@@ -94,9 +109,10 @@ async function authenticateWithWallet(walletAddress, provider) {
 
         console.log('✅ Supabase session created:', authData.user.id);
 
-        // Store wallet address
+        // Store wallet address and cache authentication
         localStorage.setItem('artsoul_wallet', walletAddress);
         localStorage.setItem('artsoul_auth_method', 'wallet');
+        authenticatedWallet = walletAddress; // Cache to prevent repeated signature requests
 
         return {
             user: authData.user,
@@ -234,6 +250,7 @@ async function signOut() {
 
     localStorage.removeItem('artsoul_wallet');
     localStorage.removeItem('artsoul_auth_method');
+    authenticatedWallet = null; // Clear cached authentication
 
     console.log('✅ Signed out');
 }
