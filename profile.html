@@ -25,10 +25,10 @@
         })();
     </script>
     <script src="theme-sync.js"></script>
-    <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
+    <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="appkit-init.js"></script>
-    <script src="oauth-integration.js"></script>
+    <script defer src="oauth-integration.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -416,8 +416,29 @@
                                     </div>
                                     <button
                                         onClick={async () => {
-                                            if (window.web3Modal) {
-                                                await window.web3Modal.disconnect();
+                                            try {
+                                                // Disconnect wallet
+                                                if (window.web3Modal) {
+                                                    await window.web3Modal.disconnect();
+                                                }
+
+                                                // Sign out from Supabase
+                                                if (window.SupabaseAuth) {
+                                                    await window.SupabaseAuth.signOut();
+                                                }
+
+                                                // Clear all local storage
+                                                localStorage.removeItem('artsoul_wallet');
+                                                localStorage.removeItem('artsoul_auth_method');
+
+                                                // Wait a bit for disconnect to complete
+                                                await new Promise(resolve => setTimeout(resolve, 500));
+
+                                                // Redirect to home
+                                                window.location.href = 'index.html';
+                                            } catch (error) {
+                                                console.error('Disconnect error:', error);
+                                                // Force redirect anyway
                                                 window.location.href = 'index.html';
                                             }
                                         }}
