@@ -65,20 +65,37 @@ window.updateNavButtons = function updateNavButtons(state) {
     const navButtons = document.getElementById('navButtons');
     if (!navButtons) return;
 
+    // Check if we're on profile page
+    const isProfilePage = window.location.pathname.includes('profile.html');
+
     if (state?.address) {
-        // Connected: Show My Profile + short wallet address + Disconnect button
+        // Connected: Show buttons based on page
         const shortAddress = `${state.address.slice(0, 6)}...${state.address.slice(-4)}`;
-        navButtons.innerHTML = `
-            <a href="profile.html" class="btn-main" style="background: transparent; border: 1px solid currentColor; color: inherit;">
-                👤 My Profile
-            </a>
-            <button onclick="window.web3Modal?.open()" class="btn-main">
-                ${shortAddress}
-            </button>
-            <button onclick="window.resetWalletConnection()" class="btn-secondary" style="padding: 0.5rem 1rem;">
-                Disconnect
-            </button>
-        `;
+
+        if (isProfilePage) {
+            // Profile page: only wallet address and disconnect
+            navButtons.innerHTML = `
+                <button onclick="window.web3Modal?.open()" class="btn-main">
+                    ${shortAddress}
+                </button>
+                <button onclick="window.resetWalletConnection()" class="btn-secondary" style="padding: 0.5rem 1rem;">
+                    Disconnect
+                </button>
+            `;
+        } else {
+            // Other pages: include My Profile button
+            navButtons.innerHTML = `
+                <a href="profile.html" class="btn-main" style="background: transparent; border: 1px solid currentColor; color: inherit;">
+                    👤 My Profile
+                </a>
+                <button onclick="window.web3Modal?.open()" class="btn-main">
+                    ${shortAddress}
+                </button>
+                <button onclick="window.resetWalletConnection()" class="btn-secondary" style="padding: 0.5rem 1rem;">
+                    Disconnect
+                </button>
+            `;
+        }
 
         // Store wallet address
         localStorage.setItem('artsoul_wallet', state.address);
@@ -338,8 +355,17 @@ async function initializeAppKit() {
                 updateNavButtons({ address: account.address, chainId: account.chainId });
                 updateNetworkBadge({ address: account.address, chainId: account.chainId });
 
-                // Don't authenticate automatically - only when user needs it
-                console.log('✅ Wallet connected - authentication will happen when needed');
+                // Authenticate automatically on wallet connect
+                console.log('🔐 Starting automatic authentication...');
+                try {
+                    if (window.ensureAuthenticated) {
+                        await window.ensureAuthenticated();
+                        console.log('✅ Wallet connected and authenticated');
+                    }
+                } catch (error) {
+                    console.error('❌ Auto-authentication failed:', error);
+                    // Continue anyway - user can try again later
+                }
 
             } else if (account?.status === 'disconnected' && lastProcessedAddress) {
                 console.log('🔌 Wallet disconnected (was connected before)');
