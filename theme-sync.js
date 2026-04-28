@@ -23,9 +23,10 @@
     }
 
     /**
-     * Apply theme to body
+     * Apply theme to body and html
      */
     function applyTheme(theme) {
+        document.documentElement.className = theme;
         document.body.className = theme;
         console.log(`🎨 Theme applied: ${theme}`);
     }
