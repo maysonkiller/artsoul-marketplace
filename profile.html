@@ -251,6 +251,14 @@
                 }
 
                 try {
+                    // Authenticate first before loading profile
+                    const isAuthenticated = await window.ensureAuthenticated?.();
+                    if (!isAuthenticated) {
+                        console.log('⚠️ Authentication required to load profile');
+                        setLoading(false);
+                        return;
+                    }
+
                     let profileData = await window.ArtSoulDB.getProfile(walletAddress);
                     if (!profileData) {
                         profileData = {
