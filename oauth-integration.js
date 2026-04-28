@@ -4,6 +4,7 @@
 class OAuthIntegration {
     constructor() {
         this.supabaseUrl = 'https://bexigvqrunomwtjsxlej.supabase.co';
+        this.supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJleGlndnFydW5vbXd0anN4bGVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjkwNDQsImV4cCI6MjA5MjgwNTA0NH0.ZU7cMhovwMk9JViY0OOq5-vwHBCpNWiMrlhk4ZKqQ5s';
         this.discordClientId = '1498799956536852480';
         this.twitterClientId = 'YVNmTUVHcE5Sb1hVbnp3NUFFNUs6MTpjaQ';
         this.redirectUri = 'https://maysonkiller.github.io/artsoul-marketplace/profile.html';
@@ -112,7 +113,8 @@ class OAuthIntegration {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'apikey': window.SUPABASE_ANON_KEY,
+                'apikey': this.supabaseAnonKey,
+                'Authorization': `Bearer ${this.supabaseAnonKey}`,
             },
             body: JSON.stringify({ code, state }),
         });
@@ -130,7 +132,8 @@ class OAuthIntegration {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'apikey': window.SUPABASE_ANON_KEY,
+                'apikey': this.supabaseAnonKey,
+                'Authorization': `Bearer ${this.supabaseAnonKey}`,
             },
             body: JSON.stringify({ code, state, code_verifier: codeVerifier }),
         });
