@@ -54,7 +54,12 @@
      */
     function initTheme() {
         const savedTheme = getTheme();
-        applyTheme(savedTheme);
+
+        // Only apply theme if body doesn't already have it (inline script may have set it)
+        if (!document.body.className || document.body.className !== savedTheme) {
+            applyTheme(savedTheme);
+        }
+
         updateThemeButtons(savedTheme);
     }
 
