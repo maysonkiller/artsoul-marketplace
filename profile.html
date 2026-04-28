@@ -7,6 +7,7 @@
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="theme-sync.js"></script>
     <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
     <script type="module" src="appkit-init.js"></script>
@@ -222,7 +223,7 @@
         ];
 
         function ProfilePage() {
-            const [theme, setTheme] = useState('classic');
+            const [theme, setTheme] = useState(() => window.ThemeSync?.getTheme() || 'classic');
             const [profile, setProfile] = useState(null);
             const [editMode, setEditMode] = useState(false);
             const [selectedGallery, setSelectedGallery] = useState('nft');
@@ -231,6 +232,13 @@
             const fileInputRef = useRef(null);
 
             const isClassic = theme === 'classic';
+
+            // Sync theme with localStorage
+            const handleThemeChange = (newTheme) => {
+                setTheme(newTheme);
+                window.ThemeSync?.saveTheme(newTheme);
+                window.ThemeSync?.applyTheme(newTheme);
+            };
 
             // Load profile and artworks
             useEffect(() => {
@@ -368,13 +376,13 @@
                                     </a>
                                     <div className="theme-toggle">
                                         <button
-                                            onClick={() => setTheme('classic')}
+                                            onClick={() => handleThemeChange('classic')}
                                             className={`theme-btn ${theme === 'classic' ? 'active' : ''}`}
                                         >
                                             Classic
                                         </button>
                                         <button
-                                            onClick={() => setTheme('future')}
+                                            onClick={() => handleThemeChange('future')}
                                             className={`theme-btn ${theme === 'future' ? 'active' : ''}`}
                                         >
                                             Future

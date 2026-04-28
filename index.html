@@ -7,6 +7,7 @@
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="theme-sync.js"></script>
     <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
     <script type="module" src="appkit-init.js"></script>
@@ -1180,10 +1181,10 @@
                         <img src="ARTSOULlogo.png" alt="ArtSoul" class="site-logo">
                     </a>
                     <div class="theme-toggle">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
+                        <button data-theme="classic" class="theme-btn active">
                             Classic
                         </button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
+                        <button data-theme="future" class="theme-btn">
                             Future
                         </button>
                     </div>
@@ -1482,30 +1483,7 @@
         let morphActive = false;
         let originalPositions = [];
 
-        function setTheme(theme) {
-            document.body.classList.add('transitioning');
-            setTimeout(() => document.body.classList.remove('transitioning'), 600);
-
-            document.body.className = theme;
-            localStorage.setItem('theme', theme);
-
-            const classicBtn = document.getElementById('classicBtn');
-            const futureBtn = document.getElementById('futureBtn');
-
-            classicBtn.classList.remove('active-classic', 'active-future');
-            futureBtn.classList.remove('active-classic', 'active-future');
-
-            if (theme === 'classic') {
-                classicBtn.classList.add('active-classic');
-            } else {
-                futureBtn.classList.add('active-future');
-            }
-
-            const mainBtn = document.querySelector('#navButtons .btn-main');
-            if (mainBtn) {
-                mainBtn.className = 'btn-main';
-            }
-        }
+        // Theme is now handled by theme-sync.js
 
         function viewArt(id) {
             if (morphActive) return;

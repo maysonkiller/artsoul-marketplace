@@ -7,6 +7,7 @@
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="theme-sync.js"></script>
     <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
     <script type="module" src="appkit-init.js"></script>
@@ -485,10 +486,10 @@
                         <img src="ARTSOULlogo.png" alt="ArtSoul" class="site-logo">
                     </a>
                     <div class="theme-toggle">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
+                        <button data-theme="classic" class="theme-btn active">
                             Classic
                         </button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
+                        <button data-theme="future" class="theme-btn">
                             Future
                         </button>
                     </div>
@@ -654,27 +655,6 @@
         ReactDOM.render(<DocsApp />, document.getElementById('app'));
     </script>
 
-    <script>
-        function setTheme(theme) {
-            document.body.className = theme;
-            localStorage.setItem('theme', theme);
-
-            const classicBtn = document.getElementById('classicBtn');
-            const futureBtn = document.getElementById('futureBtn');
-
-            if (theme === 'classic') {
-                classicBtn.className = 'theme-btn active-classic';
-                futureBtn.className = 'theme-btn';
-            } else {
-                classicBtn.className = 'theme-btn';
-                futureBtn.className = 'theme-btn active-future';
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'classic';
-            setTheme(savedTheme);
-        });
-    </script>
+    <!-- Theme is now handled by theme-sync.js -->
 </body>
 </html>
