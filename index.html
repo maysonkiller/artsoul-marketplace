@@ -89,6 +89,7 @@
             position: relative;
             transition: all 0.3s ease-out;
             overflow: hidden;
+            z-index: 1;
         }
 
         .future .card:hover {
@@ -100,6 +101,17 @@
                 0 0 60px var(--accent-future),
                 0 0 90px var(--neon-purple);
             border-color: var(--neon-purple);
+            z-index: 10;
+        }
+
+        /* Coming Soon text animation in Future mode */
+        .future .coming-soon-text {
+            background: linear-gradient(90deg, var(--accent-future), var(--neon-purple), var(--accent-future));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 3s linear infinite;
         }
 
         /* Smoke effect for Future mode */
@@ -521,6 +533,7 @@
             width: auto;
             display: block;
             transition: all 0.3s;
+            border-radius: 12px;
         }
 
         .classic .site-logo {
@@ -528,16 +541,19 @@
         }
 
         .future .site-logo {
-            filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 20px rgba(191, 0, 255, 0.4));
-            animation: logoGlow 3s ease-in-out infinite;
+            border: 3px solid transparent;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4);
+            animation: logoBorderGlow 3s ease-in-out infinite;
         }
 
-        @keyframes logoGlow {
+        @keyframes logoBorderGlow {
             0%, 100% {
-                filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 20px rgba(191, 0, 255, 0.6));
+                box-shadow: 0 0 20px rgba(0, 245, 255, 0.8), 0 0 40px rgba(191, 0, 255, 0.6), inset 0 0 20px rgba(0, 245, 255, 0.2);
+                border-color: rgba(0, 245, 255, 0.6);
             }
             50% {
-                filter: drop-shadow(0 0 20px rgba(191, 0, 255, 0.8)) drop-shadow(0 0 30px rgba(0, 245, 255, 0.6));
+                box-shadow: 0 0 30px rgba(191, 0, 255, 0.8), 0 0 60px rgba(0, 245, 255, 0.6), inset 0 0 30px rgba(191, 0, 255, 0.2);
+                border-color: rgba(191, 0, 255, 0.6);
             }
         }
 
@@ -1179,73 +1195,73 @@
         <div class="gallery">
             <div class="card rounded-xl overflow-hidden" data-letter="A">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="R">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="T">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="S">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="O">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="L">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="A">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="R">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="T">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="S">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="O">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
 
             <div class="card rounded-xl overflow-hidden" data-letter="L">
                 <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                    <p class="text-2xl font-light">Coming Soon</p>
+                    <p class="text-2xl font-light coming-soon-text">Coming Soon</p>
                 </div>
             </div>
         </div>

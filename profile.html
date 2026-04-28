@@ -122,11 +122,13 @@
             padding-bottom: 0.75rem;
         }
 
+        /* Site logo styles */
         .site-logo {
             height: 100px;
             width: auto;
             display: block;
             transition: all 0.3s;
+            border-radius: 12px;
         }
 
         .classic .site-logo {
@@ -134,16 +136,19 @@
         }
 
         .future .site-logo {
-            filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 20px rgba(191, 0, 255, 0.4));
-            animation: logoGlow 3s ease-in-out infinite;
+            border: 3px solid transparent;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4);
+            animation: logoBorderGlow 3s ease-in-out infinite;
         }
 
-        @keyframes logoGlow {
+        @keyframes logoBorderGlow {
             0%, 100% {
-                filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 20px rgba(191, 0, 255, 0.6));
+                box-shadow: 0 0 20px rgba(0, 245, 255, 0.8), 0 0 40px rgba(191, 0, 255, 0.6), inset 0 0 20px rgba(0, 245, 255, 0.2);
+                border-color: rgba(0, 245, 255, 0.6);
             }
             50% {
-                filter: drop-shadow(0 0 20px rgba(191, 0, 255, 0.8)) drop-shadow(0 0 30px rgba(0, 245, 255, 0.6));
+                box-shadow: 0 0 30px rgba(191, 0, 255, 0.8), 0 0 60px rgba(0, 245, 255, 0.6), inset 0 0 30px rgba(191, 0, 255, 0.2);
+                border-color: rgba(191, 0, 255, 0.6);
             }
         }
 
