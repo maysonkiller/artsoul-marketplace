@@ -400,59 +400,72 @@
 
         @keyframes slideCardsFlow {
             0% {
-                transform: translateX(-240px);
+                transform: translateX(-280px);
             }
             100% {
-                transform: translateX(calc(100vw + 240px));
+                transform: translateX(calc(100vw + 280px));
             }
         }
 
         .future .gallery .card:nth-child(1) {
             animation-delay: 0s;
+            left: calc(-280px + 0 * 280px);
         }
 
         .future .gallery .card:nth-child(2) {
-            animation-delay: -4.16s;
+            animation-delay: 0s;
+            left: calc(-280px + 1 * 280px);
         }
 
         .future .gallery .card:nth-child(3) {
-            animation-delay: -8.32s;
+            animation-delay: 0s;
+            left: calc(-280px + 2 * 280px);
         }
 
         .future .gallery .card:nth-child(4) {
-            animation-delay: -12.48s;
+            animation-delay: 0s;
+            left: calc(-280px + 3 * 280px);
         }
 
         .future .gallery .card:nth-child(5) {
-            animation-delay: -16.64s;
+            animation-delay: 0s;
+            left: calc(-280px + 4 * 280px);
         }
 
         .future .gallery .card:nth-child(6) {
-            animation-delay: -20.8s;
+            animation-delay: 0s;
+            left: calc(-280px + 5 * 280px);
         }
 
         .future .gallery .card:nth-child(7) {
-            animation-delay: -24.96s;
+            animation-delay: 0s;
+            left: calc(-280px + 6 * 280px);
         }
 
         .future .gallery .card:nth-child(8) {
-            animation-delay: -29.12s;
+            animation-delay: 0s;
+            left: calc(-280px + 7 * 280px);
         }
 
         .future .gallery .card:nth-child(9) {
-            animation-delay: -33.28s;
+            animation-delay: 0s;
+            left: calc(-280px + 8 * 280px);
         }
 
         .future .gallery .card:nth-child(10) {
-            animation-delay: -37.44s;
+            animation-delay: 0s;
+            left: calc(-280px + 9 * 280px);
         }
 
         .future .gallery .card:nth-child(11) {
-            animation-delay: -41.6s;
+            animation-delay: 0s;
+            left: calc(-280px + 10 * 280px);
         }
 
         .future .gallery .card:nth-child(12) {
-            animation-delay: -45.76s;
+            animation-delay: 0s;
+            left: calc(-280px + 11 * 280px);
+        }
         }
 
         /* Mode Transition Effect */
@@ -538,12 +551,22 @@
 
         .classic .site-logo {
             filter: drop-shadow(0 0 8px rgba(169, 221, 211, 0.4));
+            animation: logoLevitate 4s ease-in-out infinite;
         }
 
         .future .site-logo {
             border: 3px solid transparent;
             box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4);
-            animation: logoBorderGlow 3s ease-in-out infinite;
+            animation: logoBorderGlow 3s ease-in-out infinite, logoLevitate 4s ease-in-out infinite;
+        }
+
+        @keyframes logoLevitate {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         @keyframes logoBorderGlow {
@@ -558,7 +581,7 @@
         }
 
         .logo-link:hover .site-logo {
-            transform: scale(1.05);
+            animation-play-state: paused;
         }
 
         .classic .logo-link:hover .site-logo {
@@ -566,7 +589,7 @@
         }
 
         .future .logo-link:hover .site-logo {
-            filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 30px rgba(191, 0, 255, 0.6));
+            box-shadow: 0 0 35px rgba(0, 245, 255, 0.9), 0 0 70px rgba(191, 0, 255, 0.7), inset 0 0 35px rgba(191, 0, 255, 0.3);
         }
 
         .card {
