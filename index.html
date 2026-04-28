@@ -1519,10 +1519,7 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'classic';
-            setTheme(savedTheme);
-        });
+        // Theme is now handled by theme-sync.js - removed duplicate initialization
 
         // Profile Section Functions
         let selectedArtworkFile = null;
