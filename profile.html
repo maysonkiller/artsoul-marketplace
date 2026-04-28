@@ -411,25 +411,14 @@
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div ref={networkBadgeRef}></div>
-                                    {profile?.wallet_address && (
-                                        <div className={`px-3 py-2 rounded-lg font-mono text-sm ${
-                                            isClassic
-                                                ? 'bg-gray-800 text-gray-300 border border-gray-700'
-                                                : 'bg-cyan-900/30 text-cyan-300 border border-cyan-500/30'
-                                        }`}>
-                                            {profile.wallet_address.slice(0, 6)}...{profile.wallet_address.slice(-4)}
-                                        </div>
-                                    )}
                                     <div ref={navButtonsRef} className="flex items-center gap-3">
-                                        {/* AppKit will populate this */}
+                                        {/* AppKit will populate wallet button with network switching */}
                                     </div>
                                     <button
-                                        onClick={() => {
+                                        onClick={async () => {
                                             if (window.web3Modal) {
-                                                window.web3Modal.disconnect();
-                                                setTimeout(() => {
-                                                    window.location.href = 'index.html';
-                                                }, 500);
+                                                await window.web3Modal.disconnect();
+                                                window.location.href = 'index.html';
                                             }
                                         }}
                                         className="btn-secondary"

@@ -63,7 +63,7 @@
 /* Logo Hover Effect - Future Mode */
 .future .logo-link:hover .site-logo {
     filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 30px rgba(191, 0, 255, 0.6));
-    animation: glitchButton 0.5s ease-in-out;
+    /* No glitch animation - logo should only levitate smoothly */
 }
 
 /* Network Badge - Future Mode */
@@ -96,9 +96,9 @@
     animation: neonPulse 0.3s infinite, glitchButton 0.5s ease-in-out;
 }
 
-/* All clickable elements in Future mode (except devnet-banner) */
+/* All clickable elements in Future mode (except devnet-banner and logo) */
 .future button:hover:not(.devnet-banner),
-.future a:hover:not(.devnet-banner) {
+.future a:hover:not(.devnet-banner):not(.logo-link) {
     animation: glitchButton 0.5s ease-in-out;
 }
 
