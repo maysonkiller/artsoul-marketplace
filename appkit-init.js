@@ -285,13 +285,7 @@ async function initializeAppKit() {
             networks,
             metadata,
             projectId,
-            features: {
-                socials: ['google', 'x', 'apple', 'discord'],
-                email: true,
-                onramp: false,
-                swaps: false,
-                analytics: true
-            },
+            // Remove local features config - managed via Reown dashboard
             themeMode: 'dark',
             themeVariables: {
                 '--w3m-accent': '#00f5ff',
