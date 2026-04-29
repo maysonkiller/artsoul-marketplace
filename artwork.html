@@ -238,12 +238,73 @@
                     await window.ArtSoulContracts.init(provider);
                     await window.ArtSoulContracts.endAuction(artwork.blockchain_id);
 
-                    alert('✅ Auction ended!');
+                    alert('Auction ended!');
                     loadArtwork();
                 } catch (error) {
                     console.error('End auction failed:', error);
                     alert('Failed to end auction: ' + (error.message || 'Unknown error'));
                 }
+            }
+
+            async function handleVote(voteType) {
+                // Check wallet connection
+                const walletAddress = window.getCurrentWalletAddress?.();
+                if (!walletAddress) {
+                    alert('Please connect your wallet to vote');
+                    return;
+                }
+
+                // Check authentication
+                const isAuth = await window.SupabaseAuth?.isAuthenticated();
+                if (!isAuth) {
+                    const authenticated = await window.ensureAuthenticated?.();
+                    if (!authenticated) return;
+                }
+
+                try {
+                    // Save vote to database
+                    await window.ArtSoulDB.saveVote({
+                        artwork_id: artwork.id,
+                        voter_address: walletAddress,
+                        vote_type: voteType
+                    });
+
+                    // Recalculate community value
+                    const votes = await window.ArtSoulDB.getVotes(artwork.id);
+                    const communityValue = calculateCommunityValue(votes, artwork.creator_value);
+
+                    // Update artwork with new community value
+                    await window.ArtSoulDB.updateArtwork(artwork.id, {
+                        community_value: communityValue
+                    });
+
+                    alert('Vote recorded! Community Value updated.');
+                    loadArtwork();
+                } catch (error) {
+                    console.error('Vote failed:', error);
+                    alert('Failed to record vote: ' + (error.message || 'Unknown error'));
+                }
+            }
+
+            function calculateCommunityValue(votes, creatorValue) {
+                if (!votes || votes.length === 0) return null;
+
+                const baseValue = parseFloat(creatorValue) || 0;
+                let totalAdjustment = 0;
+
+                votes.forEach(vote => {
+                    if (vote.vote_type === 'undervalued') {
+                        totalAdjustment += 0.1; // +10%
+                    } else if (vote.vote_type === 'overvalued') {
+                        totalAdjustment -= 0.1; // -10%
+                    }
+                    // 'fair' votes don't change the value
+                });
+
+                const avgAdjustment = totalAdjustment / votes.length;
+                const communityValue = baseValue * (1 + avgAdjustment);
+
+                return Math.max(0, communityValue).toFixed(4);
             }
 
             if (loading) {
@@ -381,7 +442,7 @@
 
                                 {/* Triple Valuation */}
                                 <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                    <h3 className="text-xl font-bold mb-4">💎 Triple Valuation</h3>
+                                    <h3 className="text-xl font-bold mb-4">Triple Valuation</h3>
                                     <div className="space-y-3">
                                         <div className="flex justify-between">
                                             <span className="opacity-70">Creator Value:</span>
@@ -395,6 +456,59 @@
                                             <span className="opacity-70">Community Value:</span>
                                             <span className="font-bold">{artwork.community_value ? `${artwork.community_value} ETH` : 'Not rated yet'}</span>
                                         </div>
+                                    </div>
+                                </div>
+
+                                {/* Community Voting */}
+                                <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
+                                    <h3 className="text-xl font-bold mb-4">Community Voting</h3>
+                                    <p className="text-sm opacity-70 mb-4">
+                                        Help determine the fair market value by voting
+                                    </p>
+
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <button
+                                            onClick={() => handleVote('undervalued')}
+                                            className={`p-4 rounded-lg text-center transition-all ${
+                                                isClassic
+                                                    ? 'bg-green-600 hover:bg-green-500 text-white'
+                                                    : 'bg-green-600 hover:bg-green-500 text-white'
+                                            }`}
+                                        >
+                                            <div className="text-2xl mb-1">↑</div>
+                                            <div className="text-xs font-medium">Undervalued</div>
+                                            <div className="text-xs opacity-70 mt-1">Worth more</div>
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleVote('fair')}
+                                            className={`p-4 rounded-lg text-center transition-all ${
+                                                isClassic
+                                                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                                                    : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                                            }`}
+                                        >
+                                            <div className="text-2xl mb-1">→</div>
+                                            <div className="text-xs font-medium">Fair Price</div>
+                                            <div className="text-xs opacity-70 mt-1">Just right</div>
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleVote('overvalued')}
+                                            className={`p-4 rounded-lg text-center transition-all ${
+                                                isClassic
+                                                    ? 'bg-red-600 hover:bg-red-500 text-white'
+                                                    : 'bg-red-600 hover:bg-red-500 text-white'
+                                            }`}
+                                        >
+                                            <div className="text-2xl mb-1">↓</div>
+                                            <div className="text-xs font-medium">Overvalued</div>
+                                            <div className="text-xs opacity-70 mt-1">Worth less</div>
+                                        </button>
+                                    </div>
+
+                                    <div className="mt-4 text-xs text-center opacity-50">
+                                        Your vote helps calculate Community Value
                                     </div>
                                 </div>
 
