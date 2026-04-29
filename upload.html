@@ -527,19 +527,36 @@
 
                 // Step 7: Create auction immediately (3 days)
                 uploadBtn.textContent = 'Creating auction...';
+                let auctionCreated = false;
                 try {
                     await window.ArtSoulContracts.createAuction(
                         result.artworkId,
                         price,
                         3 // 3 days duration
                     );
+                    auctionCreated = true;
+                    console.log('✅ Auction created on blockchain');
 
-                    // Update status to auction
+                    // Update status to auction in database
                     await window.ArtSoulDB.updateArtwork(result.artworkId, { status: 'auction' });
-                    console.log('✅ Auction created automatically');
+                    console.log('✅ Database synced with blockchain');
                 } catch (auctionError) {
-                    console.warn('⚠️ Auction creation failed, artwork saved as draft:', auctionError);
-                    // Continue anyway - artwork is saved, user can create auction later
+                    console.error('⚠️ Auction creation error:', auctionError);
+
+                    if (auctionCreated) {
+                        // Blockchain succeeded but database failed - try to sync again
+                        console.warn('⚠️ Blockchain auction created but database sync failed, retrying...');
+                        try {
+                            await window.ArtSoulDB.updateArtwork(result.artworkId, { status: 'auction' });
+                            console.log('✅ Database synced on retry');
+                        } catch (retryError) {
+                            console.error('❌ Database sync retry failed:', retryError);
+                            alert('Auction created on blockchain but database sync failed. Please refresh your profile to see the correct status.');
+                        }
+                    } else {
+                        // Blockchain creation failed - artwork stays as draft
+                        console.warn('⚠️ Auction creation failed, artwork saved as draft. You can create the auction later from your profile.');
+                    }
                 }
 
                 // Success - redirect immediately without alert

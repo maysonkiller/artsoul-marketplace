@@ -434,6 +434,28 @@
                         await window.ArtSoulContracts.init(provider);
                     }
 
+                    // Check blockchain status first
+                    console.log('Checking blockchain status for artwork:', artwork.blockchain_id);
+                    const blockchainArtwork = await window.ArtSoulContracts.getArtwork(artwork.blockchain_id);
+                    console.log('Blockchain status:', blockchainArtwork.status);
+
+                    // Status: 0=DRAFT, 1=AUCTION, 2=AUCTION_FAILED, 3=SOLD, 4=UNLISTED
+                    if (blockchainArtwork.status === 1) {
+                        // Already in AUCTION status on blockchain, just sync database
+                        console.log('⚠️ Artwork already in AUCTION status on blockchain, syncing database...');
+                        await window.ArtSoulDB.updateArtwork(artwork.id, { status: 'auction' });
+                        alert('Auction status synced! The auction was already active on the blockchain.');
+                        loadMyArtworks();
+                        return;
+                    }
+
+                    if (blockchainArtwork.status !== 0 && blockchainArtwork.status !== 2) {
+                        // Can only create auction from DRAFT (0) or AUCTION_FAILED (2)
+                        const statusNames = ['DRAFT', 'AUCTION', 'AUCTION_FAILED', 'SOLD', 'UNLISTED'];
+                        alert(`Cannot create auction. Artwork status: ${statusNames[blockchainArtwork.status]}`);
+                        return;
+                    }
+
                     // Create auction on blockchain
                     console.log('Creating auction for artwork:', artwork.blockchain_id);
                     await window.ArtSoulContracts.createAuction(
