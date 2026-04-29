@@ -108,7 +108,7 @@ window.updateNavButtons = function updateNavButtons(state) {
 /**
  * Update network badge with current network and balance
  */
-window.updateNetworkBadge = function updateNetworkBadge(state) {
+window.updateNetworkBadge = async function updateNetworkBadge(state) {
     const networkBadgeContainer = document.getElementById('networkBadge');
     if (!networkBadgeContainer) return;
 
@@ -118,26 +118,21 @@ window.updateNetworkBadge = function updateNetworkBadge(state) {
 
         // Fetch balance using AppKit provider
         if (modal?.getWalletProvider) {
-            modal.getWalletProvider().then(provider => {
+            try {
+                const provider = await modal.getWalletProvider();
                 if (provider && provider.request) {
-                    provider.request({ method: 'eth_getBalance', params: [state.address, 'latest'] })
-                        .then(balance => {
-                            currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
-                            renderNetworkBadge();
-                        })
-                        .catch(() => {
-                            currentBalance = '0.00';
-                            renderNetworkBadge();
-                        });
-                } else {
-                    renderNetworkBadge();
+                    try {
+                        const balance = await provider.request({ method: 'eth_getBalance', params: [state.address, 'latest'] });
+                        currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
+                    } catch (error) {
+                        currentBalance = '0.00';
+                    }
                 }
-            }).catch(() => {
-                renderNetworkBadge();
-            });
-        } else {
-            renderNetworkBadge();
+            } catch (error) {
+                console.warn('Failed to get balance:', error);
+            }
         }
+        renderNetworkBadge();
     } else {
         // Clear badge when disconnected
         networkBadgeContainer.innerHTML = '';
@@ -415,24 +410,6 @@ async function initializeAppKit() {
                 if (window.location.pathname.includes('profile.html')) {
                     console.log('🏠 Redirecting to home page...');
                     window.location.href = 'index.html';
-                }
-            }
-        });
-
-        // Subscribe to network changes
-        modal.subscribeState((state) => {
-            if (state?.selectedNetworkId) {
-                console.log('🔄 Network changed:', state.selectedNetworkId);
-
-                // Update network badge
-                const walletAddress = window.currentWalletAddress || localStorage.getItem('artsoul_wallet');
-                if (walletAddress) {
-                    updateNetworkBadge({ address: walletAddress, chainId: state.selectedNetworkId });
-
-                    // Refresh avatar dropdown to update network indicator
-                    if (window.AvatarDropdown) {
-                        window.AvatarDropdown.refresh(walletAddress);
-                    }
                 }
             }
         });

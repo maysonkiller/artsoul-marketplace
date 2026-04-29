@@ -50,8 +50,11 @@ class ArtSoulContracts {
      */
     async init(provider) {
         try {
-            // Get network
-            const network = await provider.getNetwork();
+            // Create ethers provider
+            this.provider = new ethers.BrowserProvider(provider);
+
+            // Get network info
+            const network = await this.provider.getNetwork();
             const chainId = Number(network.chainId);
 
             // Check if supported network
@@ -60,7 +63,6 @@ class ArtSoulContracts {
             }
 
             this.currentNetwork = 'baseSepolia';
-            this.provider = new ethers.BrowserProvider(provider);
             this.signer = await this.provider.getSigner();
 
             // Initialize contracts
