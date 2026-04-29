@@ -413,10 +413,19 @@ async function initializeAppKit() {
             }
         });
 
-        // Subscribe to chain changes to update UI (removed auto-close)
+        // Subscribe to chain changes to update UI and close modal after selection
+        let lastSelectedNetwork = null;
         modal.subscribeState((state) => {
-            if (state.selectedNetworkId) {
+            if (state.selectedNetworkId && state.selectedNetworkId !== lastSelectedNetwork) {
                 console.log('🔄 Network changed to:', state.selectedNetworkId);
+                lastSelectedNetwork = state.selectedNetworkId;
+
+                // Close modal after network selection (with small delay)
+                setTimeout(() => {
+                    if (modal.getState().open) {
+                        modal.close();
+                    }
+                }, 300);
 
                 // Update network display
                 if (window.currentWalletAddress) {
