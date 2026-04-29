@@ -1795,9 +1795,15 @@
                 price.className = 'text-sm font-medium';
                 price.textContent = `${art.creator_estimated_value} ETH`;
 
+                // Vote count
+                const voteCount = document.createElement('p');
+                voteCount.className = 'text-xs opacity-60 mt-1';
+                voteCount.textContent = `${art.vote_count || 0} votes`;
+
                 info.appendChild(title);
                 info.appendChild(desc);
                 info.appendChild(price);
+                info.appendChild(voteCount);
                 card.appendChild(imgContainer);
                 card.appendChild(info);
                 container.appendChild(card);
@@ -1814,24 +1820,8 @@
             if (!gallery) return;
 
             try {
-                let artworks = await window.ArtSoulDB.getAllArtworks();
-
-                // Sort: first by sold status and highest price, then by newest
-                if (artworks && artworks.length > 0) {
-                    artworks.sort((a, b) => {
-                        // Sold artworks first
-                        if (a.status === 'sold' && b.status !== 'sold') return -1;
-                        if (a.status !== 'sold' && b.status === 'sold') return 1;
-
-                        // Among sold, sort by price (highest first)
-                        if (a.status === 'sold' && b.status === 'sold') {
-                            return (parseFloat(b.creator_value) || 0) - (parseFloat(a.creator_value) || 0);
-                        }
-
-                        // Otherwise sort by newest
-                        return new Date(b.created_at) - new Date(a.created_at);
-                    });
-                }
+                // Get TOP-12 artworks sorted by votes
+                let artworks = await window.ArtSoulDB.getArtworksByVotes(12);
 
                 // Always show 12 slots
                 gallery.innerHTML = ''; // Clear first

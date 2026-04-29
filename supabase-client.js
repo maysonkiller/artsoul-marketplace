@@ -541,12 +541,7 @@ function subscribeToAuction(auctionId, callback) {
 async function saveVote(voteData) {
     const supabase = await initSupabase();
 
-    // Validate vote_type
-    const validVoteTypes = ['undervalued', 'fair', 'overvalued'];
-    if (!validVoteTypes.includes(voteData.vote_type)) {
-        throw new Error('Invalid vote type. Must be: undervalued, fair, or overvalued');
-    }
-
+    // Simple like system - one wallet can vote once per artwork
     // Validate artwork_id is UUID
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!voteData.artwork_id || !uuidRegex.test(voteData.artwork_id)) {
@@ -558,6 +553,32 @@ async function saveVote(voteData) {
     if (!voteData.voter_address || !addressRegex.test(voteData.voter_address)) {
         throw new Error('Invalid voter address format');
     }
+
+    // Check if user already voted
+    const existingVote = await getUserVote(voteData.artwork_id, voteData.voter_address);
+    if (existingVote) {
+        throw new Error('You have already voted for this artwork');
+    }
+
+    // Insert vote (simple like, no vote_type needed)
+    const { data, error } = await supabase
+        .from('votes')
+        .insert([{
+            artwork_id: voteData.artwork_id,
+            voter_address: voteData.voter_address,
+            vote_type: 'like', // Simple like system
+            created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error saving vote:', error);
+        throw error;
+    }
+
+    return data;
+}
 
     // Check if user already voted
     const { data: existingVote } = await supabase
@@ -640,6 +661,59 @@ async function getUserVote(artworkId, voterAddress) {
     return data;
 }
 
+// Get vote count for an artwork
+async function getVoteCount(artworkId) {
+    const supabase = await initSupabase();
+
+    const { count, error } = await supabase
+        .from('votes')
+        .select('*', { count: 'exact', head: true })
+        .eq('artwork_id', artworkId);
+
+    if (error) {
+        console.error('Error getting vote count:', error);
+        return 0;
+    }
+
+    return count || 0;
+}
+
+// Get artworks sorted by vote count
+async function getArtworksByVotes(limit = null) {
+    const supabase = await initSupabase();
+
+    // Get all artworks with vote counts
+    const { data: artworks, error: artworksError } = await supabase
+        .from('artworks')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (artworksError) {
+        console.error('Error fetching artworks:', artworksError);
+        throw artworksError;
+    }
+
+    // Get vote counts for each artwork
+    const artworksWithVotes = await Promise.all(
+        artworks.map(async (artwork) => {
+            const voteCount = await getVoteCount(artwork.id);
+            return { ...artwork, vote_count: voteCount };
+        })
+    );
+
+    // Sort by vote count (descending), then by created_at (ascending) for ties
+    artworksWithVotes.sort((a, b) => {
+        if (b.vote_count !== a.vote_count) {
+            return b.vote_count - a.vote_count;
+        }
+        // If votes are equal, earlier created artwork comes first
+        return new Date(a.created_at) - new Date(b.created_at);
+    });
+
+    // Return limited results if specified
+    return limit ? artworksWithVotes.slice(0, limit) : artworksWithVotes;
+}
+
 // Export functions
 window.ArtSoulDB = {
     initSupabase,
@@ -671,6 +745,8 @@ window.ArtSoulDB = {
     saveVote,
     getVotes,
     getUserVote,
+    getVoteCount,
+    getArtworksByVotes,
     // Real-time
     subscribeToAuction
 };

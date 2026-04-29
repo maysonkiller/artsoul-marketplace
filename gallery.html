@@ -113,7 +113,8 @@
 
             async function loadArtworks() {
                 try {
-                    const data = await window.ArtSoulDB.getAllArtworks();
+                    // Get all artworks sorted by votes
+                    const data = await window.ArtSoulDB.getArtworksByVotes();
                     setArtworks(data || []);
                     setLoading(false);
                 } catch (error) {
@@ -465,6 +466,10 @@
                                                         }}>{artwork.system_value} ETH</span>
                                                     </div>
                                                 )}
+                                                <div className="flex justify-between">
+                                                    <span className="opacity-70">Votes:</span>
+                                                    <span className="font-medium">{artwork.vote_count || 0}</span>
+                                                </div>
                                             </div>
 
                                             {/* Creator */}
