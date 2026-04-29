@@ -228,16 +228,21 @@ window.resetWalletConnection = async () => {
         }, 1000);
 
         // Check if we're already on index.html
-    const isIndexPage = window.location.pathname.endsWith('index.html') ||
-                        window.location.pathname === '/' ||
-                        window.location.pathname.endsWith('/');
+        const isIndexPage = window.location.pathname.endsWith('index.html') ||
+                            window.location.pathname === '/' ||
+                            window.location.pathname.endsWith('/');
 
-    if (isIndexPage) {
-        // Already on index, just reload
+        if (isIndexPage) {
+            // Already on index, just reload
+            window.location.reload();
+        } else {
+            // Redirect to home page
+            window.location.href = 'index.html';
+        }
+    } catch (error) {
+        console.error('❌ Reset failed:', error);
+        // Force reload anyway
         window.location.reload();
-    } else {
-        // Redirect to home page
-        window.location.href = 'index.html';
     }
 };
 
