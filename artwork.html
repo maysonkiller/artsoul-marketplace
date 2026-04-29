@@ -382,7 +382,18 @@
                         <div className="container mx-auto px-4 py-4">
                             <div className="flex items-center justify-between">
                                 <a href="index.html" className="flex items-center">
-                                    <img src="ARTSOULlogo.png" alt="ArtSoul" style={{height: '60px', width: 'auto'}} />
+                                    <img
+                                        src="ARTSOULlogo.png"
+                                        alt="ArtSoul"
+                                        style={{
+                                            height: '60px',
+                                            width: 'auto',
+                                            borderRadius: '12px',
+                                            filter: isClassic ? 'drop-shadow(0 0 8px rgba(169, 221, 211, 0.4))' : 'none',
+                                            boxShadow: isClassic ? 'none' : '0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4)',
+                                            animation: isClassic ? 'logoLevitate 4s ease-in-out infinite' : 'logoBorderGlow 3s ease-in-out infinite, logoLevitate 4s ease-in-out infinite'
+                                        }}
+                                    />
                                 </a>
                                 <div className="flex items-center gap-3">
                                     <div id="networkBadge"></div>
