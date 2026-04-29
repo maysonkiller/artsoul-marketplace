@@ -200,6 +200,7 @@
         ];
 
         function ProfilePage() {
+            console.log('🎨 ProfilePage component rendering...');
             const [theme, setTheme] = useState(() => window.ThemeSync?.getTheme() || 'classic');
             const [profile, setProfile] = useState(null);
             const [editMode, setEditMode] = useState(false);
@@ -1010,6 +1011,11 @@
                 </div>
             );
         }
+
+        console.log('🚀 About to render ProfilePage...');
+        console.log('React:', typeof React);
+        console.log('ReactDOM:', typeof ReactDOM);
+        console.log('App div:', document.getElementById('app'));
 
         ReactDOM.render(<ProfilePage />, document.getElementById('app'));
 
