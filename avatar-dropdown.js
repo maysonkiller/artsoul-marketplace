@@ -418,6 +418,7 @@
                 menu.style.background = '#1a1a1a';
                 menu.style.border = '1px solid #a9ddd3';
                 avatarButton.style.borderColor = '#a9ddd3';
+                avatarButton.style.boxShadow = 'none';
 
                 items.forEach(item => {
                     item.addEventListener('mouseenter', function() {
@@ -432,13 +433,16 @@
                 menu.style.border = '1px solid rgba(0, 245, 255, 0.3)';
                 menu.style.boxShadow = '0 0 30px rgba(0, 245, 255, 0.2)';
                 avatarButton.style.borderColor = '#00f5ff';
+                avatarButton.style.boxShadow = '0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4)';
 
                 items.forEach(item => {
                     item.addEventListener('mouseenter', function() {
                         this.style.background = 'rgba(0, 245, 255, 0.1)';
+                        this.style.boxShadow = '0 0 10px rgba(0, 245, 255, 0.3)';
                     });
                     item.addEventListener('mouseleave', function() {
                         this.style.background = 'transparent';
+                        this.style.boxShadow = 'none';
                     });
                 });
             }

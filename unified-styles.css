@@ -155,6 +155,41 @@
     text-shadow: none;
 }
 
+/* Avatar Button Glow Effect */
+.future .avatar-button {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4);
+    animation: avatarGlow 3s ease-in-out infinite;
+}
+
+@keyframes avatarGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4);
+        border-color: rgba(0, 245, 255, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(191, 0, 255, 0.8), 0 0 60px rgba(0, 245, 255, 0.6);
+        border-color: rgba(191, 0, 255, 0.6);
+    }
+}
+
+.classic .avatar-button {
+    box-shadow: none;
+}
+
+/* Dropdown Menu Items Gradient Text in Future Mode */
+.future .dropdown-item span {
+    background: linear-gradient(90deg, var(--accent-future), var(--neon-purple), var(--accent-future));
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientFlow 3s linear infinite;
+}
+
+.future .dropdown-item:hover span {
+    animation-duration: 1.5s;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
     .btn-main,
