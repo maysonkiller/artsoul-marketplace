@@ -28,13 +28,25 @@
                 // Load profile from Supabase
                 this.profile = await window.ArtSoulDB.getProfile(walletAddress);
 
-                // If no profile, show wallet info instead of redirecting
-                // Profile is optional - users can use the app with just wallet connection
+                // If no profile, create a basic one automatically
                 if (!this.profile) {
                     console.log('👤 No profile found for wallet:', walletAddress);
-                    console.log('👤 Showing wallet info without profile');
-                    this.renderWalletInfo(walletAddress);
-                    return;
+                    console.log('👤 Creating basic profile automatically...');
+
+                    try {
+                        // Create basic profile with wallet address
+                        this.profile = await window.ArtSoulDB.updateProfile(walletAddress, {
+                            username: `User${walletAddress.slice(2, 8)}`,
+                            bio: '',
+                            avatar_url: null
+                        });
+                        console.log('✅ Basic profile created:', this.profile);
+                    } catch (createError) {
+                        console.error('❌ Failed to create profile:', createError);
+                        // If profile creation fails, show wallet info
+                        this.renderWalletInfo(walletAddress);
+                        return;
+                    }
                 }
 
                 console.log('👤 Profile loaded:', this.profile.username || 'Anonymous');

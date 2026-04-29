@@ -447,15 +447,9 @@ async function initializeAppKit() {
         // Subscribe to chain changes to update UI and close modal after selection
         let lastSelectedNetwork = null;
         let networkChangeTimeout = null;
-        let wasModalOpen = false;
 
         modal.subscribeState((state) => {
-            // Track if modal is open
-            if (state.open) {
-                wasModalOpen = true;
-            }
-
-            // Only auto-close if network changed AND modal was opened by user
+            // Handle network change
             if (state.selectedNetworkId && state.selectedNetworkId !== lastSelectedNetwork) {
                 console.log('🔄 Network changed to:', state.selectedNetworkId);
                 const previousNetwork = lastSelectedNetwork;
@@ -466,13 +460,13 @@ async function initializeAppKit() {
                     clearTimeout(networkChangeTimeout);
                 }
 
-                // Only close modal if it was opened by user and network actually changed
-                if (wasModalOpen && previousNetwork !== null && modal.getState().open) {
+                // Close modal after network change if it's open
+                // Only skip auto-close on initial load (previousNetwork === null && !state.open)
+                if (modal.getState().open && previousNetwork !== null) {
                     networkChangeTimeout = setTimeout(() => {
                         if (modal.getState().open) {
                             console.log('✅ Closing modal after network change');
                             modal.close();
-                            wasModalOpen = false;
                         }
                     }, 1000);
                 }
@@ -491,11 +485,6 @@ async function initializeAppKit() {
                         }, 100);
                     }
                 }
-            }
-
-            // Reset flag when modal closes
-            if (!state.open) {
-                wasModalOpen = false;
             }
         });
 
