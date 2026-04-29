@@ -663,64 +663,64 @@
             position: absolute;
             width: 390px;
             top: 0;
-            animation: slideCardsFlow 90s linear infinite;
+            animation: slideCardsFlow 60s linear infinite;
         }
 
         @keyframes slideCardsFlow {
-            0% {
+            from {
                 transform: translateX(0);
             }
-            100% {
-                transform: translateX(calc(450px * 12));
+            to {
+                transform: translateX(calc(450px * 6));
             }
         }
 
         .future .gallery .card:nth-child(1) {
-            left: calc(-450px);
+            left: calc(-450px * 2);
         }
 
         .future .gallery .card:nth-child(2) {
-            left: calc(0 * 450px);
+            left: calc(-450px * 1);
         }
 
         .future .gallery .card:nth-child(3) {
-            left: calc(1 * 450px);
+            left: calc(0 * 450px);
         }
 
         .future .gallery .card:nth-child(4) {
-            left: calc(2 * 450px);
+            left: calc(1 * 450px);
         }
 
         .future .gallery .card:nth-child(5) {
-            left: calc(3 * 450px);
+            left: calc(2 * 450px);
         }
 
         .future .gallery .card:nth-child(6) {
-            left: calc(4 * 450px);
+            left: calc(3 * 450px);
         }
 
         .future .gallery .card:nth-child(7) {
-            left: calc(5 * 450px);
+            left: calc(4 * 450px);
         }
 
         .future .gallery .card:nth-child(8) {
-            left: calc(6 * 450px);
+            left: calc(5 * 450px);
         }
 
         .future .gallery .card:nth-child(9) {
-            left: calc(7 * 450px);
+            left: calc(6 * 450px);
         }
 
         .future .gallery .card:nth-child(10) {
-            left: calc(8 * 450px);
+            left: calc(7 * 450px);
         }
 
         .future .gallery .card:nth-child(11) {
-            left: calc(9 * 450px);
+            left: calc(8 * 450px);
         }
 
         .future .gallery .card:nth-child(12) {
-            left: calc(10 * 450px);
+            left: calc(9 * 450px);
         }
 
         @media (max-width: 1200px) {

@@ -222,14 +222,23 @@
                     networkBadgeRef.current.id = 'networkBadge';
                 }
 
+                // Force initial update
+                if (window.web3Modal && window.updateNavButtons && window.updateNetworkBadge) {
+                    const state = window.web3Modal.getState();
+                    if (state?.address) {
+                        window.updateNavButtons(state);
+                        window.updateNetworkBadge(state);
+                    }
+                }
+
                 // Continuously check and update navButtons
                 const interval = setInterval(() => {
                     if (window.web3Modal) {
                         const state = window.web3Modal.getState();
                         const navButtons = document.getElementById('navButtons');
 
-                        // Only update if navButtons is empty but wallet is connected
-                        if (navButtons && navButtons.children.length === 0 && state?.address) {
+                        // Always update if wallet is connected
+                        if (navButtons && state?.address) {
                             if (window.updateNavButtons) {
                                 window.updateNavButtons(state);
                             }
@@ -580,8 +589,12 @@
                                                 {profile?.bio || 'No bio yet'}
                                             </p>
                                             <div className="flex gap-4 flex-wrap">
-                                                {profile?.twitter_username && (
-                                                    <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                                                {profile?.twitter_handle && (
+                                                    <a
+                                                        href={`https://twitter.com/${profile.twitter_handle.replace('@', '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer hover:opacity-80 transition-opacity ${
                                                         isClassic
                                                             ? 'bg-gray-700 text-gray-200 border border-gray-600'
                                                             : 'bg-cyan-900/50 text-cyan-300 border border-cyan-500/30 shadow-[0_0_15px_rgba(0,245,255,0.3)]'
@@ -589,8 +602,8 @@
                                                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                                         </svg>
-                                                        @{profile.twitter_username}
-                                                    </div>
+                                                        @{profile.twitter_handle.replace('@', '')}
+                                                    </a>
                                                 )}
                                                 {profile?.discord_username && (
                                                     <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
