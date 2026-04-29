@@ -137,38 +137,7 @@
         }
 
         /* Button effects for Future mode moved to button-effects.css */
-
-        .future .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--accent-future);
-            color: var(--accent-future);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .future .btn-secondary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .future .btn-secondary:hover {
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 15px var(--accent-future), 0 0 30px var(--neon-purple);
-            animation: neonPulse 0.3s infinite;
-        }
-
-        .future .btn-secondary:hover::before {
-            left: 100%;
-        }
-
         /* Glitch animation moved to button-effects.css */
-
         /* Gradient flow animation moved to unified-styles.css */
 
         /* Roadmap timeline gradient flow */

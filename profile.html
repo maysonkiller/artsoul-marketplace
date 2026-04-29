@@ -328,14 +328,37 @@
                 const file = e.target.files[0];
                 if (!file) return;
 
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file');
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size must be less than 5MB');
+                    return;
+                }
+
                 try {
+                    // Ensure authenticated before upload
+                    const isAuth = await window.ensureAuthenticated();
+                    if (!isAuth) return;
+
                     const walletAddress = window.getCurrentWalletAddress?.();
                     const fileName = `avatar_${walletAddress}_${Date.now()}.${file.name.split('.').pop()}`;
+
+                    // Show loading feedback
+                    const originalAvatar = profile?.avatar_url;
+                    setProfile({...profile, avatar_url: 'uploading...'});
+
                     const avatarUrl = await window.ArtSoulDB.uploadFile(file, fileName);
                     setProfile({...profile, avatar_url: avatarUrl});
                 } catch (error) {
                     console.error('Error uploading avatar:', error);
                     alert('Error uploading avatar: ' + error.message);
+                    // Restore original avatar on error
+                    setProfile({...profile, avatar_url: originalAvatar});
                 }
             }
 
@@ -462,7 +485,7 @@
                                         <label className={`block mt-3 text-center text-sm cursor-pointer ${
                                             isClassic ? 'text-gray-300 hover:underline' : 'text-cyan-400 hover:underline'
                                         }`}>
-                                            <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" ref={fileInputRef} />
+                                            <input type="file" accept="image/*" capture="environment" onChange={handleAvatarUpload} className="hidden" ref={fileInputRef} />
                                             Change Avatar
                                         </label>
                                     )}

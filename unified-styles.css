@@ -124,44 +124,6 @@
     transition: all 0.3s;
 }
 
-/* Classic Mode Styles */
-.classic .btn-main {
-    background: var(--text-classic);
-    color: var(--bg-classic);
-    border: 1px solid var(--text-classic);
-}
-
-.classic .btn-main:hover {
-    background: transparent;
-    color: var(--text-classic);
-}
-
-.classic .btn-secondary {
-    background: transparent;
-    border: 1px solid var(--text-classic);
-    color: var(--text-classic);
-}
-
-.classic .btn-secondary:hover {
-    background: var(--text-classic);
-    color: var(--bg-classic);
-}
-
-/* Future Mode Styles */
-.future .btn-main {
-    background: linear-gradient(135deg, var(--accent-future) 0%, var(--neon-purple) 100%);
-    color: #000000;
-    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-    border: none;
-    font-weight: 600;
-}
-
-.future .btn-secondary {
-    background: transparent;
-    border: 1px solid var(--accent-future);
-    color: var(--accent-future);
-}
-
 /* Gradient Flow Animation for Future Mode */
 @keyframes gradientFlow {
     0% { background-position: 0% 50%; }
