@@ -51,7 +51,10 @@
 
             // If no chainId from modal, try from provider
             if (!chainId && window.ethereum) {
-                chainId = window.ethereum.chainId ? parseInt(window.ethereum.chainId, 16) : null;
+                const hexChainId = window.ethereum.chainId;
+                if (hexChainId) {
+                    chainId = parseInt(hexChainId, 16);
+                }
             }
 
             // Network mapping with SVG icons (only supported networks)
@@ -63,8 +66,16 @@
 
             // Return network info
             if (!chainId) {
-                // If wallet connected but no chainId yet, show loading
-                return { name: 'Loading...', icon: '⏳', color: '#888888' };
+                // If wallet connected but no chainId yet, try to get it
+                if (window.currentWalletAddress) {
+                    // Retry after a short delay
+                    setTimeout(() => {
+                        if (this.profile) {
+                            this.updateNetworkDisplay();
+                        }
+                    }, 500);
+                }
+                return { name: 'Connecting...', icon: '⏳', color: '#888888' };
             }
 
             const network = networks[chainId];
@@ -74,6 +85,20 @@
             }
 
             return network;
+        }
+
+        /**
+         * Update network display dynamically
+         */
+        updateNetworkDisplay() {
+            const networkInfo = this.getCurrentNetworkInfo();
+            const networkButton = document.querySelector('.dropdown-item[onclick*="Networks"]');
+            if (networkButton) {
+                const iconSpan = networkButton.querySelector('span:first-child');
+                const nameSpan = networkButton.querySelector('span:last-child');
+                if (iconSpan) iconSpan.textContent = networkInfo.icon;
+                if (nameSpan) nameSpan.textContent = networkInfo.name;
+            }
         }
 
         /**
