@@ -124,6 +124,77 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
+        // Media Viewer Component - supports images, videos, audio, GIFs
+        function MediaViewer({ url, fileType, title }) {
+            const getMediaType = () => {
+                if (!fileType) return 'image';
+
+                const type = fileType.toLowerCase();
+
+                // Video formats
+                if (type === 'video' || ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(type)) {
+                    return 'video';
+                }
+
+                // Audio formats
+                if (type === 'audio' || ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'flac'].includes(type)) {
+                    return 'audio';
+                }
+
+                // Image formats (including GIF)
+                return 'image';
+            };
+
+            const mediaType = getMediaType();
+            const sanitizedTitle = window.ArtSoulSecurity?.sanitizeText(title) || 'Artwork';
+
+            if (mediaType === 'video') {
+                return (
+                    <video
+                        src={url}
+                        controls
+                        loop
+                        playsInline
+                        className="w-full h-full object-contain bg-black"
+                        style={{ maxHeight: '100%' }}
+                    >
+                        Your browser does not support video playback.
+                    </video>
+                );
+            }
+
+            if (mediaType === 'audio') {
+                return (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-black p-8">
+                        <div className="mb-8 text-center">
+                            <div className="text-6xl mb-4">🎵</div>
+                            <div className="text-xl opacity-70">{sanitizedTitle}</div>
+                        </div>
+                        <audio
+                            src={url}
+                            controls
+                            className="w-full max-w-md"
+                            style={{
+                                filter: 'invert(1) hue-rotate(180deg)',
+                                borderRadius: '0.5rem'
+                            }}
+                        >
+                            Your browser does not support audio playback.
+                        </audio>
+                    </div>
+                );
+            }
+
+            // Default: image (including GIF)
+            return (
+                <img
+                    src={url}
+                    alt={sanitizedTitle}
+                    className="w-full h-full object-contain bg-black"
+                />
+            );
+        }
+
         function ArtworkPage() {
             const [theme, setTheme] = useState('classic');
             const [artwork, setArtwork] = useState(null);
@@ -515,7 +586,7 @@
                     {/* Content */}
                     <main className="py-0 lg:py-12">
                         <div className="grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-0">
-                            {/* Artwork Image */}
+                            {/* Artwork Media Viewer */}
                             <div className="w-full h-[60vh] lg:h-screen lg:sticky lg:top-0 bg-black flex items-center justify-center p-4 lg:p-8">
                                 <div className={`relative w-full h-full rounded-xl overflow-hidden ${
                                     isClassic
@@ -528,14 +599,14 @@
                                 } : {}}
                                 >
                                     {artwork.file_url && window.ArtSoulSecurity?.isValidStorageUrl(artwork.file_url) ? (
-                                        <img
-                                            src={artwork.file_url}
-                                            alt={window.ArtSoulSecurity?.sanitizeText(artwork.title) || 'Artwork'}
-                                            className="w-full h-full object-contain bg-black"
+                                        <MediaViewer
+                                            url={artwork.file_url}
+                                            fileType={artwork.file_type}
+                                            title={artwork.title}
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-black">
-                                            <div className="text-2xl opacity-50">Invalid image URL</div>
+                                            <div className="text-2xl opacity-50">Invalid media URL</div>
                                         </div>
                                     )}
                                 </div>
