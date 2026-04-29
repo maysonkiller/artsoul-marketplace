@@ -446,15 +446,25 @@ async function initializeAppKit() {
 
         // Subscribe to chain changes to update UI and close modal after selection
         let lastSelectedNetwork = null;
+        let networkChangeTimeout = null;
+
         modal.subscribeState((state) => {
             if (state.selectedNetworkId && state.selectedNetworkId !== lastSelectedNetwork) {
                 console.log('🔄 Network changed to:', state.selectedNetworkId);
                 lastSelectedNetwork = state.selectedNetworkId;
 
-                // Close modal immediately after network selection
-                if (modal.getState().open) {
-                    modal.close();
+                // Clear any existing timeout
+                if (networkChangeTimeout) {
+                    clearTimeout(networkChangeTimeout);
                 }
+
+                // Close modal after a short delay to ensure network switch is complete
+                networkChangeTimeout = setTimeout(() => {
+                    if (modal.getState().open) {
+                        console.log('✅ Closing modal after network change');
+                        modal.close();
+                    }
+                }, 1000);
 
                 // Update network display
                 if (window.currentWalletAddress) {
