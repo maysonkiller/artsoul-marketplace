@@ -1,6 +1,32 @@
 /* ArtSoul - Unified Button Sizes and Styles */
 /* Apply consistent button sizes across all pages */
 
+/* CSS Variables */
+:root {
+    --bg-classic: #010101;
+    --text-classic: #a9ddd3;
+    --accent-classic: #a9ddd3;
+    --accent-future: #00f5ff;
+    --neon-purple: #bf00ff;
+}
+
+/* Logo Animations */
+@keyframes logoLevitate {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes logoBorderGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 245, 255, 0.8), 0 0 40px rgba(191, 0, 255, 0.6);
+        border-color: rgba(0, 245, 255, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(191, 0, 255, 0.8), 0 0 60px rgba(0, 245, 255, 0.6);
+        border-color: rgba(191, 0, 255, 0.6);
+    }
+}
+
 /* Classic Mode Styles */
 .classic .btn-main {
     background: var(--text-classic);
