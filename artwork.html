@@ -132,8 +132,10 @@
 
             async function loadArtwork() {
                 try {
+                    console.log('[Artwork] Loading artwork:', artworkId);
                     // Load from Supabase
                     const data = await window.ArtSoulDB.getArtwork(artworkId);
+                    console.log('[Artwork] Loaded data:', data);
                     setArtwork(data);
 
                     // Load creator profile
