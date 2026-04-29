@@ -26,7 +26,6 @@
     <script type="module" src="supabase-client.js"></script>
     <script type="module" src="supabase-auth.js"></script>
     <script src="avatar-dropdown.js"></script>
-    <script src="claude-ai.js"></script>
     <script type="module" src="appkit-init.js"></script>
     <script type="module" src="contracts-integration.js"></script>
     <style>
@@ -146,34 +145,6 @@
                             setCreatorProfile(profile);
                         } catch (error) {
                             console.warn('Could not load creator profile:', error);
-                        }
-                    }
-
-                    // Generate AI analysis if not exists
-                    if (!data.system_reasoning && window.ClaudeAI) {
-                        try {
-                            const apiKey = window.ClaudeAI.getApiKey();
-                            if (apiKey) {
-                                console.log('[Artwork] Generating AI analysis...');
-                                const analysis = await window.ClaudeAI.analyzeArtwork(data);
-
-                                // Update artwork with AI analysis
-                                await window.ArtSoulDB.updateArtwork(data.id, {
-                                    system_reasoning: analysis.reasoning,
-                                    system_confidence: analysis.confidence,
-                                    system_value: analysis.system_value
-                                });
-
-                                // Update local state
-                                setArtwork({
-                                    ...data,
-                                    system_reasoning: analysis.reasoning,
-                                    system_confidence: analysis.confidence,
-                                    system_value: analysis.system_value
-                                });
-                            }
-                        } catch (error) {
-                            console.warn('AI analysis failed:', error);
                         }
                     }
 
@@ -571,25 +542,6 @@
                                         Your vote helps calculate Community Value
                                     </div>
                                 </div>
-
-                                {/* AI Analysis */}
-                                {artwork.system_reasoning && (
-                                    <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                        <h3 className="text-xl font-bold mb-4">AI Analysis</h3>
-                                        <div className="space-y-3">
-                                            <div>
-                                                <div className="text-sm opacity-70 mb-1">Why this valuation?</div>
-                                                <p className="opacity-90">{artwork.system_reasoning}</p>
-                                            </div>
-                                            {artwork.system_confidence && (
-                                                <div className="flex justify-between items-center pt-3 border-t border-current opacity-30">
-                                                    <span className="text-sm opacity-70">Confidence:</span>
-                                                    <span className="text-sm font-semibold">{artwork.system_confidence}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
 
                                 {/* Back Button */}
                                 <a href="index.html" className="btn-secondary w-full block text-center">
