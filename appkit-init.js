@@ -72,10 +72,17 @@ let lastProcessedAddress = null;
 window.updateNavButtons = function updateNavButtons(state) {
     const navButtons = document.getElementById('navButtons');
     if (!navButtons) {
-        // On React pages, wait for element to be available
-        setTimeout(() => updateNavButtons(state), 100);
+        // On React pages, wait for element to be available (max 3 retries)
+        if (!window._navButtonsRetries) window._navButtonsRetries = 0;
+        if (window._navButtonsRetries < 3) {
+            window._navButtonsRetries++;
+            setTimeout(() => updateNavButtons(state), 100);
+        }
         return;
     }
+
+    // Reset retry counter
+    window._navButtonsRetries = 0;
 
     if (state?.address) {
         // Connected: Show Avatar Dropdown
@@ -167,13 +174,6 @@ function renderNetworkBadge() {
  * Prevents duplicate connection attempts
  */
 window.safeConnectWallet = async () => {
-    // Check if we're in disconnecting state
-    if (sessionStorage.getItem('artsoul_disconnecting') === 'true') {
-        console.log('⏳ Waiting for disconnect to complete...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        sessionStorage.removeItem('artsoul_disconnecting');
-    }
-
     const btn = document.getElementById('connectBtn');
     if (btn) btn.disabled = true;
 
