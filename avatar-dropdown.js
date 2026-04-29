@@ -253,6 +253,24 @@
 
                         <!-- Menu Items -->
                         <div style="padding: 0.25rem 0;">
+                            <a
+                                href="index.html"
+                                class="dropdown-item"
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.75rem;
+                                    padding: 0.75rem;
+                                    border-radius: 0.5rem;
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                    text-decoration: none;
+                                    color: inherit;
+                                "
+                            >
+                                <span>Home</span>
+                            </a>
+
                             ${!isProfilePage ? `
                                 <a
                                     href="profile.html"
