@@ -155,29 +155,32 @@ async function getAllArtworks() {
 async function getArtwork(artworkId) {
     const supabase = await initSupabase();
 
-    const { data, error } = await supabase
+    // First try with creator join
+    let { data, error } = await supabase
         .from('artworks')
         .select(`
             *,
-            creator:profiles!creator_id(*),
+            creator:profiles!artworks_creator_id_fkey(*),
             auctions(*)
         `)
         .eq('id', artworkId)
         .single();
 
+    // If foreign key error, try without creator join
+    if (error && (error.code === 'PGRST200' || error.code === '42P01')) {
+        console.warn('[getArtwork] Foreign key not found, loading without creator');
+        const result = await supabase
+            .from('artworks')
+            .select('*, auctions(*)')
+            .eq('id', artworkId)
+            .single();
+
+        data = result.data;
+        error = result.error;
+    }
+
     if (error) {
         console.error('Error fetching artwork:', error);
-        // If it's a foreign key error, try without creator profile
-        if (error.code === '42P01' || error.code === 'PGRST301') {
-            const { data: artworkOnly, error: artworkError } = await supabase
-                .from('artworks')
-                .select('*')
-                .eq('id', artworkId)
-                .single();
-
-            if (artworkError) throw artworkError;
-            return artworkOnly;
-        }
         throw error;
     }
 

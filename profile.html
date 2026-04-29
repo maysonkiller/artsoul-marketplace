@@ -1017,7 +1017,13 @@
         console.log('[Profile] ReactDOM:', typeof ReactDOM);
         console.log('[Profile] App div:', document.getElementById('app'));
 
-        ReactDOM.render(<ProfilePage />, document.getElementById('app'));
+        if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+            console.error('[Profile] React or ReactDOM not loaded!');
+        } else if (!document.getElementById('app')) {
+            console.error('[Profile] App div not found!');
+        } else {
+            ReactDOM.render(<ProfilePage />, document.getElementById('app'));
+        }
 
         // Theme is managed by theme-sync.js
     </script>
