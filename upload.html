@@ -529,6 +529,7 @@
                 // Step 7: Create auction immediately (3 days)
                 uploadBtn.textContent = 'Creating auction...';
                 let auctionCreated = false;
+                let dbSynced = false;
                 try {
                     await window.ArtSoulContracts.createAuction(
                         result.artworkId,
@@ -538,29 +539,41 @@
                     auctionCreated = true;
                     console.log('✅ Auction created on blockchain');
 
-                    // Update status to auction in database
-                    await window.ArtSoulDB.updateArtwork(result.artworkId, { status: 'auction' });
-                    console.log('✅ Database synced with blockchain');
+                    // Update status to auction in database with retry logic
+                    const maxRetries = 3;
+                    for (let i = 0; i < maxRetries; i++) {
+                        try {
+                            await window.ArtSoulDB.updateArtwork(result.artworkId, { status: 'auction' });
+                            console.log('✅ Database synced with blockchain');
+                            dbSynced = true;
+                            break;
+                        } catch (syncError) {
+                            console.warn(`⚠️ Database sync attempt ${i + 1} failed:`, syncError);
+                            if (i < maxRetries - 1) {
+                                // Wait before retry (exponential backoff)
+                                await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                            }
+                        }
+                    }
+
+                    if (!dbSynced) {
+                        throw new Error('Database sync failed after multiple attempts');
+                    }
                 } catch (auctionError) {
                     console.error('⚠️ Auction creation error:', auctionError);
 
-                    if (auctionCreated) {
-                        // Blockchain succeeded but database failed - try to sync again
-                        console.warn('⚠️ Blockchain auction created but database sync failed, retrying...');
-                        try {
-                            await window.ArtSoulDB.updateArtwork(result.artworkId, { status: 'auction' });
-                            console.log('✅ Database synced on retry');
-                        } catch (retryError) {
-                            console.error('❌ Database sync retry failed:', retryError);
-                            alert('Auction created on blockchain but database sync failed. Please refresh your profile to see the correct status.');
-                        }
-                    } else {
+                    if (auctionCreated && !dbSynced) {
+                        // Blockchain succeeded but database failed after retries
+                        await alert('Auction created on blockchain but database sync failed.\n\nYour artwork is live on the blockchain!\nPlease go to your profile and the status will sync automatically.');
+                        window.location.href = 'profile.html';
+                        return;
+                    } else if (!auctionCreated) {
                         // Blockchain creation failed - artwork stays as draft
-                        console.warn('⚠️ Auction creation failed, artwork saved as draft. You can create the auction later from your profile.');
+                        await alert('Auction creation failed. Your artwork has been saved as a draft.\n\nYou can create the auction later from your profile.');
                     }
                 }
 
-                // Success - redirect immediately without alert
+                // Success - redirect to gallery
                 window.location.href = 'gallery.html';
 
             } catch (error) {

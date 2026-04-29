@@ -169,13 +169,14 @@
                 button.textContent = btn.text;
                 button.onclick = btn.onClick;
                 button.style.cssText = `
-                    padding: 0.75rem 2rem;
+                    padding: 1rem 2.5rem;
                     border-radius: 0.5rem;
-                    font-size: 1rem;
-                    font-weight: 500;
+                    font-size: 1.125rem;
+                    font-weight: 600;
                     cursor: pointer;
                     transition: all 0.2s;
                     border: none;
+                    min-width: 120px;
                     ${btn.primary
                         ? isClassic
                             ? 'background: #a9ddd3; color: #000; border: 2px solid #a9ddd3;'
