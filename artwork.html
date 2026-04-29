@@ -532,30 +532,9 @@
                                     </div>
                                 </div>
 
-                                {/* AI Analysis */}
-                                {artwork.ai_analysis && (
-                                    <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                        <h3 className="text-xl font-bold mb-4">🤖 AI Analysis</h3>
-                                        <div className="space-y-3">
-                                            {artwork.ai_analysis.reasoning && (
-                                                <div>
-                                                    <div className="text-sm opacity-70 mb-1">Why this valuation?</div>
-                                                    <p className="opacity-90">{artwork.ai_analysis.reasoning}</p>
-                                                </div>
-                                            )}
-                                            {artwork.ai_analysis.confidence && (
-                                                <div className="flex justify-between items-center pt-3 border-t border-current opacity-30">
-                                                    <span className="text-sm opacity-70">Confidence:</span>
-                                                    <span className="text-sm font-semibold">{artwork.ai_analysis.confidence}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-
                                 {/* Back Button */}
                                 <a href="index.html" className="btn-secondary w-full block text-center">
-                                    ← Back to Gallery
+                                    Back to Gallery
                                 </a>
                             </div>
                         </div>
