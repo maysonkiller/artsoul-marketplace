@@ -874,22 +874,32 @@
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                                 {/* Add New Button */}
                                 <div
-                                    onClick={handleQuickUpload}
-                                    className={`aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer gallery-item ${
-                                        isClassic
-                                            ? 'bg-gray-700 border-2 border-dashed border-gray-600 hover:bg-gray-600 hover:border-gray-500'
-                                            : 'bg-gray-800/30 border-2 border-dashed border-cyan-500/30 hover:bg-gray-700/50 hover:border-cyan-400 neon-border'
+                                    className={`rounded-lg overflow-hidden gallery-item border ${
+                                        isClassic ? 'bg-gray-700 border-gray-600' : 'bg-gray-800/50 backdrop-blur-sm border-cyan-500/20'
                                     }`}
                                 >
-                                    <div className={`text-5xl mb-2 ${
-                                        isClassic ? 'text-gray-400' : 'text-cyan-400'
-                                    }`}>
-                                        ➕
+                                    <div
+                                        onClick={handleQuickUpload}
+                                        className={`aspect-square flex flex-col items-center justify-center cursor-pointer ${
+                                            isClassic
+                                                ? 'bg-gray-700 border-2 border-dashed border-gray-600 hover:bg-gray-600 hover:border-gray-500'
+                                                : 'bg-gray-800/30 border-2 border-dashed border-cyan-500/30 hover:bg-gray-700/50 hover:border-cyan-400 neon-border'
+                                        }`}
+                                    >
+                                        <div className={`text-5xl mb-2 ${
+                                            isClassic ? 'text-gray-400' : 'text-cyan-400'
+                                        }`}>
+                                            ➕
+                                        </div>
+                                        <div className={`text-sm font-medium ${
+                                            isClassic ? 'text-gray-300' : 'text-cyan-300'
+                                        }`}>
+                                            Add New
+                                        </div>
                                     </div>
-                                    <div className={`text-sm font-medium ${
-                                        isClassic ? 'text-gray-300' : 'text-cyan-300'
-                                    }`}>
-                                        Add New
+                                    <div className={`p-3 ${isClassic ? 'bg-gray-800' : 'bg-gray-900/50'}`}>
+                                        <div className="text-sm font-semibold mb-2">Upload Artwork</div>
+                                        <div className="text-xs opacity-70 mb-3">Create new NFT</div>
                                     </div>
                                 </div>
 
