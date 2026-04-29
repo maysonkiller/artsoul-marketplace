@@ -526,47 +526,52 @@
 
                                 {/* Creator */}
                                 <div className={`p-4 rounded-lg ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="text-sm opacity-70">Created by</div>
-                                        <button
-                                            onClick={() => {
-                                                const text = `Check out "${artwork.title}" by ${creatorProfile?.username || 'artist'} on ArtSoul Marketplace!`;
-                                                const url = window.location.href;
-                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-                                                window.open(twitterUrl, '_blank', 'width=550,height=420');
-                                            }}
-                                            className={`hover:opacity-70 transition-opacity flex items-center justify-center rounded-lg ${
-                                                isClassic ? 'bg-gray-700 hover:bg-gray-600' : 'bg-cyan-900/30 hover:bg-cyan-900/50'
-                                            }`}
-                                            style={{
-                                                width: '80px',
-                                                height: '80px'
-                                            }}
-                                            title="Share on X"
-                                        >
-                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <a
-                                        href={`profile.html?address=${artwork.creator_id}`}
-                                        className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-                                    >
-                                        <img
-                                            src={creatorProfile?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${artwork.creator_id}`}
-                                            alt="Creator"
-                                            className="w-12 h-12 rounded-full border-2 border-current"
-                                        />
-                                        <div>
-                                            <div className="font-semibold">
-                                                {creatorProfile?.username || `${artwork.creator_id?.slice(0, 6)}...${artwork.creator_id?.slice(-4)}`}
-                                            </div>
-                                            <div className="text-xs opacity-50 font-mono">
-                                                {artwork.creator_id?.slice(0, 10)}...{artwork.creator_id?.slice(-8)}
-                                            </div>
+                                    <div className="flex items-start justify-between gap-4 mb-2">
+                                        <div className="flex-1">
+                                            <div className="text-sm opacity-70 mb-2">Created by</div>
+                                            <a
+                                                href={`profile.html?address=${artwork.creator_id}`}
+                                                className="flex items-center gap-3 hover:opacity-80 transition-opacity w-fit"
+                                            >
+                                                <img
+                                                    src={creatorProfile?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${artwork.creator_id}`}
+                                                    alt="Creator"
+                                                    className="w-12 h-12 rounded-full border-2 border-current"
+                                                />
+                                                <div>
+                                                    <div className="font-semibold">
+                                                        {creatorProfile?.username || `${artwork.creator_id?.slice(0, 6)}...${artwork.creator_id?.slice(-4)}`}
+                                                    </div>
+                                                    <div className="text-xs opacity-50 font-mono">
+                                                        {artwork.creator_id?.slice(0, 10)}...{artwork.creator_id?.slice(-8)}
+                                                    </div>
+                                                </div>
+                                            </a>
                                         </div>
-                                    </a>
+                                        <div className="flex flex-col items-center gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    const text = `Check out "${artwork.title}" by ${creatorProfile?.username || 'artist'} on ArtSoul Marketplace!`;
+                                                    const url = window.location.href;
+                                                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                                                    window.open(twitterUrl, '_blank', 'width=550,height=420');
+                                                }}
+                                                className={`hover:opacity-70 transition-opacity flex items-center justify-center rounded-lg ${
+                                                    isClassic ? 'bg-gray-700 hover:bg-gray-600' : 'bg-cyan-900/30 hover:bg-cyan-900/50'
+                                                }`}
+                                                style={{
+                                                    width: '80px',
+                                                    height: '80px'
+                                                }}
+                                                title="Share on X"
+                                            >
+                                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                                </svg>
+                                            </button>
+                                            <div className="text-xs opacity-50 text-center">Share on X</div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Auction Info */}
