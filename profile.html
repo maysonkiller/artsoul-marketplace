@@ -188,17 +188,23 @@
         const { useState, useEffect, useRef } = React;
 
         const GALLERY_TYPES = [
-            { id: 'nft', label: 'NFT', icon: '', fileType: 'image' },
-            { id: 'video', label: 'Video', icon: '', fileType: 'video' },
-            { id: 'music', label: 'Music', icon: '', fileType: 'music' },
-            { id: 'gif', label: 'GIF', icon: '', fileType: 'gif' },
+            { id: 'created', label: 'Created', description: 'Artworks I created' },
+            { id: 'collected', label: 'Collected', description: 'Artworks I own' }
+        ];
+
+        const STATUS_FILTERS = [
+            { id: 'all', label: 'All' },
+            { id: 'draft', label: 'Draft' },
+            { id: 'auction', label: 'On Auction' },
+            { id: 'sold', label: 'Sold' }
         ];
 
         function ProfilePage() {
             const [theme, setTheme] = useState(() => window.ThemeSync?.getTheme() || 'classic');
             const [profile, setProfile] = useState(null);
             const [editMode, setEditMode] = useState(false);
-            const [selectedGallery, setSelectedGallery] = useState('nft');
+            const [selectedGallery, setSelectedGallery] = useState('created');
+            const [statusFilter, setStatusFilter] = useState('all');
             const [myArtworks, setMyArtworks] = useState([]);
             const [loading, setLoading] = useState(true);
             const fileInputRef = useRef(null);
@@ -258,7 +264,7 @@
                 if (profile) {
                     loadMyArtworks();
                 }
-            }, [profile, selectedGallery]);
+            }, [profile, selectedGallery, statusFilter]);
 
             async function handleOAuthCallback() {
                 if (window.OAuthIntegration) {
@@ -301,20 +307,29 @@
             }
 
             async function loadMyArtworks() {
-                if (!profile?.id) return;
+                if (!profile?.wallet_address) return;
 
                 try {
-                    const artworks = await window.ArtSoulDB.getArtworksByCreator(profile.id);
-                    const filtered = artworks.filter(art => {
-                        if (selectedGallery === 'nft') return art.file_type === 'image';
-                        if (selectedGallery === 'video') return art.file_type === 'video';
-                        if (selectedGallery === 'music') return art.file_type === 'music';
-                        if (selectedGallery === 'gif') return art.file_type === 'gif';
-                        return false;
-                    });
-                    setMyArtworks(filtered);
+                    let artworks = [];
+
+                    if (selectedGallery === 'created') {
+                        // Load artworks created by this user
+                        artworks = await window.ArtSoulDB.getArtworksByCreator(profile.wallet_address);
+                    } else if (selectedGallery === 'collected') {
+                        // Load artworks owned by this user (bought at auctions)
+                        // TODO: implement getArtworksByOwner when we have ownership tracking
+                        artworks = [];
+                    }
+
+                    // Filter by status
+                    if (statusFilter !== 'all') {
+                        artworks = artworks.filter(art => art.status === statusFilter);
+                    }
+
+                    setMyArtworks(artworks);
                 } catch (error) {
                     console.error('Error loading artworks:', error);
+                    setMyArtworks([]);
                 }
             }
 
@@ -774,27 +789,55 @@
                             <h2 className={`text-2xl font-bold mb-4 ${
                                 isClassic ? 'text-gray-100' : ''
                             }`}>
-                                My Galleries
+                                My Artworks
                             </h2>
-                            <div className="flex flex-wrap gap-3">
+
+                            {/* Gallery Type Tabs */}
+                            <div className="flex flex-wrap gap-3 mb-4">
                                 {GALLERY_TYPES.map(gallery => (
                                     <button
                                         key={gallery.id}
-                                        onClick={() => setSelectedGallery(gallery.id)}
+                                        onClick={() => {
+                                            setSelectedGallery(gallery.id);
+                                            setStatusFilter('all');
+                                        }}
                                         className={`px-6 py-3 rounded-lg font-medium transform hover:scale-105 transition-all ${
                                             selectedGallery === gallery.id
                                                 ? isClassic
                                                     ? 'bg-gray-600 text-white'
-                                                    : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white neon-border'
+                                                    : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
                                                 : isClassic
                                                     ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                                     : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
                                         }`}
                                     >
-                                        {gallery.icon} {gallery.label}
+                                        {gallery.label}
                                     </button>
                                 ))}
                             </div>
+
+                            {/* Status Filters */}
+                            {selectedGallery === 'created' && (
+                                <div className="flex flex-wrap gap-2">
+                                    {STATUS_FILTERS.map(filter => (
+                                        <button
+                                            key={filter.id}
+                                            onClick={() => setStatusFilter(filter.id)}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                                statusFilter === filter.id
+                                                    ? isClassic
+                                                        ? 'bg-gray-500 text-white'
+                                                        : 'bg-cyan-600 text-white'
+                                                    : isClassic
+                                                        ? 'bg-gray-700/50 text-gray-400 hover:bg-gray-600'
+                                                        : 'bg-gray-800/30 text-gray-400 hover:bg-gray-700/50'
+                                            }`}
+                                        >
+                                            {filter.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Gallery Content */}
@@ -807,7 +850,7 @@
                                 <h3 className={`text-xl font-bold ${
                                     isClassic ? 'text-gray-100' : 'text-cyan-300'
                                 }`}>
-                                    {GALLERY_TYPES.find(g => g.id === selectedGallery)?.label}
+                                    {GALLERY_TYPES.find(g => g.id === selectedGallery)?.description}
                                 </h3>
                                 <span className={`text-sm ${
                                     isClassic ? 'text-gray-400' : 'text-purple-300'
@@ -817,36 +860,26 @@
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {/* Add New Button */}
-                                <div
-                                    onClick={handleQuickUpload}
-                                    className={`aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer gallery-item ${
-                                        isClassic
-                                            ? 'bg-gray-700 border-2 border-dashed border-gray-600 hover:bg-gray-600 hover:border-gray-500'
-                                            : 'bg-gray-800/30 border-2 border-dashed border-cyan-500/30 hover:bg-gray-700/50 hover:border-cyan-400 neon-border'
-                                    }`}
-                                >
-                                    <div className={`text-5xl mb-2 ${
-                                        isClassic ? 'text-gray-400' : 'text-cyan-400'
-                                    }`}>
-                                        ➕
-                                    </div>
-                                    <div className={`text-sm font-medium ${
-                                        isClassic ? 'text-gray-300' : 'text-cyan-300'
-                                    }`}>
-                                        Add New
-                                    </div>
-                                </div>
-
                                 {/* Existing Artworks */}
-                                {myArtworks.map(artwork => (
-                                    <div
-                                        key={artwork.id}
-                                        className={`rounded-lg overflow-hidden gallery-item border ${
-                                            isClassic ? 'bg-gray-700 border-gray-600' : 'bg-gray-800/50 backdrop-blur-sm border-cyan-500/20'
-                                        }`}
-                                    >
-                                        {/* Artwork Image */}
+                                {myArtworks.length === 0 ? (
+                                    <div className="col-span-full text-center py-12">
+                                        <p className="text-gray-400 mb-4">No artworks yet</p>
+                                        {selectedGallery === 'created' && (
+                                            <a href="upload.html" className="btn-main">
+                                                Upload Artwork
+                                            </a>
+                                        )}
+                                    </div>
+                                ) : (
+                                    myArtworks.map(artwork => (
+                                        <div
+                                            key={artwork.id}
+                                            className={`rounded-lg overflow-hidden gallery-item border cursor-pointer ${
+                                                isClassic ? 'bg-gray-700 border-gray-600' : 'bg-gray-800/50 backdrop-blur-sm border-cyan-500/20'
+                                            }`}
+                                            onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}
+                                        >
+                                            {/* Artwork Image */}
                                         <div className="aspect-square cursor-pointer" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
                                             {artwork.file_url ? (
                                                 <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-cover" />
@@ -870,61 +903,63 @@
                                             )}
                                         </div>
 
-                                        {/* Artwork Info & Actions */}
-                                        <div className={`p-3 ${isClassic ? 'bg-gray-800' : 'bg-gray-900/50'}`}>
-                                            <div className="text-sm font-semibold mb-2 truncate">{artwork.title}</div>
-                                            <div className="text-xs opacity-70 mb-3">{artwork.creator_value || '0'} ETH</div>
+                                            {/* Artwork Info & Actions */}
+                                            <div className={`p-3 ${isClassic ? 'bg-gray-800' : 'bg-gray-900/50'}`}>
+                                                <div className="text-sm font-semibold mb-1 truncate">{artwork.title}</div>
+                                                <div className="text-xs opacity-70 mb-2">{artwork.creator_value || '0'} ETH</div>
 
-                                            {/* Action Buttons */}
-                                            <div className="flex gap-2">
-                                                {artwork.status === 'draft' && (
-                                                    <button
-                                                        onClick={() => handleCreateAuction(artwork)}
-                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
-                                                            isClassic
-                                                                ? 'bg-green-600 hover:bg-green-500 text-white'
-                                                                : 'bg-cyan-600 hover:bg-cyan-500 text-white'
-                                                        }`}
-                                                    >
-                                                        🔥 Auction
-                                                    </button>
-                                                )}
-                                                {artwork.status === 'auction' && (
-                                                    <button
-                                                        onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}
-                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
-                                                            isClassic
-                                                                ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                                                                : 'bg-purple-600 hover:bg-purple-500 text-white'
-                                                        }`}
-                                                    >
-                                                        📊 View
-                                                    </button>
-                                                )}
-                                                {artwork.status === 'sold' && (
-                                                    <button
-                                                        onClick={() => handleRelistArtwork(artwork)}
-                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
-                                                            isClassic
-                                                                ? 'bg-yellow-600 hover:bg-yellow-500 text-white'
-                                                                : 'bg-orange-600 hover:bg-orange-500 text-white'
-                                                        }`}
-                                                    >
-                                                        🔄 Relist
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => handleDeleteArtwork(artwork)}
-                                                    className={`px-3 py-2 rounded text-xs font-medium transition-all ${
-                                                        isClassic
-                                                            ? 'bg-red-600 hover:bg-red-500 text-white'
-                                                            : 'bg-red-600 hover:bg-red-500 text-white'
-                                                    }`}
-                                                >
-                                                    🗑️
-                                                </button>
+                                                {/* Status Badge */}
+                                                <div className="mb-3">
+                                                    <span className={`text-xs px-2 py-1 rounded ${
+                                                        artwork.status === 'draft'
+                                                            ? 'bg-blue-600 text-white'
+                                                            : artwork.status === 'auction'
+                                                            ? 'bg-green-600 text-white'
+                                                            : 'bg-gray-600 text-white'
+                                                    }`}>
+                                                        {artwork.status === 'draft' ? 'Draft' : artwork.status === 'auction' ? 'Live Auction' : 'Sold'}
+                                                    </span>
+                                                </div>
+
+                                                {/* Action Buttons */}
+                                                <div className="flex gap-2">
+                                                    {artwork.status === 'draft' && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleCreateAuction(artwork);
+                                                            }}
+                                                            className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                                isClassic
+                                                                    ? 'bg-green-600 hover:bg-green-500 text-white'
+                                                                    : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                                                            }`}
+                                                        >
+                                                            Create Auction
+                                                        </button>
+                                                    )}
+                                                    {artwork.status === 'auction' && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                window.location.href = `artwork.html?id=${artwork.id}`;
+                                                            }}
+                                                            className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                                isClassic
+                                                                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                                                                    : 'bg-purple-600 hover:bg-purple-500 text-white'
+                                                            }`}
+                                                        >
+                                                            View Auction
+                                                        </button>
+                                                    )}
+                                                    {artwork.status === 'sold' && (
+                                                        <div className="flex-1 text-xs text-center py-2 opacity-50">
+                                                            Sold
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
                                     </div>
                                 ))}
 
