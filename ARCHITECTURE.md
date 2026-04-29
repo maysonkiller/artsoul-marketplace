@@ -64,9 +64,9 @@
 - NFT создается только при реальной продаже
 - Экономия средств если artwork не продался
 
-## Triple Valuation System
+## Dual Valuation System
 
-Каждое artwork имеет 3 оценки:
+Каждое artwork имеет 2 оценки:
 
 ### 1. Creator Value (Оценка автора)
 - Устанавливается автором при загрузке
@@ -75,28 +75,17 @@
 - Видна всем пользователям
 
 ### 2. Community Value (Оценка сообщества)
-- Формируется из ставок на аукционе
-- Средняя ставка всех участников
+- Формируется из голосования сообщества
+- Пользователи голосуют: undervalued, fair, overvalued
 - Обновляется в реальном времени
-- Показывает реальный интерес сообщества
-
-### 3. System Value (AI оценка)
-- Автоматическая оценка через Claude API
-- Анализ качества, стиля, композиции
-- Сравнение с похожими работами
-- Объяснение почему такая оценка
+- Показывает реальное мнение сообщества
 
 **Пример:**
 ```
 🎨 "Sunset Dreams" by @artist123
 
 Creator Value:    1.5 ETH  (автор оценил)
-Community Value:  2.3 ETH  (средняя ставка)
-System Value:     2.1 ETH  (AI оценка)
-
-AI Reasoning: "High quality digital art with vibrant colors 
-and professional composition. Similar works in this style 
-sold for 1.8-2.5 ETH. Strong emotional impact."
+Community Votes:  45% undervalued, 30% fair, 25% overvalued
 ```
 
 ## Система аукционов
@@ -264,8 +253,6 @@ Floor Price = 2.0 ETH (навсегда)
 - file_type (image/video/music/gif)
 - creator_id (FK → profiles)
 - creator_estimated_value (DECIMAL) - Creator Value
-- ai_estimated_value (DECIMAL) - System Value
-- ai_reasoning (TEXT) - объяснение AI
 - token_id (INT, nullable) - ID NFT после минта
 - contract_address (TEXT, nullable)
 - chain_id (INT) - на какой сети
@@ -314,8 +301,8 @@ Profile → Upload → Выбрать файл → Заполнить форму
   - Description
   - Creator Estimated Value (ETH)
   - Select Network (Base/Ethereum/Rialo)
-→ Upload → AI анализирует → Показывает System Value
-→ Confirm → Файл загружается → Аукцион начинается
+→ Upload → Файл загружается → Artwork создан
+→ Можно создать аукцион из профиля
 ```
 
 ### 2. Просмотр artwork
@@ -329,13 +316,14 @@ Gallery → Click artwork → Страница artwork:
 │  "Sunset Dreams"                    │
 │  by @artist123 (кликабельно)        │
 │                                     │
-│  📊 Triple Valuation:               │
+│  📊 Valuation:                      │
 │  Creator:    1.5 ETH                │
-│  Community:  2.3 ETH (avg of bids)  │
-│  System:     2.1 ETH                │
 │                                     │
-│  🤖 AI Analysis:                    │
-│  "High quality digital art..."      │
+│  🗳️ Community Voting:               │
+│  45% undervalued                    │
+│  30% fair                           │
+│  25% overvalued                     │
+│  [Vote: Undervalued/Fair/Overvalued]│
 │                                     │
 │  ⏰ Auction ends in: 1d 5h 23m      │
 │                                     │
@@ -397,9 +385,8 @@ Profile → My Artworks → "Sunset Dreams":
 - Smart contracts deployment (Base, Ethereum, Rialo)
 - Lazy minting system
 - Auction mechanism
-- AI valuation (Claude API)
 - IPFS integration
-- Triple Valuation System
+- Community Voting System
 
 ### Q4 2026
 - Direct sales (post-auction)
@@ -414,7 +401,6 @@ Profile → My Artworks → "Sunset Dreams":
 - DAO governance
 - Gallery partnerships
 - Creator tools
-- Advanced AI features
 - Mobile app
 
 ## Технический стек

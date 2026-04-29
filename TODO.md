@@ -54,11 +54,6 @@ Switch networks anytime via the Network Badge.
 3. Тесты для контрактов
 4. Деплой на Base Sepolia для тестирования
 
-### Шаг 5: Интеграция AI оценки
-- Подключить Claude API для анализа artwork
-- Добавить System Value в Triple Valuation
-- Показывать AI reasoning
-
 ## 📁 Созданные файлы:
 
 1. `supabase-rls-fix.sql` - исправление RLS политик

@@ -16,10 +16,9 @@
 - [x] Wallet connection (WalletConnect/AppKit)
 - [x] IPFS integration (Supabase storage)
 - [x] Blockchain artwork creation
-- [x] Triple Valuation System
+- [x] Dual Valuation System
   - [x] Creator Value
-  - [x] System Value (AI analysis)
-  - [ ] Community Value (voting system) - TODO
+  - [x] Community Value (voting system)
 - [x] 3-day auction system
 - [x] Bidding functionality
 - [ ] Auction end and winner selection - TODO
@@ -80,13 +79,6 @@
 - ✅ Responsive design
 - ✅ Button effects and animations
 - ✅ Loading states
-
-#### AI Integration
-- ✅ Claude AI analysis module
-- ✅ Artwork valuation
-- ✅ Mock analysis fallback
-- ✅ API key management
-- ✅ localStorage persistence
 
 ---
 
@@ -197,7 +189,7 @@
 ## 📚 Documentation Status
 
 - ✅ README.md
-- ✅ CLAUDE_AI_SETUP.md
+- ✅ ARCHITECTURE.md
 - ✅ supabase-schema.sql
 - ✅ supabase-artworks-migration.sql
 - ✅ .env.example
