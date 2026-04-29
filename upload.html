@@ -346,6 +346,11 @@
                 <p id="fileName" class="text-sm mt-4 opacity-70"></p>
             </div>
 
+            <!-- File Preview -->
+            <div id="filePreview" style="display: none;" class="rounded-xl overflow-hidden border-2 border-current opacity-50">
+                <img id="previewImage" alt="Preview" class="w-full h-auto max-h-96 object-contain bg-black">
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block opacity-70 mb-2 font-medium">Title</label>
@@ -375,6 +380,23 @@
             if (file) {
                 selectedFile = file;
                 document.getElementById('fileName').textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('filePreview');
+                    const previewImg = document.getElementById('previewImage');
+
+                    if (file.type.startsWith('image/')) {
+                        previewImg.src = e.target.result;
+                        preview.style.display = 'block';
+                    } else if (file.type.startsWith('video/')) {
+                        // For video, show first frame or placeholder
+                        previewImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7wn46sIFZpZGVvPC90ZXh0Pjwvc3ZnPg==';
+                        preview.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
             }
         }
 
@@ -502,18 +524,18 @@
                 let successMessage = `✅ Artwork uploaded successfully!\n\nArtwork ID: ${result.artworkId}\nTransaction: ${result.txHash}`;
 
                 if (aiAnalysis && !aiAnalysis.isMock) {
-                    successMessage += `\n\n🤖 AI Analysis:\nSystem Value: ${aiAnalysis.systemValue} ETH\nConfidence: ${aiAnalysis.confidence}\n${aiAnalysis.reasoning}`;
+                    successMessage += `\n\n🤖 Claude AI Analysis:\nSystem Value: ${aiAnalysis.systemValue} ETH\nConfidence: ${aiAnalysis.confidence}\n${aiAnalysis.reasoning}`;
                 } else if (aiAnalysis?.isMock) {
-                    successMessage += `\n\n🤖 Mock AI Analysis:\nSystem Value: ${aiAnalysis.systemValue} ETH\n(Using simulated analysis - set API key for real AI evaluation)`;
+                    successMessage += `\n\n⚠️ AI Analysis Unavailable:\nSystem Value: ${aiAnalysis.systemValue} ETH (simulated)\n\nTo enable real Claude AI analysis:\nwindow.ClaudeAIAnalysis.setApiKey('sk-ant-your-key-here')`;
                 }
 
-                successMessage += '\n\nYou can now create an auction in your profile.';
+                successMessage += '\n\nRedirecting to artwork page...';
 
                 alert(successMessage);
 
-                // Redirect to profile
+                // Redirect to artwork page
                 setTimeout(() => {
-                    window.location.href = 'profile.html';
+                    window.location.href = `artwork.html?id=${result.artworkId}`;
                 }, 2000);
 
             } catch (error) {
