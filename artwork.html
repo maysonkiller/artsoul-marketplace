@@ -619,6 +619,19 @@
                                     )}
                                 </div>
 
+                                {/* Share on X */}
+                                <button
+                                    onClick={() => {
+                                        const text = `Check out "${artwork.title}" on ArtSoul Marketplace!`;
+                                        const url = window.location.href;
+                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                                        window.open(twitterUrl, '_blank', 'width=550,height=420');
+                                    }}
+                                    className="btn-main w-full"
+                                >
+                                    Share on X
+                                </button>
+
                                 {/* Back Button */}
                                 <a href="gallery.html" className="btn-secondary w-full block text-center">
                                     Back to Gallery
