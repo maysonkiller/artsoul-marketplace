@@ -418,14 +418,8 @@
             // ============================================
 
             async function handleCreateAuction(artwork) {
-                const duration = prompt('Auction duration in days (default: 3):', '3');
-                if (!duration) return;
-
-                const durationDays = parseInt(duration);
-                if (isNaN(durationDays) || durationDays <= 0) {
-                    alert('Invalid duration');
-                    return;
-                }
+                // Fixed 3-day auction duration
+                const durationDays = 3;
 
                 try {
                     // Check wallet connection
@@ -451,7 +445,7 @@
                     // Update status in Supabase
                     await window.ArtSoulDB.updateArtwork(artwork.id, { status: 'auction' });
 
-                    alert('✅ Auction created successfully!');
+                    alert('Auction created successfully!');
                     loadMyArtworks(); // Reload artworks
                 } catch (error) {
                     console.error('Create auction failed:', error);

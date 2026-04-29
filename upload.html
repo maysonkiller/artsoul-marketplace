@@ -525,13 +525,8 @@
                     tx_hash: result.txHash
                 });
 
-                // Success!
-                alert(`Artwork uploaded successfully!\n\nArtwork ID: ${result.artworkId}\nTransaction: ${result.txHash}\n\nRedirecting to gallery...`);
-
-                // Redirect to gallery page
-                setTimeout(() => {
-                    window.location.href = 'gallery.html';
-                }, 2000);
+                // Success - redirect immediately without alert
+                window.location.href = 'gallery.html';
 
             } catch (error) {
                 console.error('❌ Upload failed:', error);
