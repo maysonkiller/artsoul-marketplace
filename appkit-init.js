@@ -26,9 +26,9 @@ const rialoPlayground = {
 // TESTNETS ONLY (for now)
 // To enable mainnets: uncomment mainnet and base in the array below
 const networks = [
-    rialoPlayground,      // Coming soon
-    baseSepolia,          // Base testnet
+    baseSepolia,          // Base testnet (default)
     sepolia,              // Ethereum testnet
+    rialoPlayground,      // Coming soon (moved to 3rd position)
     // base,              // Base mainnet (uncomment when ready for production)
     // mainnet            // Ethereum mainnet (uncomment when ready for production)
 ];

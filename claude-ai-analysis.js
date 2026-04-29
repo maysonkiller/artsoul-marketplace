@@ -7,16 +7,40 @@ class ClaudeAIAnalysis {
         this.apiEndpoint = 'https://api.anthropic.com/v1/messages';
         this.model = 'claude-3-5-sonnet-20241022';
 
-        // API key should be stored securely (environment variable or backend)
-        // For now, we'll use a placeholder - in production, this should be handled by backend
-        this.apiKey = null;
+        // Try to load API key from localStorage
+        this.apiKey = localStorage.getItem('claude_api_key') || null;
+
+        // Log status
+        if (this.apiKey) {
+            console.log('✅ Claude API key loaded from localStorage');
+        } else {
+            console.warn('⚠️ Claude API key not set. Using mock analysis. Set key with: window.ClaudeAIAnalysis.setApiKey("your-key")');
+        }
     }
 
     /**
-     * Set API key (should be called from backend or secure storage)
+     * Set API key and save to localStorage
      */
     setApiKey(key) {
         this.apiKey = key;
+        if (key) {
+            localStorage.setItem('claude_api_key', key);
+            console.log('✅ Claude API key saved to localStorage');
+        } else {
+            localStorage.removeItem('claude_api_key');
+            console.log('🗑️ Claude API key removed from localStorage');
+        }
+    }
+
+    /**
+     * Get current API key status
+     */
+    getApiKeyStatus() {
+        return {
+            isSet: !!this.apiKey,
+            usingMock: !this.apiKey,
+            keyPreview: this.apiKey ? `${this.apiKey.slice(0, 8)}...${this.apiKey.slice(-4)}` : null
+        };
     }
 
     /**

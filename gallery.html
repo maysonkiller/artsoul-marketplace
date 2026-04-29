@@ -28,6 +28,62 @@
     <script src="avatar-dropdown.js"></script>
     <script type="module" src="appkit-init.js"></script>
     <script type="module" src="contracts-integration.js"></script>
+    <style>
+        /* Future mode text glow effect */
+        .future h1,
+        .future h3,
+        .future .font-bold {
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(0, 245, 255, 0.5), 0 0 20px rgba(0, 245, 255, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(191, 0, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4), 0 0 60px rgba(0, 245, 255, 0.3);
+            }
+        }
+
+        /* Future mode button glow */
+        .future .btn-main,
+        .future .btn-secondary {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .future .btn-main::before,
+        .future .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 245, 255, 0.3), transparent);
+            animation: buttonScan 3s linear infinite;
+        }
+
+        @keyframes buttonScan {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Avatar button glow in future mode */
+        .future .avatar-button {
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+            animation: avatarPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(191, 0, 255, 0.6), 0 0 40px rgba(0, 245, 255, 0.4);
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="app"></div>
@@ -144,10 +200,16 @@
             return (
                 <div className="min-h-screen">
                     {/* Header */}
-                    <header className={`sticky top-0 z-50 backdrop-blur-xl ${isClassic ? 'bg-gray-900/95 border-b border-gray-700' : 'bg-black/80 border-b border-cyan-500/30'}`}>
+                    <header className="sticky top-0 z-50 backdrop-blur-xl" style={{
+                        background: isClassic ? 'rgba(1, 1, 1, 0.95)' : 'rgba(0, 0, 0, 0.8)',
+                        borderBottom: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                        boxShadow: isClassic ? 'none' : '0 0 20px rgba(0, 245, 255, 0.3)'
+                    }}>
                         <div className="container mx-auto px-4 py-4">
                             <div className="flex items-center justify-between">
-                                <a href="index.html" className="text-2xl font-bold">ArtSoul</a>
+                                <a href="index.html" className="text-2xl font-bold" style={{
+                                    color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                }}>ArtSoul</a>
                                 <div className="flex items-center gap-3">
                                     <div id="networkBadge"></div>
                                     <div id="navButtons"></div>
@@ -158,10 +220,16 @@
 
                     {/* Main Content */}
                     <main className="container mx-auto px-4 py-8">
-                        <h1 className="text-4xl font-bold mb-8">Gallery</h1>
+                        <h1 className="text-4xl font-bold mb-8" style={{
+                            color: isClassic ? '#a9ddd3' : '#00f5ff'
+                        }}>Gallery</h1>
 
                         {/* Filters */}
-                        <div className={`rounded-xl p-6 mb-8 ${isClassic ? 'bg-gray-800 border border-gray-700' : 'bg-gray-900/50 border border-cyan-500/30'}`}>
+                        <div className="rounded-xl p-6 mb-8" style={{
+                            background: isClassic ? 'rgba(232, 227, 213, 0.03)' : 'rgba(0, 245, 255, 0.05)',
+                            border: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                            boxShadow: isClassic ? 'none' : '0 0 20px rgba(0, 245, 255, 0.1)'
+                        }}>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                                 {/* Search */}
                                 <input
@@ -169,14 +237,24 @@
                                     placeholder="Search artworks..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className={`px-4 py-2 rounded-lg ${isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-gray-800 border border-cyan-500/30'}`}
+                                    className="px-4 py-2 rounded-lg"
+                                    style={{
+                                        background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'rgba(0, 245, 255, 0.05)',
+                                        border: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                                        color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                    }}
                                 />
 
                                 {/* Status Filter */}
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
-                                    className={`px-4 py-2 rounded-lg ${isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-gray-800 border border-cyan-500/30'}`}
+                                    className="px-4 py-2 rounded-lg"
+                                    style={{
+                                        background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'rgba(0, 245, 255, 0.05)',
+                                        border: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                                        color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                    }}
                                 >
                                     <option value="all">All Status</option>
                                     <option value="draft">Draft</option>
@@ -188,7 +266,12 @@
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className={`px-4 py-2 rounded-lg ${isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-gray-800 border border-cyan-500/30'}`}
+                                    className="px-4 py-2 rounded-lg"
+                                    style={{
+                                        background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'rgba(0, 245, 255, 0.05)',
+                                        border: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                                        color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                    }}
                                 >
                                     <option value="newest">Newest First</option>
                                     <option value="oldest">Oldest First</option>
@@ -214,7 +297,12 @@
                                     placeholder="Min Price (ETH)"
                                     value={minPrice}
                                     onChange={(e) => setMinPrice(e.target.value)}
-                                    className={`px-4 py-2 rounded-lg ${isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-gray-800 border border-cyan-500/30'}`}
+                                    className="px-4 py-2 rounded-lg"
+                                    style={{
+                                        background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'rgba(0, 245, 255, 0.05)',
+                                        border: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                                        color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                    }}
                                 />
                                 <input
                                     type="number"
@@ -222,7 +310,12 @@
                                     placeholder="Max Price (ETH)"
                                     value={maxPrice}
                                     onChange={(e) => setMaxPrice(e.target.value)}
-                                    className={`px-4 py-2 rounded-lg ${isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-gray-800 border border-cyan-500/30'}`}
+                                    className="px-4 py-2 rounded-lg"
+                                    style={{
+                                        background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'rgba(0, 245, 255, 0.05)',
+                                        border: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                                        color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                    }}
                                 />
                             </div>
 
@@ -235,7 +328,6 @@
                         {/* Gallery Grid */}
                         {filteredArtworks.length === 0 ? (
                             <div className="text-center py-20">
-                                <div className="text-6xl mb-4 opacity-30">🎨</div>
                                 <div className="text-xl opacity-50">No artworks found</div>
                                 <div className="text-sm opacity-30 mt-2">Try adjusting your filters</div>
                             </div>
@@ -245,33 +337,59 @@
                                     <div
                                         key={artwork.id}
                                         onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}
-                                        className={`rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-105 ${
-                                            isClassic ? 'bg-gray-800 border border-gray-700 hover:border-gray-500' : 'bg-gray-900/50 border border-cyan-500/30 hover:border-cyan-500'
-                                        }`}
+                                        className="rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-105"
+                                        style={{
+                                            background: isClassic ? 'rgba(232, 227, 213, 0.03)' : 'rgba(0, 245, 255, 0.05)',
+                                            border: isClassic ? '1px solid #a9ddd3' : '1px solid rgba(0, 245, 255, 0.3)',
+                                            boxShadow: isClassic ? 'none' : '0 0 15px rgba(0, 245, 255, 0.1)'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!isClassic) {
+                                                e.currentTarget.style.borderColor = '#bf00ff';
+                                                e.currentTarget.style.boxShadow = '0 0 30px rgba(191, 0, 255, 0.4)';
+                                            } else {
+                                                e.currentTarget.style.borderColor = '#e8e3d5';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!isClassic) {
+                                                e.currentTarget.style.borderColor = 'rgba(0, 245, 255, 0.3)';
+                                                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 245, 255, 0.1)';
+                                            } else {
+                                                e.currentTarget.style.borderColor = '#a9ddd3';
+                                            }
+                                        }}
                                     >
                                         {/* Image */}
                                         <div className="aspect-square overflow-hidden">
                                             {artwork.file_url ? (
                                                 <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-cover" />
                                             ) : (
-                                                <div className={`w-full h-full flex items-center justify-center ${isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'}`}>
-                                                    <div className="text-6xl opacity-30">🎨</div>
+                                                <div className="w-full h-full flex items-center justify-center" style={{
+                                                    background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'linear-gradient(135deg, rgba(191, 0, 255, 0.2), rgba(0, 245, 255, 0.2))'
+                                                }}>
+                                                    <div className="text-4xl opacity-20">No Image</div>
                                                 </div>
                                             )}
                                         </div>
 
                                         {/* Info */}
                                         <div className="p-4">
-                                            <h3 className="font-bold text-lg mb-2 truncate">{artwork.title}</h3>
+                                            <h3 className="font-bold text-lg mb-2 truncate" style={{
+                                                color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                            }}>{artwork.title}</h3>
                                             <p className="text-sm opacity-70 mb-3 line-clamp-2">{artwork.description}</p>
 
                                             {/* Status Badge */}
                                             <div className="flex items-center justify-between mb-3">
-                                                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                                    artwork.status === 'auction' ? (isClassic ? 'bg-green-600' : 'bg-cyan-600') :
-                                                    artwork.status === 'sold' ? (isClassic ? 'bg-gray-600' : 'bg-purple-600') :
-                                                    (isClassic ? 'bg-blue-600' : 'bg-orange-600')
-                                                }`}>
+                                                <span className="px-2 py-1 rounded text-xs font-medium" style={{
+                                                    background: artwork.status === 'auction'
+                                                        ? (isClassic ? '#4ade80' : '#00f5ff')
+                                                        : artwork.status === 'sold'
+                                                        ? (isClassic ? '#6b7280' : '#bf00ff')
+                                                        : (isClassic ? '#60a5fa' : '#f97316'),
+                                                    color: '#000000'
+                                                }}>
                                                     {artwork.status === 'auction' ? 'Live' : artwork.status === 'sold' ? 'Sold' : 'Draft'}
                                                 </span>
                                             </div>
@@ -285,13 +403,17 @@
                                                 {artwork.system_value && (
                                                     <div className="flex justify-between">
                                                         <span className="opacity-70">AI Value:</span>
-                                                        <span className="font-bold text-cyan-400">{artwork.system_value} ETH</span>
+                                                        <span className="font-bold" style={{
+                                                            color: isClassic ? '#a9ddd3' : '#00f5ff'
+                                                        }}>{artwork.system_value} ETH</span>
                                                     </div>
                                                 )}
                                             </div>
 
                                             {/* Creator */}
-                                            <div className="mt-3 pt-3 border-t border-gray-700">
+                                            <div className="mt-3 pt-3" style={{
+                                                borderTop: isClassic ? '1px solid rgba(169, 221, 211, 0.3)' : '1px solid rgba(0, 245, 255, 0.2)'
+                                            }}>
                                                 <div className="text-xs opacity-50">
                                                     {artwork.creator_id?.slice(0, 6)}...{artwork.creator_id?.slice(-4)}
                                                 </div>

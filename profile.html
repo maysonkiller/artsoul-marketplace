@@ -544,22 +544,6 @@
                                     <a href="index.html" className="logo-link">
                                         <img src="ARTSOULlogo.png" alt="ArtSoul" className="site-logo" />
                                     </a>
-                                    <div className="theme-toggle">
-                                        <button
-                                            onClick={() => window.setTheme?.('classic')}
-                                            id="classicBtn"
-                                            className={`theme-btn ${theme === 'classic' ? 'active-classic' : ''}`}
-                                        >
-                                            Classic
-                                        </button>
-                                        <button
-                                            onClick={() => window.setTheme?.('future')}
-                                            id="futureBtn"
-                                            className={`theme-btn ${theme === 'future' ? 'active-future' : ''}`}
-                                        >
-                                            Future
-                                        </button>
-                                    </div>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div ref={networkBadgeRef}></div>
@@ -599,11 +583,14 @@
                                         )}
                                     </div>
                                     {editMode && (
-                                        <label className={`block mt-3 text-center text-sm cursor-pointer ${
-                                            isClassic ? 'text-gray-300 hover:underline' : 'text-cyan-400 hover:underline'
-                                        }`}>
-                                            <input type="file" accept="image/*" capture="environment" onChange={handleAvatarUpload} className="hidden" ref={fileInputRef} />
-                                            Change Avatar
+                                        <label className="block mt-3 text-center text-sm cursor-pointer opacity-0 hover:opacity-100 transition-opacity">
+                                            <input
+                                                type="file"
+                                                accept="image/*,video/*"
+                                                onChange={handleAvatarUpload}
+                                                className="hidden"
+                                                ref={fileInputRef}
+                                            />
                                         </label>
                                     )}
                                 </div>

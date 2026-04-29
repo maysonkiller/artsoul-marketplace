@@ -58,6 +58,11 @@
                 2025: { name: 'Rialo', icon: '🌐', color: '#00f5ff' }
             };
 
+            // Return network or default if not connected yet
+            if (!chainId) {
+                return { name: 'Not Connected', icon: '○', color: '#888888' };
+            }
+
             const network = networks[chainId] || { name: 'Unknown', icon: '?', color: '#888888' };
             return network;
         }
@@ -96,12 +101,6 @@
                             border: 2px solid transparent;
                         "
                     >
-                        <!-- Network Icon -->
-                        <div style="
-                            font-size: 1.5rem;
-                            line-height: 1;
-                        ">${networkInfo.icon}</div>
-
                         <!-- Avatar -->
                         <img
                             src="${avatarUrl}"
@@ -289,9 +288,21 @@
             // Apply theme-specific styles
             this.applyThemeStyles();
 
-            // Close dropdown when clicking outside (support both click and touch)
+            // Close dropdown when clicking outside
             const closeHandler = (e) => {
                 const container = document.querySelector('.avatar-dropdown-container');
+                const menu = document.getElementById('avatarDropdownMenu');
+
+                // Don't close if clicking inside the menu (except disconnect button)
+                if (menu && menu.contains(e.target)) {
+                    // Only close if clicking disconnect button
+                    if (e.target.closest('button')?.textContent?.includes('Disconnect')) {
+                        return; // Let disconnect handler close it
+                    }
+                    return; // Don't close for other menu items
+                }
+
+                // Close if clicking outside container
                 if (container && !container.contains(e.target) && this.isOpen) {
                     this.close();
                 }

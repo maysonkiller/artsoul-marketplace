@@ -29,6 +29,7 @@
     <script type="module" src="supabase-client.js"></script>
     <script src="avatar-dropdown.js"></script>
     <script type="module" src="appkit-init.js"></script>
+    <script src="claude-ai-analysis.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -453,20 +454,6 @@
         }
 
         /* Gallery cards sliding animation in Future mode */
-        .future .gallery {
-            overflow: hidden;
-            position: relative;
-            display: block;
-            height: 300px;
-        }
-
-        .future .gallery .card {
-            position: absolute;
-            width: 220px;
-            top: 0;
-            animation: slideCardsFlow 50s linear infinite;
-        }
-
         /* Mode Transition Effect */
         @keyframes modeTransition {
             0% { filter: brightness(1); }
@@ -645,100 +632,63 @@
         .gallery {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             gap: 1rem;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto 200px;
         }
 
-        /* Gallery cards sliding animation in Future mode */
-        .future .gallery {
-            overflow: hidden;
-            position: relative;
-            display: block;
-            height: 450px;
-            margin-top: 80px;
+        /* Levitation animation for gallery cards */
+        .gallery .card {
+            animation: cardLevitate 4s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .gallery .card .aspect-square {
+            aspect-ratio: 1;
             width: 100%;
         }
 
-        .future .gallery .card {
-            position: absolute;
-            width: 390px;
-            top: 0;
-            animation: slideCardsFlow 60s linear infinite;
-        }
+        .gallery .card:nth-child(1) { animation-delay: 0s; }
+        .gallery .card:nth-child(2) { animation-delay: 0.3s; }
+        .gallery .card:nth-child(3) { animation-delay: 0.6s; }
+        .gallery .card:nth-child(4) { animation-delay: 0.9s; }
+        .gallery .card:nth-child(5) { animation-delay: 1.2s; }
+        .gallery .card:nth-child(6) { animation-delay: 1.5s; }
+        .gallery .card:nth-child(7) { animation-delay: 1.8s; }
+        .gallery .card:nth-child(8) { animation-delay: 2.1s; }
+        .gallery .card:nth-child(9) { animation-delay: 2.4s; }
+        .gallery .card:nth-child(10) { animation-delay: 2.7s; }
+        .gallery .card:nth-child(11) { animation-delay: 3.0s; }
+        .gallery .card:nth-child(12) { animation-delay: 3.3s; }
 
-        @keyframes slideCardsFlow {
-            from {
-                transform: translateX(0);
+        @keyframes cardLevitate {
+            0%, 100% {
+                transform: translateY(0px);
             }
-            to {
-                transform: translateX(calc(450px * 6));
+            50% {
+                transform: translateY(-15px);
             }
-        }
-
-        .future .gallery .card:nth-child(1) {
-            left: calc(-450px * 2);
-        }
-
-        .future .gallery .card:nth-child(2) {
-            left: calc(-450px * 1);
-        }
-
-        .future .gallery .card:nth-child(3) {
-            left: calc(0 * 450px);
-        }
-
-        .future .gallery .card:nth-child(4) {
-            left: calc(1 * 450px);
-        }
-
-        .future .gallery .card:nth-child(5) {
-            left: calc(2 * 450px);
-        }
-
-        .future .gallery .card:nth-child(6) {
-            left: calc(3 * 450px);
-        }
-
-        .future .gallery .card:nth-child(7) {
-            left: calc(4 * 450px);
-        }
-
-        .future .gallery .card:nth-child(8) {
-            left: calc(5 * 450px);
-        }
-
-        .future .gallery .card:nth-child(9) {
-            left: calc(6 * 450px);
-        }
-
-        .future .gallery .card:nth-child(10) {
-            left: calc(7 * 450px);
-        }
-
-        .future .gallery .card:nth-child(11) {
-            left: calc(8 * 450px);
-        }
-
-        .future .gallery .card:nth-child(12) {
-            left: calc(9 * 450px);
         }
 
         @media (max-width: 1200px) {
             .gallery {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(3, 1fr);
             }
         }
 
         @media (max-width: 768px) {
             .gallery {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(4, 1fr);
             }
         }
 
         @media (max-width: 480px) {
             .gallery {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(6, 1fr);
             }
         }
 
@@ -1249,14 +1199,6 @@
                     <a href="index.html" class="logo-link">
                         <img src="ARTSOULlogo.png" alt="ArtSoul" class="site-logo">
                     </a>
-                    <div class="theme-toggle">
-                        <button onclick="setTheme('classic')" id="classicBtn" class="theme-btn active-classic">
-                            Classic
-                        </button>
-                        <button onclick="setTheme('future')" id="futureBtn" class="theme-btn">
-                            Future
-                        </button>
-                    </div>
                 </div>
                 <a href="docs.html#rialo" class="devnet-banner" style="position: absolute; left: 50%; transform: translateX(-50%);">Rialo Playground Devnet</a>
                 <div class="flex items-center gap-4">
