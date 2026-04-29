@@ -494,7 +494,23 @@
 
                                 {/* Creator */}
                                 <div className={`p-4 rounded-lg ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                    <div className="text-sm opacity-70 mb-2">Created by</div>
+                                    <div className="flex items-start justify-between mb-2">
+                                        <div className="text-sm opacity-70">Created by</div>
+                                        <button
+                                            onClick={() => {
+                                                const text = `Check out "${artwork.title}" by ${creatorProfile?.username || 'artist'} on ArtSoul Marketplace!`;
+                                                const url = window.location.href;
+                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                                                window.open(twitterUrl, '_blank', 'width=550,height=420');
+                                            }}
+                                            className="hover:opacity-70 transition-opacity"
+                                            title="Share on X"
+                                        >
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
                                     <a
                                         href={`profile.html?address=${artwork.creator_id}`}
                                         className="flex items-center gap-3 hover:opacity-80 transition-opacity"
@@ -618,19 +634,6 @@
                                         </div>
                                     )}
                                 </div>
-
-                                {/* Share on X */}
-                                <button
-                                    onClick={() => {
-                                        const text = `Check out "${artwork.title}" on ArtSoul Marketplace!`;
-                                        const url = window.location.href;
-                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-                                        window.open(twitterUrl, '_blank', 'width=550,height=420');
-                                    }}
-                                    className="btn-main w-full"
-                                >
-                                    Share on X
-                                </button>
 
                                 {/* Back Button */}
                                 <a href="gallery.html" className="btn-secondary w-full block text-center">
