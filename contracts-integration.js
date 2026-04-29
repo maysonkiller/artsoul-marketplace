@@ -1,14 +1,19 @@
 // ArtSoul Smart Contract Integration
-// Connects frontend to deployed contracts on Base Sepolia
+// Connects frontend to deployed contracts on Base Sepolia and Ethereum Sepolia
 
 import { ethers } from 'https://esm.sh/ethers@6.7.0';
 
-// Contract addresses (Base Sepolia)
+// Contract addresses (Testnets)
 const CONTRACTS = {
     baseSepolia: {
         nft: '0x68055c742D2f91C2F6B5f277489aE961B466b2BD',
         marketplace: '0xA927574ECdCc81349C112Cc49C2f71ab707a537E',
         chainId: 84532
+    },
+    sepolia: {
+        nft: '0x68055c742D2f91C2F6B5f277489aE961B466b2BD',
+        marketplace: '0xA927574ECdCc81349C112Cc49C2f71ab707a537E',
+        chainId: 11155111
     }
 };
 
@@ -60,12 +65,17 @@ class ArtSoulContracts {
             const network = await this.provider.getNetwork();
             const chainId = Number(network.chainId);
 
-            // Check if supported network
-            if (chainId !== CONTRACTS.baseSepolia.chainId) {
-                throw new Error(`Unsupported network. Please switch to Base Sepolia (Chain ID: ${CONTRACTS.baseSepolia.chainId})`);
+            // Determine which network we're on
+            let networkKey = null;
+            if (chainId === CONTRACTS.baseSepolia.chainId) {
+                networkKey = 'baseSepolia';
+            } else if (chainId === CONTRACTS.sepolia.chainId) {
+                networkKey = 'sepolia';
+            } else {
+                throw new Error(`Unsupported network. Please switch to Base Sepolia (${CONTRACTS.baseSepolia.chainId}) or Ethereum Sepolia (${CONTRACTS.sepolia.chainId})`);
             }
 
-            this.currentNetwork = 'baseSepolia';
+            this.currentNetwork = networkKey;
             this.signer = await this.provider.getSigner();
 
             // Initialize contracts

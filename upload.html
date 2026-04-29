@@ -512,7 +512,7 @@
                     fileType = 'image';
                 }
 
-                await window.ArtSoulDB.createArtwork({
+                const dbArtwork = await window.ArtSoulDB.createArtwork({
                     blockchain_id: result.artworkId,
                     creator_id: walletAddress,
                     title: title,
@@ -525,6 +525,8 @@
                     status: 'draft',
                     tx_hash: result.txHash
                 });
+
+                console.log('✅ Artwork saved to database with ID:', dbArtwork.id);
 
                 // Step 7: Create auction immediately (3 days)
                 uploadBtn.textContent = 'Creating auction...';
@@ -543,7 +545,7 @@
                     const maxRetries = 3;
                     for (let i = 0; i < maxRetries; i++) {
                         try {
-                            await window.ArtSoulDB.updateArtwork(result.artworkId, { status: 'auction' });
+                            await window.ArtSoulDB.updateArtwork(dbArtwork.id, { status: 'auction' });
                             console.log('✅ Database synced with blockchain');
                             dbSynced = true;
                             break;
