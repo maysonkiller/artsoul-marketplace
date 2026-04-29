@@ -448,6 +448,91 @@ function subscribeToAuction(auctionId, callback) {
     });
 }
 
+// Voting Functions
+async function saveVote(voteData) {
+    const supabase = await initSupabase();
+
+    // Check if user already voted
+    const { data: existingVote } = await supabase
+        .from('votes')
+        .select('*')
+        .eq('artwork_id', voteData.artwork_id)
+        .eq('voter_address', voteData.voter_address)
+        .single();
+
+    if (existingVote) {
+        // Update existing vote
+        const { data, error } = await supabase
+            .from('votes')
+            .update({
+                vote_type: voteData.vote_type,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', existingVote.id)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error updating vote:', error);
+            throw error;
+        }
+
+        return data;
+    } else {
+        // Create new vote
+        const { data, error } = await supabase
+            .from('votes')
+            .insert([{
+                artwork_id: voteData.artwork_id,
+                voter_address: voteData.voter_address,
+                vote_type: voteData.vote_type
+            }])
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error creating vote:', error);
+            throw error;
+        }
+
+        return data;
+    }
+}
+
+async function getVotes(artworkId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('votes')
+        .select('*')
+        .eq('artwork_id', artworkId);
+
+    if (error) {
+        console.error('Error getting votes:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function getUserVote(artworkId, voterAddress) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('votes')
+        .select('*')
+        .eq('artwork_id', artworkId)
+        .eq('voter_address', voterAddress)
+        .single();
+
+    if (error && error.code !== 'PGRST116') {
+        console.error('Error getting user vote:', error);
+        throw error;
+    }
+
+    return data;
+}
+
 // Export functions
 window.ArtSoulDB = {
     initSupabase,
@@ -474,6 +559,10 @@ window.ArtSoulDB = {
     placeBid,
     getAuctionBids,
     getUserBid,
+    // Voting
+    saveVote,
+    getVotes,
+    getUserVote,
     // Real-time
     subscribeToAuction
 };
