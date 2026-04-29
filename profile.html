@@ -216,14 +216,6 @@
 
             // Preserve navButtons and networkBadge content after React render
             useEffect(() => {
-                // Set up refs for AppKit to use
-                if (navButtonsRef.current) {
-                    navButtonsRef.current.id = 'navButtons';
-                }
-                if (networkBadgeRef.current) {
-                    networkBadgeRef.current.id = 'networkBadge';
-                }
-
                 // Force initial update
                 if (window.web3Modal && window.updateNavButtons && window.updateNetworkBadge) {
                     const state = window.web3Modal.getState();
@@ -546,8 +538,8 @@
                                     </a>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div ref={networkBadgeRef}></div>
-                                    <div ref={navButtonsRef} className="flex items-center gap-3">
+                                    <div id="networkBadge" ref={networkBadgeRef}></div>
+                                    <div id="navButtons" ref={navButtonsRef} className="flex items-center gap-3">
                                         {/* AppKit will populate avatar dropdown */}
                                     </div>
                                 </div>
