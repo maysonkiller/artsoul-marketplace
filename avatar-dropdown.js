@@ -15,7 +15,11 @@
          * Initialize avatar dropdown
          */
         async init(walletAddress) {
-            if (!walletAddress) return;
+            // If no wallet connected, show connect button
+            if (!walletAddress) {
+                this.renderConnectButton();
+                return;
+            }
 
             try {
                 // Load profile from Supabase
@@ -536,6 +540,28 @@
          */
         async refresh(walletAddress) {
             await this.init(walletAddress);
+        }
+
+        /**
+         * Render connect button when wallet not connected
+         */
+        renderConnectButton() {
+            const container = document.getElementById('avatarButton');
+            if (!container) return;
+
+            container.innerHTML = `
+                <button
+                    onclick="window.web3Modal?.open()"
+                    class="btn-main"
+                    style="
+                        padding: 0.5rem 1rem;
+                        font-size: 0.875rem;
+                        white-space: nowrap;
+                    "
+                >
+                    Connect Wallet
+                </button>
+            `;
         }
     }
 
