@@ -59,6 +59,7 @@ let modal = null;
 let currentNetwork = null;
 let currentBalance = '0.00';
 let lastProcessedAddress = null;
+let isAuthenticating = false;
 
 // ============================================
 // UI UPDATE FUNCTIONS
@@ -375,14 +376,19 @@ async function initializeAppKit() {
 
                 // Authenticate automatically on wallet connect
                 console.log('🔐 Starting automatic authentication...');
-                try {
-                    if (window.ensureAuthenticated) {
-                        await window.ensureAuthenticated();
-                        console.log('✅ Wallet connected and authenticated');
+                if (!isAuthenticating) {
+                    isAuthenticating = true;
+                    try {
+                        if (window.ensureAuthenticated) {
+                            await window.ensureAuthenticated();
+                            console.log('✅ Wallet connected and authenticated');
+                        }
+                    } catch (error) {
+                        console.error('❌ Auto-authentication failed:', error);
+                        // Continue anyway - user can try again later
+                    } finally {
+                        isAuthenticating = false;
                     }
-                } catch (error) {
-                    console.error('❌ Auto-authentication failed:', error);
-                    // Continue anyway - user can try again later
                 }
 
             } else if (account?.status === 'disconnected' && lastProcessedAddress) {

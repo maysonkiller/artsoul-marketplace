@@ -375,7 +375,7 @@
             // Apply theme-specific styles
             this.applyThemeStyles();
 
-            // Remove old event listeners if they exist
+            // Clean up old event listeners before adding new ones
             if (this.closeHandler) {
                 document.removeEventListener('click', this.closeHandler);
                 document.removeEventListener('touchstart', this.closeHandler);
