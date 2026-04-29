@@ -29,6 +29,7 @@
     <script type="module" src="supabase-auth.js"></script>
     <script src="avatar-dropdown.js"></script>
     <script type="module" src="appkit-init.js"></script>
+    <script type="module" src="contracts-integration.js"></script>
     <script defer src="oauth-integration.js"></script>
     <style>
         :root {
@@ -405,6 +406,124 @@
                 window.location.href = 'upload.html';
             }
 
+            // ============================================
+            // AUCTION MANAGEMENT FUNCTIONS
+            // ============================================
+
+            async function handleCreateAuction(artwork) {
+                const duration = prompt('Auction duration in days (default: 3):', '3');
+                if (!duration) return;
+
+                const durationDays = parseInt(duration);
+                if (isNaN(durationDays) || durationDays <= 0) {
+                    alert('Invalid duration');
+                    return;
+                }
+
+                try {
+                    // Check wallet connection
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    // Initialize contracts
+                    if (!window.ArtSoulContracts.marketplaceContract) {
+                        await window.ArtSoulContracts.init(provider);
+                    }
+
+                    // Create auction on blockchain
+                    console.log('Creating auction for artwork:', artwork.blockchain_id);
+                    await window.ArtSoulContracts.createAuction(
+                        artwork.blockchain_id,
+                        artwork.creator_value.toString(),
+                        durationDays
+                    );
+
+                    // Update status in Supabase
+                    await window.ArtSoulDB.updateArtwork(artwork.id, { status: 'auction' });
+
+                    alert('✅ Auction created successfully!');
+                    loadMyArtworks(); // Reload artworks
+                } catch (error) {
+                    console.error('Create auction failed:', error);
+                    alert('Failed to create auction: ' + (error.message || 'Unknown error'));
+                }
+            }
+
+            async function handleDeleteArtwork(artwork) {
+                if (!confirm(`Delete "${artwork.title}"? This cannot be undone.`)) return;
+
+                try {
+                    // Check wallet connection
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    // Initialize contracts
+                    if (!window.ArtSoulContracts.marketplaceContract) {
+                        await window.ArtSoulContracts.init(provider);
+                    }
+
+                    // Delete from blockchain
+                    console.log('Deleting artwork:', artwork.blockchain_id);
+                    await window.ArtSoulContracts.deleteArtwork(artwork.blockchain_id);
+
+                    // Delete from Supabase
+                    await window.ArtSoulDB.deleteArtwork(artwork.id);
+
+                    alert('✅ Artwork deleted successfully!');
+                    loadMyArtworks(); // Reload artworks
+                } catch (error) {
+                    console.error('Delete failed:', error);
+                    alert('Failed to delete artwork: ' + (error.message || 'Unknown error'));
+                }
+            }
+
+            async function handleRelistArtwork(artwork) {
+                const newPrice = prompt('New starting price (ETH):', artwork.creator_value);
+                if (!newPrice) return;
+
+                const price = parseFloat(newPrice);
+                if (isNaN(price) || price <= 0) {
+                    alert('Invalid price');
+                    return;
+                }
+
+                try {
+                    // Check wallet connection
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    // Initialize contracts
+                    if (!window.ArtSoulContracts.marketplaceContract) {
+                        await window.ArtSoulContracts.init(provider);
+                    }
+
+                    // Relist on blockchain
+                    console.log('Relisting artwork:', artwork.blockchain_id);
+                    await window.ArtSoulContracts.relistArtwork(artwork.blockchain_id, price.toString());
+
+                    // Update in Supabase
+                    await window.ArtSoulDB.updateArtwork(artwork.id, {
+                        status: 'draft',
+                        creator_value: price
+                    });
+
+                    alert('✅ Artwork relisted successfully!');
+                    loadMyArtworks(); // Reload artworks
+                } catch (error) {
+                    console.error('Relist failed:', error);
+                    alert('Failed to relist artwork: ' + (error.message || 'Unknown error'));
+                }
+            }
+
             if (loading) {
                 return (
                     <div className="flex items-center justify-center min-h-screen">
@@ -445,11 +564,8 @@
                                 <div className="flex items-center gap-3">
                                     <div ref={networkBadgeRef}></div>
                                     <div ref={navButtonsRef} className="flex items-center gap-3">
-                                        {/* AppKit will populate wallet button and disconnect button */}
+                                        {/* AppKit will populate avatar dropdown */}
                                     </div>
-                                    <a href="index.html" className="btn-secondary">
-                                        Back to Gallery
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -747,30 +863,89 @@
                                 {myArtworks.map(artwork => (
                                     <div
                                         key={artwork.id}
-                                        className={`aspect-square rounded-lg overflow-hidden cursor-pointer gallery-item border ${
+                                        className={`rounded-lg overflow-hidden gallery-item border ${
                                             isClassic ? 'bg-gray-700 border-gray-600' : 'bg-gray-800/50 backdrop-blur-sm border-cyan-500/20'
                                         }`}
                                     >
-                                        {artwork.file_url ? (
-                                            <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className={`w-full h-full flex items-center justify-center ${
-                                                isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
-                                            }`}>
-                                                <div className="text-center p-4">
-                                                    <div className={`text-4xl mb-2 ${
-                                                        isClassic ? 'text-gray-400' : 'text-cyan-400'
-                                                    }`}>
-                                                        {GALLERY_TYPES.find(g => g.id === selectedGallery)?.icon}
-                                                    </div>
-                                                    <div className={`text-xs ${
-                                                        isClassic ? 'text-gray-400' : 'text-purple-300'
-                                                    }`}>
-                                                        {artwork.title}
+                                        {/* Artwork Image */}
+                                        <div className="aspect-square cursor-pointer" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
+                                            {artwork.file_url ? (
+                                                <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className={`w-full h-full flex items-center justify-center ${
+                                                    isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
+                                                }`}>
+                                                    <div className="text-center p-4">
+                                                        <div className={`text-4xl mb-2 ${
+                                                            isClassic ? 'text-gray-400' : 'text-cyan-400'
+                                                        }`}>
+                                                            {GALLERY_TYPES.find(g => g.id === selectedGallery)?.icon}
+                                                        </div>
+                                                        <div className={`text-xs ${
+                                                            isClassic ? 'text-gray-400' : 'text-purple-300'
+                                                        }`}>
+                                                            {artwork.title}
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            )}
+                                        </div>
+
+                                        {/* Artwork Info & Actions */}
+                                        <div className={`p-3 ${isClassic ? 'bg-gray-800' : 'bg-gray-900/50'}`}>
+                                            <div className="text-sm font-semibold mb-2 truncate">{artwork.title}</div>
+                                            <div className="text-xs opacity-70 mb-3">{artwork.creator_value || '0'} ETH</div>
+
+                                            {/* Action Buttons */}
+                                            <div className="flex gap-2">
+                                                {artwork.status === 'draft' && (
+                                                    <button
+                                                        onClick={() => handleCreateAuction(artwork)}
+                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                            isClassic
+                                                                ? 'bg-green-600 hover:bg-green-500 text-white'
+                                                                : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                                                        }`}
+                                                    >
+                                                        🔥 Auction
+                                                    </button>
+                                                )}
+                                                {artwork.status === 'auction' && (
+                                                    <button
+                                                        onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}
+                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                            isClassic
+                                                                ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                                                                : 'bg-purple-600 hover:bg-purple-500 text-white'
+                                                        }`}
+                                                    >
+                                                        📊 View
+                                                    </button>
+                                                )}
+                                                {artwork.status === 'sold' && (
+                                                    <button
+                                                        onClick={() => handleRelistArtwork(artwork)}
+                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                            isClassic
+                                                                ? 'bg-yellow-600 hover:bg-yellow-500 text-white'
+                                                                : 'bg-orange-600 hover:bg-orange-500 text-white'
+                                                        }`}
+                                                    >
+                                                        🔄 Relist
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => handleDeleteArtwork(artwork)}
+                                                    className={`px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                        isClassic
+                                                            ? 'bg-red-600 hover:bg-red-500 text-white'
+                                                            : 'bg-red-600 hover:bg-red-500 text-white'
+                                                    }`}
+                                                >
+                                                    🗑️
+                                                </button>
                                             </div>
-                                        )}
+                                        </div>
                                     </div>
                                 ))}
 

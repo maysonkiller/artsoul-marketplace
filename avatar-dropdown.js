@@ -39,6 +39,30 @@
         }
 
         /**
+         * Get current network information
+         */
+        getCurrentNetworkInfo() {
+            // Try to get network from web3Modal state
+            let chainId = null;
+            if (window.web3Modal) {
+                const state = window.web3Modal.getState();
+                chainId = state?.chainId;
+            }
+
+            // Network mapping
+            const networks = {
+                84532: { name: 'Base Sepolia', color: '#0052FF' },
+                11155111: { name: 'Sepolia', color: '#627EEA' },
+                8453: { name: 'Base', color: '#0052FF' },
+                1: { name: 'Ethereum', color: '#627EEA' },
+                2025: { name: 'Rialo', color: '#00f5ff' }
+            };
+
+            const network = networks[chainId] || { name: 'Unknown', color: '#888888' };
+            return network;
+        }
+
+        /**
          * Render avatar dropdown
          */
         render() {
@@ -51,9 +75,40 @@
             const walletAddress = this.profile?.wallet_address || '';
             const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
 
+            // Get current network info
+            const networkInfo = this.getCurrentNetworkInfo();
+
             // Create avatar dropdown HTML
             navButtons.innerHTML = `
-                <div class="avatar-dropdown-container" style="position: relative;">
+                <div class="avatar-dropdown-container" style="position: relative; display: flex; align-items: center; gap: 0.75rem;">
+                    <!-- Network Indicator -->
+                    <button
+                        onclick="window.web3Modal?.open({ view: 'Networks' })"
+                        class="network-indicator"
+                        style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            padding: 0.5rem 0.75rem;
+                            border-radius: 0.75rem;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                            border: 2px solid;
+                            background: rgba(0, 0, 0, 0.3);
+                        "
+                        title="Switch Network"
+                    >
+                        <div style="
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            background: ${networkInfo.color};
+                            box-shadow: 0 0 8px ${networkInfo.color};
+                        "></div>
+                        <span style="font-size: 0.875rem; font-weight: 500;">${networkInfo.name}</span>
+                    </button>
+
+                    <!-- Avatar Button -->
                     <button
                         class="avatar-button"
                         onclick="window.AvatarDropdown.toggle()"
@@ -155,7 +210,7 @@
                             </a>
 
                             <a
-                                href="index.html"
+                                href="gallery.html"
                                 class="dropdown-item"
                                 style="
                                     display: flex;
@@ -169,8 +224,27 @@
                                     color: inherit;
                                 "
                             >
-                                <span style="font-size: 1.25rem;">🏠</span>
+                                <span style="font-size: 1.25rem;">🖼️</span>
                                 <span>Gallery</span>
+                            </a>
+
+                            <a
+                                href="docs.html"
+                                class="dropdown-item"
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.75rem;
+                                    padding: 0.75rem;
+                                    border-radius: 0.5rem;
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                    text-decoration: none;
+                                    color: inherit;
+                                "
+                            >
+                                <span style="font-size: 1.25rem;">📚</span>
+                                <span>Documentation</span>
                             </a>
 
                             <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
@@ -204,13 +278,16 @@
             // Apply theme-specific styles
             this.applyThemeStyles();
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
+            // Close dropdown when clicking outside (support both click and touch)
+            const closeHandler = (e) => {
                 const container = document.querySelector('.avatar-dropdown-container');
                 if (container && !container.contains(e.target) && this.isOpen) {
                     this.close();
                 }
-            });
+            };
+
+            document.addEventListener('click', closeHandler);
+            document.addEventListener('touchstart', closeHandler, { passive: true });
         }
 
         /**
@@ -254,6 +331,7 @@
             const theme = localStorage.getItem('artsoul_theme') || 'classic';
             const menu = document.getElementById('avatarDropdownMenu');
             const avatarButton = document.querySelector('.avatar-button');
+            const networkIndicator = document.querySelector('.network-indicator');
             const items = document.querySelectorAll('.dropdown-item');
 
             if (!menu || !avatarButton) return;
@@ -262,6 +340,11 @@
                 menu.style.background = '#1a1a1a';
                 menu.style.border = '1px solid #a9ddd3';
                 avatarButton.style.borderColor = '#a9ddd3';
+
+                if (networkIndicator) {
+                    networkIndicator.style.borderColor = '#a9ddd3';
+                    networkIndicator.style.color = '#a9ddd3';
+                }
 
                 items.forEach(item => {
                     item.addEventListener('mouseenter', function() {
@@ -276,6 +359,11 @@
                 menu.style.border = '1px solid rgba(0, 245, 255, 0.3)';
                 menu.style.boxShadow = '0 0 30px rgba(0, 245, 255, 0.2)';
                 avatarButton.style.borderColor = '#00f5ff';
+
+                if (networkIndicator) {
+                    networkIndicator.style.borderColor = '#00f5ff';
+                    networkIndicator.style.color = '#00f5ff';
+                }
 
                 items.forEach(item => {
                     item.addEventListener('mouseenter', function() {

@@ -136,6 +136,22 @@ async function getArtworks(filters = {}) {
     return data;
 }
 
+async function getAllArtworks() {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching all artworks:', error);
+        throw error;
+    }
+
+    return data;
+}
+
 async function getArtwork(artworkId) {
     const supabase = await initSupabase();
 
@@ -175,6 +191,40 @@ async function getArtworksByCreator(creatorId) {
     }
 
     return data;
+}
+
+async function updateArtwork(artworkId, updates) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .update(updates)
+        .eq('id', artworkId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error updating artwork:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+async function deleteArtwork(artworkId) {
+    const supabase = await initSupabase();
+
+    const { error } = await supabase
+        .from('artworks')
+        .delete()
+        .eq('id', artworkId);
+
+    if (error) {
+        console.error('Error deleting artwork:', error);
+        throw error;
+    }
+
+    return true;
 }
 
 // Storage Functions
@@ -408,8 +458,11 @@ window.ArtSoulDB = {
     // Artworks
     createArtwork,
     getArtworks,
+    getAllArtworks,
     getArtwork,
     getArtworksByCreator,
+    updateArtwork,
+    deleteArtwork,
     // Storage
     uploadFile,
     // Auctions

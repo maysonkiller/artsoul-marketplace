@@ -5,7 +5,7 @@
 
 import { createAppKit } from 'https://esm.sh/@reown/appkit@1.7.11?bundle'
 import { WagmiAdapter } from 'https://esm.sh/@reown/appkit-adapter-wagmi@1.7.11?bundle'
-import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
+import { mainnet, base, sepolia, baseSepolia } from 'https://esm.sh/@reown/appkit/networks?bundle'
 
 // ============================================
 // CONFIGURATION
@@ -13,16 +13,25 @@ import { mainnet, polygon, bsc, base, arbitrum, optimism, sepolia } from 'https:
 
 const projectId = '9fdc97f91c02d46a28ca9d185a9e58f2';
 
-// Custom Rialo Playground network
+// Custom Rialo network (coming soon - not EVM compatible yet)
 const rialoPlayground = {
     id: 2025,
-    name: 'Rialo Playground',
+    name: 'Rialo (Coming Soon)',
     nativeCurrency: { name: 'RIA', symbol: 'RIA', decimals: 18 },
     rpcUrls: { default: { http: ['https://playground.rialo.io/rpc'] } },
-    blockExplorers: { default: { name: 'Rialo Explorer', url: 'https://playground.rialo.io' } }
+    blockExplorers: { default: { name: 'Rialo Explorer', url: 'https://playground.rialo.io' } },
+    testnet: true
 };
 
-const networks = [mainnet, polygon, bsc, base, arbitrum, optimism, sepolia, rialoPlayground];
+// TESTNETS ONLY (for now)
+// To enable mainnets: uncomment mainnet and base in the array below
+const networks = [
+    rialoPlayground,      // Coming soon
+    baseSepolia,          // Base testnet
+    sepolia,              // Ethereum testnet
+    // base,              // Base mainnet (uncomment when ready for production)
+    // mainnet            // Ethereum mainnet (uncomment when ready for production)
+];
 
 const metadata = {
     name: 'ArtSoul Marketplace',
@@ -33,14 +42,13 @@ const metadata = {
 
 // Network display names and currencies
 const networkMap = {
-    1: { name: 'Ethereum', currency: 'ETH' },
-    137: { name: 'Polygon', currency: 'MATIC' },
-    56: { name: 'BSC', currency: 'BNB' },
+    // Testnets
+    84532: { name: 'Base Sepolia', currency: 'ETH' },
+    11155111: { name: 'Ethereum Sepolia', currency: 'ETH' },
+    2025: { name: 'Rialo (Soon)', currency: 'RIA' },
+    // Mainnets (for future use)
     8453: { name: 'Base', currency: 'ETH' },
-    42161: { name: 'Arbitrum', currency: 'ETH' },
-    10: { name: 'Optimism', currency: 'ETH' },
-    11155111: { name: 'Sepolia', currency: 'ETH' },
-    2025: { name: 'Rialo Playground', currency: 'RIA' }
+    1: { name: 'Ethereum', currency: 'ETH' }
 };
 
 // ============================================
@@ -305,12 +313,22 @@ async function initializeAppKit() {
             networks,
             metadata,
             projectId,
-            // Remove local features config - managed via Reown dashboard
             themeMode: 'dark',
             themeVariables: {
                 '--w3m-accent': '#00f5ff',
                 '--w3m-color-mix': '#bf00ff'
-            }
+            },
+            // Mobile-specific settings
+            enableWalletConnect: true,
+            enableInjected: true,
+            enableCoinbase: true,
+            // Ensure mobile wallets are enabled
+            featuredWalletIds: [
+                'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
+                'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
+                '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust Wallet
+                '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369'  // Rainbow
+            ]
         };
 
         console.log('🔌 Using WagmiAdapter for browser extensions');
@@ -350,6 +368,11 @@ async function initializeAppKit() {
                 updateNavButtons({ address: account.address, chainId: account.chainId });
                 updateNetworkBadge({ address: account.address, chainId: account.chainId });
 
+                // Refresh avatar dropdown to update network indicator
+                if (window.AvatarDropdown) {
+                    window.AvatarDropdown.refresh(account.address);
+                }
+
                 // Authenticate automatically on wallet connect
                 console.log('🔐 Starting automatic authentication...');
                 try {
@@ -386,6 +409,24 @@ async function initializeAppKit() {
                 if (window.location.pathname.includes('profile.html')) {
                     console.log('🏠 Redirecting to home page...');
                     window.location.href = 'index.html';
+                }
+            }
+        });
+
+        // Subscribe to network changes
+        modal.subscribeState((state) => {
+            if (state?.selectedNetworkId) {
+                console.log('🔄 Network changed:', state.selectedNetworkId);
+
+                // Update network badge
+                const walletAddress = window.currentWalletAddress || localStorage.getItem('artsoul_wallet');
+                if (walletAddress) {
+                    updateNetworkBadge({ address: walletAddress, chainId: state.selectedNetworkId });
+
+                    // Refresh avatar dropdown to update network indicator
+                    if (window.AvatarDropdown) {
+                        window.AvatarDropdown.refresh(walletAddress);
+                    }
                 }
             }
         });
