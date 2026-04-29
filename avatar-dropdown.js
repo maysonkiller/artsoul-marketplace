@@ -297,13 +297,23 @@
             // Apply theme-specific styles
             this.applyThemeStyles();
 
+            // Remove old event listeners if they exist
+            if (this.closeHandler) {
+                document.removeEventListener('click', this.closeHandler);
+                document.removeEventListener('touchstart', this.closeHandler);
+            }
+
             // Close dropdown when clicking outside
-            const closeHandler = (e) => {
+            this.closeHandler = (e) => {
                 const container = document.querySelector('.avatar-dropdown-container');
                 const menu = document.getElementById('avatarDropdownMenu');
 
-                // Don't close if clicking inside the menu (except disconnect button)
+                // Don't close if clicking inside the menu
                 if (menu && menu.contains(e.target)) {
+                    // Allow navigation links to work
+                    if (e.target.tagName === 'A' || e.target.closest('a')) {
+                        return; // Let link navigate
+                    }
                     // Only close if clicking disconnect button
                     if (e.target.closest('button')?.textContent?.includes('Disconnect')) {
                         return; // Let disconnect handler close it
@@ -317,8 +327,8 @@
                 }
             };
 
-            document.addEventListener('click', closeHandler);
-            document.addEventListener('touchstart', closeHandler, { passive: true });
+            document.addEventListener('click', this.closeHandler);
+            document.addEventListener('touchstart', this.closeHandler, { passive: true });
         }
 
         /**
