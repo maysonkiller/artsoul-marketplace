@@ -120,25 +120,36 @@
             }, []);
 
             useEffect(() => {
-                // Initialize avatar dropdown and network badge with delay
+                // Initialize avatar dropdown and network badge
                 const initUI = async () => {
-                    // Wait a bit for scripts to load
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    // Wait for scripts to load (check every 100ms, max 5 seconds)
+                    let attempts = 0;
+                    const maxAttempts = 50;
 
-                    // Wait for appkit to be ready
-                    if (window.web3Modal) {
-                        const state = window.web3Modal.getState();
-                        if (state?.address) {
-                            // Initialize avatar dropdown
-                            if (window.avatarDropdown) {
-                                await window.avatarDropdown.init(state.address);
-                            }
+                    while (attempts < maxAttempts) {
+                        if (window.avatarDropdown && window.NetworkBadge && window.web3Modal) {
+                            break;
                         }
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+
+                    if (attempts >= maxAttempts) {
+                        console.warn('Scripts not loaded after 5 seconds');
+                        return;
                     }
 
                     // Initialize network badge
                     if (window.NetworkBadge) {
                         window.NetworkBadge.init();
+                    }
+
+                    // Wait for wallet connection
+                    if (window.web3Modal) {
+                        const state = window.web3Modal.getState();
+                        if (state?.address && window.avatarDropdown) {
+                            await window.avatarDropdown.init(state.address);
+                        }
                     }
                 };
 
@@ -428,7 +439,7 @@
                     <div className="min-h-screen flex items-center justify-center">
                         <div className="text-center">
                             <div className="text-2xl mb-4">Artwork not found</div>
-                            <a href="index.html" className="btn-main">Back to Gallery</a>
+                            <a href="gallery.html" className="btn-main">Back to Gallery</a>
                         </div>
                     </div>
                 );
@@ -609,7 +620,7 @@
                                 </div>
 
                                 {/* Back Button */}
-                                <a href="index.html" className="btn-secondary w-full block text-center">
+                                <a href="gallery.html" className="btn-secondary w-full block text-center">
                                     Back to Gallery
                                 </a>
                             </div>
