@@ -438,9 +438,11 @@ async function initializeAppKit() {
                         chainId: state.selectedNetworkId
                     });
 
-                    // Refresh avatar dropdown
+                    // Refresh avatar dropdown to update network icon and balance
                     if (window.AvatarDropdown) {
-                        window.AvatarDropdown.updateNetworkDisplay();
+                        setTimeout(() => {
+                            window.AvatarDropdown.refresh(window.currentWalletAddress);
+                        }, 100);
                     }
                 }
             }

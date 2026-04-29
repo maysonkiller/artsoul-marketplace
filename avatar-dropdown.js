@@ -140,7 +140,13 @@
             const navButtons = document.getElementById('navButtons');
             if (!navButtons) return;
 
-            const isProfilePage = window.location.pathname.includes('profile.html');
+            const currentPath = window.location.pathname;
+            const isIndexPage = currentPath.endsWith('index.html') || currentPath === '/' || currentPath.endsWith('/');
+            const isProfilePage = currentPath.includes('profile.html');
+            const isGalleryPage = currentPath.includes('gallery.html');
+            const isUploadPage = currentPath.includes('upload.html');
+            const isDocsPage = currentPath.includes('docs.html');
+
             const avatarUrl = this.profile?.avatar_url || this.getDefaultAvatar();
             const username = this.profile?.username || 'Anonymous';
             const walletAddress = this.profile?.wallet_address || '';
@@ -253,23 +259,25 @@
 
                         <!-- Menu Items -->
                         <div style="padding: 0.25rem 0;">
-                            <a
-                                href="index.html"
-                                class="dropdown-item"
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.75rem;
-                                    padding: 0.75rem;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
-                                    transition: all 0.2s;
-                                    text-decoration: none;
-                                    color: inherit;
-                                "
-                            >
-                                <span>Home</span>
-                            </a>
+                            ${!isIndexPage ? `
+                                <a
+                                    href="index.html"
+                                    class="dropdown-item"
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.75rem;
+                                        padding: 0.75rem;
+                                        border-radius: 0.5rem;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-decoration: none;
+                                        color: inherit;
+                                    "
+                                >
+                                    <span>Home</span>
+                                </a>
+                            ` : ''}
 
                             ${!isProfilePage ? `
                                 <a
@@ -291,59 +299,65 @@
                                 </a>
                             ` : ''}
 
-                            <a
-                                href="upload.html"
-                                class="dropdown-item"
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.75rem;
-                                    padding: 0.75rem;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
-                                    transition: all 0.2s;
-                                    text-decoration: none;
-                                    color: inherit;
-                                "
-                            >
-                                <span>Upload Artwork</span>
-                            </a>
+                            ${!isUploadPage ? `
+                                <a
+                                    href="upload.html"
+                                    class="dropdown-item"
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.75rem;
+                                        padding: 0.75rem;
+                                        border-radius: 0.5rem;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-decoration: none;
+                                        color: inherit;
+                                    "
+                                >
+                                    <span>Upload Artwork</span>
+                                </a>
+                            ` : ''}
 
-                            <a
-                                href="gallery.html"
-                                class="dropdown-item"
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.75rem;
-                                    padding: 0.75rem;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
-                                    transition: all 0.2s;
-                                    text-decoration: none;
-                                    color: inherit;
-                                "
-                            >
-                                <span>Gallery</span>
-                            </a>
+                            ${!isGalleryPage ? `
+                                <a
+                                    href="gallery.html"
+                                    class="dropdown-item"
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.75rem;
+                                        padding: 0.75rem;
+                                        border-radius: 0.5rem;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-decoration: none;
+                                        color: inherit;
+                                    "
+                                >
+                                    <span>Gallery</span>
+                                </a>
+                            ` : ''}
 
-                            <a
-                                href="docs.html"
-                                class="dropdown-item"
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.75rem;
-                                    padding: 0.75rem;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
-                                    transition: all 0.2s;
-                                    text-decoration: none;
-                                    color: inherit;
-                                "
-                            >
-                                <span>Docs</span>
-                            </a>
+                            ${!isDocsPage ? `
+                                <a
+                                    href="docs.html"
+                                    class="dropdown-item"
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.75rem;
+                                        padding: 0.75rem;
+                                        border-radius: 0.5rem;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-decoration: none;
+                                        color: inherit;
+                                    "
+                                >
+                                    <span>Docs</span>
+                                </a>
+                            ` : ''}
 
                             <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
 
