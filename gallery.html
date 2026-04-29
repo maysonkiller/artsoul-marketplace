@@ -362,7 +362,7 @@
                                         }}
                                     >
                                         {/* Image */}
-                                        <div className="aspect-video overflow-hidden bg-black" style={{maxHeight: '200px'}}>
+                                        <div className="aspect-square overflow-hidden bg-black">
                                             {artwork.file_url && window.ArtSoulSecurity?.isValidStorageUrl(artwork.file_url) ? (
                                                 <img
                                                     src={artwork.file_url}

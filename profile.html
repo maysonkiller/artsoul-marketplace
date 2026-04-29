@@ -880,9 +880,9 @@
                                         }`}
                                     >
                                         {/* Artwork Image */}
-                                        <div className="aspect-square cursor-pointer" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
+                                        <div className="aspect-square cursor-pointer bg-black" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
                                             {artwork.file_url ? (
-                                                <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-cover" />
+                                                <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />
                                             ) : (
                                                 <div className={`w-full h-full flex items-center justify-center ${
                                                     isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
