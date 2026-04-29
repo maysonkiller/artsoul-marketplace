@@ -167,6 +167,17 @@ async function getArtwork(artworkId) {
 
     if (error) {
         console.error('Error fetching artwork:', error);
+        // If it's a foreign key error, try without creator profile
+        if (error.code === '42P01' || error.code === 'PGRST301') {
+            const { data: artworkOnly, error: artworkError } = await supabase
+                .from('artworks')
+                .select('*')
+                .eq('id', artworkId)
+                .single();
+
+            if (artworkError) throw artworkError;
+            return artworkOnly;
+        }
         throw error;
     }
 
