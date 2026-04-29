@@ -27,6 +27,9 @@ const MARKETPLACE_ABI = [
     "function endAuction(uint256 artworkId)",
     "function deleteArtwork(uint256 artworkId)",
     "function relistArtwork(uint256 artworkId, uint256 newPrice)",
+    "function withdrawFees()",
+    "function owner() view returns (address)",
+    "function platformFeeBps() view returns (uint96)",
     "function artworks(uint256) view returns (uint256 id, address creator, string ipfsHash, string metadataURI, bytes32 fileHash, uint256 creatorValue, uint256 communityValue, uint256 systemValue, uint8 status, uint256 tokenId, uint256 createdAt)",
     "function auctions(uint256) view returns (uint256 artworkId, uint256 startTime, uint256 endTime, uint256 startingPrice, uint256 highestBid, address highestBidder, bool ended)",
     "function getCreatorArtworks(address creator) view returns (uint256[])",
@@ -267,6 +270,84 @@ class ArtSoulContracts {
             return tx.hash;
         } catch (error) {
             console.error('❌ Relist failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Check if current user is contract owner
+     */
+    async isOwner() {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            const owner = await this.marketplaceContract.owner();
+            const currentAddress = await this.signer.getAddress();
+            return owner.toLowerCase() === currentAddress.toLowerCase();
+        } catch (error) {
+            console.error('❌ Owner check failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Get contract balance (accumulated fees)
+     */
+    async getContractBalance() {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            const balance = await this.provider.getBalance(await this.marketplaceContract.getAddress());
+            return ethers.formatEther(balance);
+        } catch (error) {
+            console.error('❌ Get balance failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get platform fee percentage
+     */
+    async getPlatformFee() {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            const feeBps = await this.marketplaceContract.platformFeeBps();
+            return Number(feeBps) / 100; // Convert basis points to percentage
+        } catch (error) {
+            console.error('❌ Get platform fee failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Withdraw accumulated platform fees (owner only)
+     */
+    async withdrawFees() {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            // Check if user is owner
+            const isOwner = await this.isOwner();
+            if (!isOwner) {
+                throw new Error('Only contract owner can withdraw fees');
+            }
+
+            // Get current balance
+            const balance = await this.getContractBalance();
+            console.log(`💰 Withdrawing ${balance} ETH...`);
+
+            const tx = await this.marketplaceContract.withdrawFees();
+            console.log('⏳ Transaction sent:', tx.hash);
+            await tx.wait();
+            console.log('✅ Fees withdrawn successfully!');
+
+            return {
+                txHash: tx.hash,
+                amount: balance
+            };
+        } catch (error) {
+            console.error('❌ Withdraw failed:', error);
             throw error;
         }
     }
