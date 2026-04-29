@@ -149,10 +149,6 @@
                             <div className="flex items-center justify-between">
                                 <a href="index.html" className="text-2xl font-bold">ArtSoul</a>
                                 <div className="flex items-center gap-3">
-                                    <div className="theme-toggle">
-                                        <button onClick={() => window.setTheme('classic')} id="classicBtn" className="theme-btn">Classic</button>
-                                        <button onClick={() => window.setTheme('future')} id="futureBtn" className="theme-btn">Future</button>
-                                    </div>
                                     <div id="networkBadge"></div>
                                     <div id="navButtons"></div>
                                 </div>
@@ -162,7 +158,7 @@
 
                     {/* Main Content */}
                     <main className="container mx-auto px-4 py-8">
-                        <h1 className="text-4xl font-bold mb-8">🎨 Gallery</h1>
+                        <h1 className="text-4xl font-bold mb-8">Gallery</h1>
 
                         {/* Filters */}
                         <div className={`rounded-xl p-6 mb-8 ${isClassic ? 'bg-gray-800 border border-gray-700' : 'bg-gray-900/50 border border-cyan-500/30'}`}>
@@ -276,7 +272,7 @@
                                                     artwork.status === 'sold' ? (isClassic ? 'bg-gray-600' : 'bg-purple-600') :
                                                     (isClassic ? 'bg-blue-600' : 'bg-orange-600')
                                                 }`}>
-                                                    {artwork.status === 'auction' ? '🔥 Live' : artwork.status === 'sold' ? '✅ Sold' : '📝 Draft'}
+                                                    {artwork.status === 'auction' ? 'Live' : artwork.status === 'sold' ? 'Sold' : 'Draft'}
                                                 </span>
                                             </div>
 

@@ -39,7 +39,7 @@
         }
 
         /**
-         * Get current network information
+         * Get current network info
          */
         getCurrentNetworkInfo() {
             // Try to get network from web3Modal state
@@ -49,16 +49,16 @@
                 chainId = state?.chainId;
             }
 
-            // Network mapping
+            // Network mapping with icons
             const networks = {
-                84532: { name: 'Base Sepolia', color: '#0052FF' },
-                11155111: { name: 'Sepolia', color: '#627EEA' },
-                8453: { name: 'Base', color: '#0052FF' },
-                1: { name: 'Ethereum', color: '#627EEA' },
-                2025: { name: 'Rialo', color: '#00f5ff' }
+                84532: { name: 'Base Sepolia', icon: '🔵', color: '#0052FF' },
+                11155111: { name: 'Ethereum Sepolia', icon: '⟠', color: '#627EEA' },
+                8453: { name: 'Base', icon: '🔵', color: '#0052FF' },
+                1: { name: 'Ethereum', icon: '⟠', color: '#627EEA' },
+                2025: { name: 'Rialo', icon: '🌐', color: '#00f5ff' }
             };
 
-            const network = networks[chainId] || { name: 'Unknown', color: '#888888' };
+            const network = networks[chainId] || { name: 'Unknown', icon: '?', color: '#888888' };
             return network;
         }
 
@@ -80,34 +80,7 @@
 
             // Create avatar dropdown HTML
             navButtons.innerHTML = `
-                <div class="avatar-dropdown-container" style="position: relative; display: flex; align-items: center; gap: 0.75rem;">
-                    <!-- Network Indicator -->
-                    <button
-                        onclick="window.web3Modal?.open({ view: 'Networks' })"
-                        class="network-indicator"
-                        style="
-                            display: flex;
-                            align-items: center;
-                            gap: 0.5rem;
-                            padding: 0.5rem 0.75rem;
-                            border-radius: 0.75rem;
-                            cursor: pointer;
-                            transition: all 0.3s;
-                            border: 2px solid;
-                            background: rgba(0, 0, 0, 0.3);
-                        "
-                        title="Switch Network"
-                    >
-                        <div style="
-                            width: 8px;
-                            height: 8px;
-                            border-radius: 50%;
-                            background: ${networkInfo.color};
-                            box-shadow: 0 0 8px ${networkInfo.color};
-                        "></div>
-                        <span style="font-size: 0.875rem; font-weight: 500;">${networkInfo.name}</span>
-                    </button>
-
+                <div class="avatar-dropdown-container" style="position: relative;">
                     <!-- Avatar Button -->
                     <button
                         class="avatar-button"
@@ -115,14 +88,21 @@
                         style="
                             display: flex;
                             align-items: center;
-                            gap: 0.5rem;
-                            padding: 0.25rem;
+                            gap: 0.75rem;
+                            padding: 0.5rem;
                             border-radius: 9999px;
                             cursor: pointer;
                             transition: all 0.3s;
                             border: 2px solid transparent;
                         "
                     >
+                        <!-- Network Icon -->
+                        <div style="
+                            font-size: 1.5rem;
+                            line-height: 1;
+                        ">${networkInfo.icon}</div>
+
+                        <!-- Avatar -->
                         <img
                             src="${avatarUrl}"
                             alt="${username}"
@@ -134,6 +114,14 @@
                             "
                             onerror="this.src='${this.getDefaultAvatar()}'"
                         />
+
+                        <!-- Username & Address -->
+                        <div style="text-align: left;">
+                            <div style="font-weight: 600; font-size: 0.875rem;">${username}</div>
+                            <div style="font-size: 0.75rem; opacity: 0.6; font-family: monospace;">${shortAddress}</div>
+                        </div>
+
+                        <!-- Dropdown Arrow -->
                         <svg
                             width="16"
                             height="16"
@@ -154,18 +142,46 @@
                             position: absolute;
                             top: calc(100% + 0.5rem);
                             right: 0;
-                            min-width: 200px;
+                            min-width: 220px;
                             border-radius: 0.75rem;
                             padding: 0.5rem;
                             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
                             z-index: 1000;
                         "
                     >
-                        <!-- Profile Info -->
-                        <div style="padding: 0.75rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-                            <div style="font-weight: 600; margin-bottom: 0.25rem;">${username}</div>
-                            <div style="font-size: 0.75rem; opacity: 0.6; font-family: monospace;">${shortAddress}</div>
+                        <!-- Theme Switcher -->
+                        <div style="padding: 0.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <div style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 0.5rem;">Theme</div>
+                            <div class="theme-toggle" style="width: 100%;">
+                                <button onclick="window.setTheme('classic')" id="classicBtnDropdown" class="theme-btn" style="flex: 1;">Classic</button>
+                                <button onclick="window.setTheme('future')" id="futureBtnDropdown" class="theme-btn" style="flex: 1;">Future</button>
+                            </div>
                         </div>
+
+                        <!-- Network Switcher -->
+                        <button
+                            onclick="window.web3Modal?.open({ view: 'Networks' })"
+                            class="dropdown-item"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.75rem;
+                                padding: 0.75rem;
+                                border-radius: 0.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                width: 100%;
+                                border: none;
+                                background: transparent;
+                                color: inherit;
+                                text-align: left;
+                            "
+                        >
+                            <span style="font-size: 1.25rem;">${networkInfo.icon}</span>
+                            <span>${networkInfo.name}</span>
+                        </button>
+
+                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
 
                         <!-- Menu Items -->
                         <div style="padding: 0.25rem 0;">
@@ -185,7 +201,6 @@
                                         color: inherit;
                                     "
                                 >
-                                    <span style="font-size: 1.25rem;">👤</span>
                                     <span>My Profile</span>
                                 </a>
                             ` : ''}
@@ -205,7 +220,6 @@
                                     color: inherit;
                                 "
                             >
-                                <span style="font-size: 1.25rem;">🎨</span>
                                 <span>Upload Artwork</span>
                             </a>
 
@@ -224,7 +238,6 @@
                                     color: inherit;
                                 "
                             >
-                                <span style="font-size: 1.25rem;">🖼️</span>
                                 <span>Gallery</span>
                             </a>
 
@@ -243,8 +256,7 @@
                                     color: inherit;
                                 "
                             >
-                                <span style="font-size: 1.25rem;">📚</span>
-                                <span>Documentation</span>
+                                <span>Docs</span>
                             </a>
 
                             <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
@@ -267,7 +279,6 @@
                                     text-align: left;
                                 "
                             >
-                                <span style="font-size: 1.25rem;">🚪</span>
                                 <span>Disconnect</span>
                             </button>
                         </div>
@@ -331,20 +342,27 @@
             const theme = localStorage.getItem('artsoul_theme') || 'classic';
             const menu = document.getElementById('avatarDropdownMenu');
             const avatarButton = document.querySelector('.avatar-button');
-            const networkIndicator = document.querySelector('.network-indicator');
             const items = document.querySelectorAll('.dropdown-item');
+            const classicBtn = document.getElementById('classicBtnDropdown');
+            const futureBtn = document.getElementById('futureBtnDropdown');
 
             if (!menu || !avatarButton) return;
+
+            // Update theme toggle buttons
+            if (classicBtn && futureBtn) {
+                if (theme === 'classic') {
+                    classicBtn.classList.add('active-classic');
+                    futureBtn.classList.remove('active-future');
+                } else {
+                    futureBtn.classList.add('active-future');
+                    classicBtn.classList.remove('active-classic');
+                }
+            }
 
             if (theme === 'classic') {
                 menu.style.background = '#1a1a1a';
                 menu.style.border = '1px solid #a9ddd3';
                 avatarButton.style.borderColor = '#a9ddd3';
-
-                if (networkIndicator) {
-                    networkIndicator.style.borderColor = '#a9ddd3';
-                    networkIndicator.style.color = '#a9ddd3';
-                }
 
                 items.forEach(item => {
                     item.addEventListener('mouseenter', function() {
@@ -359,11 +377,6 @@
                 menu.style.border = '1px solid rgba(0, 245, 255, 0.3)';
                 menu.style.boxShadow = '0 0 30px rgba(0, 245, 255, 0.2)';
                 avatarButton.style.borderColor = '#00f5ff';
-
-                if (networkIndicator) {
-                    networkIndicator.style.borderColor = '#00f5ff';
-                    networkIndicator.style.color = '#00f5ff';
-                }
 
                 items.forEach(item => {
                     item.addEventListener('mouseenter', function() {
