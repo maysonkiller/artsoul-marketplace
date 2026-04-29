@@ -118,7 +118,7 @@
             }, []);
 
             useEffect(() => {
-                if (artworkId) {
+                if (artworkId && !artwork) {
                     loadArtwork();
                 }
             }, [artworkId]);
