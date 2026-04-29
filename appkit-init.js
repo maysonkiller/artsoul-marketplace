@@ -439,6 +439,33 @@ async function initializeAppKit() {
             }
         });
 
+        // Subscribe to chain changes to close modal and update UI
+        modal.subscribeState((state) => {
+            if (state.selectedNetworkId) {
+                console.log('🔄 Network changed to:', state.selectedNetworkId);
+
+                // Close the modal after network change
+                setTimeout(() => {
+                    if (modal.getState().open) {
+                        modal.close();
+                    }
+                }, 500);
+
+                // Update network display
+                if (window.currentWalletAddress) {
+                    updateNetworkBadge({
+                        address: window.currentWalletAddress,
+                        chainId: state.selectedNetworkId
+                    });
+
+                    // Refresh avatar dropdown
+                    if (window.AvatarDropdown) {
+                        window.AvatarDropdown.updateNetworkDisplay();
+                    }
+                }
+            }
+        });
+
         console.log('✅ AppKit initialized');
     } catch (error) {
         console.error('⚠️ AppKit init failed:', error);

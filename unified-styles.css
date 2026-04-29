@@ -190,6 +190,26 @@
     animation-duration: 1.5s;
 }
 
+/* Network icon should not have gradient effect */
+.future .network-switcher-btn img {
+    filter: none !important;
+}
+
+/* Add glow around network icon in Future mode */
+.future .network-switcher-btn img {
+    box-shadow: 0 0 10px rgba(0, 245, 255, 0.4), 0 0 20px rgba(191, 0, 255, 0.3);
+    animation: networkIconGlow 3s ease-in-out infinite;
+}
+
+@keyframes networkIconGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 245, 255, 0.6), 0 0 20px rgba(191, 0, 255, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(191, 0, 255, 0.8), 0 0 30px rgba(0, 245, 255, 0.6);
+    }
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
     .btn-main,

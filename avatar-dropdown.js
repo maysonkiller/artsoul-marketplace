@@ -57,11 +57,23 @@
                 }
             }
 
-            // Network mapping with SVG icons (only supported networks)
+            // Network mapping with proper icons (matching AppKit)
             const networks = {
-                84532: { name: 'Base Sepolia', icon: '🔵', color: '#0052FF' },
-                11155111: { name: 'Ethereum Sepolia', icon: '⟠', color: '#627EEA' },
-                2025: { name: 'Rialo', icon: '🌐', color: '#00f5ff' }
+                84532: {
+                    name: 'Base Sepolia',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMiIgZmlsbD0iIzAwNTJGRiIvPjxwYXRoIGQ9Ik0xMiAyMEMxNi40MTgzIDIwIDIwIDE2LjQxODMgMjAgMTJDMjAgNy41ODE3MiAxNi40MTgzIDQgMTIgNEM3LjU4MTcyIDQgNCA3LjU4MTcyIDQgMTJDNCA5LjM0NzE1IDUuMDUzNTcgNi45NDI4MSA2Ljc4NTcxIDUuMjE0MjlDOC41MTc4NiAzLjQ4NTc2IDEwLjkyMjIgMi40MzIxNCAxMy41NzUgMi40MzIxNEMxNi4yMjc4IDIuNDMyMTQgMTguNjMyMiAzLjQ4NTc2IDIwLjM2NDMgNS4yMTQyOUMyMi4wOTY0IDYuOTQyODEgMjMuMTUgOS4zNDcxNSAyMy4xNSAxMkMyMy4xNSAxNC42NTI5IDIyLjA5NjQgMTcuMDU3MiAyMC4zNjQzIDE4Ljc4NTdDMTguNjMyMiAyMC41MTQyIDE2LjIyNzggMjEuNTY3OSAxMy41NzUgMjEuNTY3OUMxMC45MjIyIDIxLjU2NzkgOC41MTc4NiAyMC41MTQyIDYuNzg1NzEgMTguNzg1N0M1LjA1MzU3IDE3LjA1NzIgNCAxNC42NTI5IDQgMTJaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==',
+                    color: '#0052FF'
+                },
+                11155111: {
+                    name: 'Ethereum Sepolia',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMiIgZmlsbD0iIzYyN0VFQSIvPjxwYXRoIGQ9Ik0xMiA0TDYgMTJMMTIgMTZMMTggMTJMMTIgNFoiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEyIDE3TDYgMTNMMTIgMjBMMTggMTNMMTIgMTdaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==',
+                    color: '#627EEA'
+                },
+                2025: {
+                    name: 'Rialo',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMiIgZmlsbD0iIzAwZjVmZiIvPjxwYXRoIGQ9Ik0xMiA2VjE4TTYgMTJIMTgiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=',
+                    color: '#00f5ff'
+                }
             };
 
             // Return network info
@@ -179,7 +191,7 @@
                             border-radius: 0.75rem;
                             padding: 0.5rem;
                             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-                            z-index: 1000;
+                            z-index: 10000;
                         "
                     >
                         <!-- Theme Switcher -->
@@ -194,7 +206,7 @@
                         <!-- Network Switcher -->
                         <button
                             onclick="window.web3Modal?.open({ view: 'Networks' })"
-                            class="dropdown-item"
+                            class="dropdown-item network-switcher-btn"
                             style="
                                 display: flex;
                                 align-items: center;
@@ -210,7 +222,7 @@
                                 text-align: left;
                             "
                         >
-                            <span style="font-size: 1.25rem;">${networkInfo.icon}</span>
+                            <img src="${networkInfo.icon}" alt="${networkInfo.name}" style="width: 20px; height: 20px; border-radius: 50%;" onerror="this.style.display='none'" />
                             <span>${networkInfo.name}</span>
                         </button>
 
