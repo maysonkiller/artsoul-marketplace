@@ -849,7 +849,7 @@
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                                 {/* Add New Button */}
                                 <div
                                     onClick={handleQuickUpload}
@@ -915,11 +915,11 @@
                                                         onClick={() => handleCreateAuction(artwork)}
                                                         className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
                                                             isClassic
-                                                                ? 'bg-green-600 hover:bg-green-500 text-white'
-                                                                : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                                                                ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
+                                                                : 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30'
                                                         }`}
                                                     >
-                                                        🔥 Auction
+                                                        Create Auction
                                                     </button>
                                                 )}
                                                 {artwork.status === 'auction' && (
@@ -927,11 +927,11 @@
                                                         onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}
                                                         className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
                                                             isClassic
-                                                                ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                                                                : 'bg-purple-600 hover:bg-purple-500 text-white'
+                                                                ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
+                                                                : 'bg-purple-900/30 hover:bg-purple-900/50 text-purple-400 border border-purple-500/30'
                                                         }`}
                                                     >
-                                                        📊 View
+                                                        View Auction
                                                     </button>
                                                 )}
                                                 {artwork.status === 'sold' && (
@@ -939,22 +939,22 @@
                                                         onClick={() => handleRelistArtwork(artwork)}
                                                         className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
                                                             isClassic
-                                                                ? 'bg-yellow-600 hover:bg-yellow-500 text-white'
-                                                                : 'bg-orange-600 hover:bg-orange-500 text-white'
+                                                                ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
+                                                                : 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30'
                                                         }`}
                                                     >
-                                                        🔄 Relist
+                                                        Relist
                                                     </button>
                                                 )}
                                                 <button
                                                     onClick={() => handleDeleteArtwork(artwork)}
                                                     className={`px-3 py-2 rounded text-xs font-medium transition-all ${
                                                         isClassic
-                                                            ? 'bg-red-600 hover:bg-red-500 text-white'
-                                                            : 'bg-red-600 hover:bg-red-500 text-white'
+                                                            ? 'bg-gray-700 hover:bg-red-600 text-white border border-gray-600'
+                                                            : 'bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-500/30'
                                                     }`}
                                                 >
-                                                    🗑️
+                                                    Delete
                                                 </button>
                                             </div>
                                         </div>
