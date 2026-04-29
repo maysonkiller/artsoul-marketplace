@@ -71,7 +71,11 @@ let lastProcessedAddress = null;
  */
 window.updateNavButtons = function updateNavButtons(state) {
     const navButtons = document.getElementById('navButtons');
-    if (!navButtons) return;
+    if (!navButtons) {
+        // On React pages, wait for element to be available
+        setTimeout(() => updateNavButtons(state), 100);
+        return;
+    }
 
     if (state?.address) {
         // Connected: Show Avatar Dropdown
@@ -163,6 +167,13 @@ function renderNetworkBadge() {
  * Prevents duplicate connection attempts
  */
 window.safeConnectWallet = async () => {
+    // Check if we're in disconnecting state
+    if (sessionStorage.getItem('artsoul_disconnecting') === 'true') {
+        console.log('⏳ Waiting for disconnect to complete...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        sessionStorage.removeItem('artsoul_disconnecting');
+    }
+
     const btn = document.getElementById('connectBtn');
     if (btn) btn.disabled = true;
 
@@ -189,25 +200,34 @@ window.safeConnectWallet = async () => {
  * Clears all WalletConnect/AppKit cache
  */
 window.resetWalletConnection = async () => {
-    if (window.web3Modal) {
-        await window.web3Modal.disconnect();
-    }
+    try {
+        // Set disconnecting flag to prevent auto-reconnect
+        sessionStorage.setItem('artsoul_disconnecting', 'true');
 
-    // Clear all wallet-related localStorage
-    Object.keys(localStorage)
-        .filter(k =>
-            k.includes('walletconnect') ||
-            k.includes('wc@') ||
-            k.includes('reown') ||
-            k.includes('appkit')
-        )
-        .forEach(k => localStorage.removeItem(k));
+        if (window.web3Modal) {
+            await window.web3Modal.disconnect();
+        }
 
-    // Clear ArtSoul auth
-    localStorage.removeItem('artsoul_wallet');
-    localStorage.removeItem('artsoul_auth_method');
+        // Clear all wallet-related localStorage
+        Object.keys(localStorage)
+            .filter(k =>
+                k.includes('walletconnect') ||
+                k.includes('wc@') ||
+                k.includes('reown') ||
+                k.includes('appkit')
+            )
+            .forEach(k => localStorage.removeItem(k));
 
-    // Check if we're already on index.html
+        // Clear ArtSoul auth
+        localStorage.removeItem('artsoul_wallet');
+        localStorage.removeItem('artsoul_auth_method');
+
+        // Clear session flag after a delay
+        setTimeout(() => {
+            sessionStorage.removeItem('artsoul_disconnecting');
+        }, 1000);
+
+        // Check if we're already on index.html
     const isIndexPage = window.location.pathname.endsWith('index.html') ||
                         window.location.pathname === '/' ||
                         window.location.pathname.endsWith('/');

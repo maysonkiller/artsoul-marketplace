@@ -49,21 +49,30 @@
                 chainId = state?.chainId;
             }
 
-            // Network mapping with icons
+            // If no chainId from modal, try from provider
+            if (!chainId && window.ethereum) {
+                chainId = window.ethereum.chainId ? parseInt(window.ethereum.chainId, 16) : null;
+            }
+
+            // Network mapping with SVG icons (only supported networks)
             const networks = {
                 84532: { name: 'Base Sepolia', icon: '🔵', color: '#0052FF' },
                 11155111: { name: 'Ethereum Sepolia', icon: '⟠', color: '#627EEA' },
-                8453: { name: 'Base', icon: '🔵', color: '#0052FF' },
-                1: { name: 'Ethereum', icon: '⟠', color: '#627EEA' },
                 2025: { name: 'Rialo', icon: '🌐', color: '#00f5ff' }
             };
 
-            // Return network or default if not connected yet
+            // Return network info
             if (!chainId) {
-                return { name: 'Not Connected', icon: '○', color: '#888888' };
+                // If wallet connected but no chainId yet, show loading
+                return { name: 'Loading...', icon: '⏳', color: '#888888' };
             }
 
-            const network = networks[chainId] || { name: 'Unknown', icon: '?', color: '#888888' };
+            const network = networks[chainId];
+            if (!network) {
+                // Unsupported network
+                return { name: 'Unsupported', icon: '⚠️', color: '#ff6b6b' };
+            }
+
             return network;
         }
 
