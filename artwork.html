@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artwork - ArtSoul</title>
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="unified-styles.css?v=2">
+    <link rel="stylesheet" href="button-effects.css?v=2">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        (function() {
+            const theme = localStorage.getItem('artsoul_theme') || 'classic';
+            document.documentElement.className = theme;
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.className = theme;
+                });
+            } else {
+                document.body.className = theme;
+            }
+        })();
+    </script>
+    <script src="theme-sync.js"></script>
+    <script type="module" src="supabase-client.js"></script>
+    <script type="module" src="supabase-auth.js"></script>
+    <script type="module" src="appkit-init.js"></script>
+    <script type="module" src="contracts-integration.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function ArtworkPage() {
+            const [theme, setTheme] = useState('classic');
+            const [artwork, setArtwork] = useState(null);
+            const [auction, setAuction] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [bidAmount, setBidAmount] = useState('');
+            const [timeLeft, setTimeLeft] = useState('');
+
+            const isClassic = theme === 'classic';
+            const artworkId = new URLSearchParams(window.location.search).get('id');
+
+            useEffect(() => {
+                const savedTheme = window.ThemeSync?.getTheme() || 'classic';
+                setTheme(savedTheme);
+                window.setThemeReact = (newTheme) => setTheme(newTheme);
+            }, []);
+
+            useEffect(() => {
+                if (artworkId) {
+                    loadArtwork();
+                }
+            }, [artworkId]);
+
+            useEffect(() => {
+                if (auction && !auction.ended) {
+                    const interval = setInterval(updateTimeLeft, 1000);
+                    return () => clearInterval(interval);
+                }
+            }, [auction]);
+
+            async function loadArtwork() {
+                try {
+                    // Load from Supabase
+                    const data = await window.ArtSoulDB.getArtwork(artworkId);
+                    setArtwork(data);
+
+                    // Load blockchain data if available
+                    if (data.blockchain_id && window.ArtSoulContracts) {
+                        try {
+                            const provider = await window.web3Modal?.getWalletProvider();
+                            if (provider) {
+                                await window.ArtSoulContracts.init(provider);
+                                const blockchainArtwork = await window.ArtSoulContracts.getArtwork(data.blockchain_id);
+
+                                // Load auction if status is AUCTION
+                                if (blockchainArtwork.status === 1) {
+                                    const auctionData = await window.ArtSoulContracts.getAuction(data.blockchain_id);
+                                    setAuction(auctionData);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error loading blockchain data:', error);
+                        }
+                    }
+
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Error loading artwork:', error);
+                    alert('Failed to load artwork');
+                    setLoading(false);
+                }
+            }
+
+            function updateTimeLeft() {
+                if (!auction || auction.ended) return;
+
+                const now = Math.floor(Date.now() / 1000);
+                const remaining = auction.endTime - now;
+
+                if (remaining <= 0) {
+                    setTimeLeft('Auction ended');
+                    return;
+                }
+
+                const days = Math.floor(remaining / 86400);
+                const hours = Math.floor((remaining % 86400) / 3600);
+                const minutes = Math.floor((remaining % 3600) / 60);
+                const seconds = remaining % 60;
+
+                setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+            }
+
+            async function handlePlaceBid() {
+                if (!bidAmount || parseFloat(bidAmount) <= 0) {
+                    alert('Please enter a valid bid amount');
+                    return;
+                }
+
+                const minBid = auction.highestBid === '0.0'
+                    ? parseFloat(auction.startingPrice)
+                    : parseFloat(auction.highestBid) * 1.05;
+
+                if (parseFloat(bidAmount) < minBid) {
+                    alert(`Minimum bid is ${minBid.toFixed(4)} ETH`);
+                    return;
+                }
+
+                try {
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    await window.ArtSoulContracts.init(provider);
+                    await window.ArtSoulContracts.placeBid(artwork.blockchain_id, bidAmount);
+
+                    alert('✅ Bid placed successfully!');
+                    loadArtwork(); // Reload to show new bid
+                } catch (error) {
+                    console.error('Bid failed:', error);
+                    alert('Failed to place bid: ' + (error.message || 'Unknown error'));
+                }
+            }
+
+            async function handleEndAuction() {
+                if (!confirm('End this auction?')) return;
+
+                try {
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    await window.ArtSoulContracts.init(provider);
+                    await window.ArtSoulContracts.endAuction(artwork.blockchain_id);
+
+                    alert('✅ Auction ended!');
+                    loadArtwork();
+                } catch (error) {
+                    console.error('End auction failed:', error);
+                    alert('Failed to end auction: ' + (error.message || 'Unknown error'));
+                }
+            }
+
+            if (loading) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="text-2xl opacity-50">Loading...</div>
+                    </div>
+                );
+            }
+
+            if (!artwork) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="text-2xl mb-4">Artwork not found</div>
+                            <a href="index.html" className="btn-main">Back to Gallery</a>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen">
+                    {/* Header */}
+                    <header className={`sticky top-0 z-50 backdrop-blur-xl ${isClassic ? 'bg-gray-900/95 border-b border-gray-700' : 'bg-black/80 border-b border-cyan-500/30'}`}>
+                        <div className="container mx-auto px-4 py-4">
+                            <div className="flex items-center justify-between">
+                                <a href="index.html" className="text-2xl font-bold">ArtSoul</a>
+                                <div className="flex items-center gap-3">
+                                    <div className="theme-toggle">
+                                        <button onClick={() => window.setTheme('classic')} id="classicBtn" className="theme-btn">Classic</button>
+                                        <button onClick={() => window.setTheme('future')} id="futureBtn" className="theme-btn">Future</button>
+                                    </div>
+                                    <div id="networkBadge"></div>
+                                    <div id="navButtons"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Content */}
+                    <main className="container mx-auto px-4 py-12">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                            {/* Artwork Image */}
+                            <div>
+                                <img
+                                    src={artwork.file_url}
+                                    alt={artwork.title}
+                                    className={`w-full rounded-xl ${isClassic ? 'border border-gray-700' : 'border border-cyan-500/30'}`}
+                                />
+                            </div>
+
+                            {/* Artwork Info */}
+                            <div className="space-y-6">
+                                <div>
+                                    <h1 className="text-4xl font-bold mb-2">{artwork.title}</h1>
+                                    <p className="opacity-70">{artwork.description}</p>
+                                </div>
+
+                                {/* Creator */}
+                                <div className={`p-4 rounded-lg ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
+                                    <div className="text-sm opacity-70 mb-1">Creator</div>
+                                    <div className="font-mono">{artwork.creator_id?.slice(0, 10)}...{artwork.creator_id?.slice(-8)}</div>
+                                </div>
+
+                                {/* Auction Info */}
+                                {auction && (
+                                    <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
+                                        <h3 className="text-2xl font-bold mb-4">🔥 Live Auction</h3>
+
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between">
+                                                <span className="opacity-70">Starting Price:</span>
+                                                <span className="font-bold">{auction.startingPrice} ETH</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="opacity-70">Current Bid:</span>
+                                                <span className="font-bold text-2xl">{auction.highestBid === '0.0' ? 'No bids yet' : `${auction.highestBid} ETH`}</span>
+                                            </div>
+                                            {auction.highestBidder !== '0x0000000000000000000000000000000000000000' && (
+                                                <div className="flex justify-between">
+                                                    <span className="opacity-70">Highest Bidder:</span>
+                                                    <span className="font-mono text-sm">{auction.highestBidder.slice(0, 10)}...</span>
+                                                </div>
+                                            )}
+                                            <div className="flex justify-between">
+                                                <span className="opacity-70">Time Left:</span>
+                                                <span className="font-bold">{timeLeft}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Bid Input */}
+                                        {!auction.ended && (
+                                            <div className="mt-6 space-y-3">
+                                                <input
+                                                    type="number"
+                                                    step="0.001"
+                                                    placeholder="Enter bid amount (ETH)"
+                                                    value={bidAmount}
+                                                    onChange={(e) => setBidAmount(e.target.value)}
+                                                    className={`w-full px-4 py-3 rounded-lg ${isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-gray-800/50 border border-cyan-500/30'}`}
+                                                />
+                                                <button onClick={handlePlaceBid} className="btn-main w-full">
+                                                    Place Bid
+                                                </button>
+                                                <div className="text-sm opacity-50 text-center">
+                                                    Minimum: {auction.highestBid === '0.0' ? auction.startingPrice : (parseFloat(auction.highestBid) * 1.05).toFixed(4)} ETH
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* End Auction (for creator) */}
+                                        {auction.ended === false && Date.now() / 1000 >= auction.endTime && (
+                                            <button onClick={handleEndAuction} className="btn-secondary w-full mt-4">
+                                                End Auction
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Triple Valuation */}
+                                <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
+                                    <h3 className="text-xl font-bold mb-4">💎 Triple Valuation</h3>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between">
+                                            <span className="opacity-70">Creator Value:</span>
+                                            <span className="font-bold">{artwork.creator_value || '0'} ETH</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="opacity-70">Community Value:</span>
+                                            <span className="font-bold">{artwork.community_value || 'Not rated'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="opacity-70">System Value (AI):</span>
+                                            <span className="font-bold">{artwork.system_value || 'Analyzing...'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Back Button */}
+                                <a href="index.html" className="btn-secondary w-full block text-center">
+                                    ← Back to Gallery
+                                </a>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<ArtworkPage />, document.getElementById('app'));
+    </script>
+</body>
+</html>
