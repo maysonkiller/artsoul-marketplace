@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artwork - ArtSoul</title>
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
+
+    <!-- Open Graph / Twitter Card meta tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ArtSoul Marketplace">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ArtSoul">
+    <meta id="og-title" property="og:title" content="Artwork - ArtSoul">
+    <meta id="og-description" property="og:description" content="View this artwork on ArtSoul Marketplace">
+    <meta id="og-image" property="og:image" content="">
+    <meta id="og-url" property="og:url" content="">
+    <meta id="twitter-title" name="twitter:title" content="Artwork - ArtSoul">
+    <meta id="twitter-description" name="twitter:description" content="View this artwork on ArtSoul Marketplace">
+    <meta id="twitter-image" name="twitter:image" content="">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="unified-styles.css?v=2">
     <link rel="stylesheet" href="button-effects.css?v=2">
@@ -190,6 +204,17 @@
                     const data = await window.ArtSoulDB.getArtwork(artworkId);
                     console.log('[Artwork] Loaded data:', data);
                     setArtwork(data);
+
+                    // Update meta tags for social sharing
+                    const pageUrl = window.location.href;
+                    document.getElementById('og-title').setAttribute('content', data.title + ' - ArtSoul');
+                    document.getElementById('og-description').setAttribute('content', data.description || 'View this artwork on ArtSoul Marketplace');
+                    document.getElementById('og-image').setAttribute('content', data.file_url);
+                    document.getElementById('og-url').setAttribute('content', pageUrl);
+                    document.getElementById('twitter-title').setAttribute('content', data.title + ' - ArtSoul');
+                    document.getElementById('twitter-description').setAttribute('content', data.description || 'View this artwork on ArtSoul Marketplace');
+                    document.getElementById('twitter-image').setAttribute('content', data.file_url);
+                    document.title = data.title + ' - ArtSoul';
 
                     // Load creator profile
                     if (data.creator_id) {
@@ -497,7 +522,7 @@
 
                                 {/* Creator */}
                                 <div className={`p-4 rounded-lg ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                    <div className="flex items-start justify-between mb-2">
+                                    <div className="flex items-center justify-between mb-2">
                                         <div className="text-sm opacity-70">Created by</div>
                                         <button
                                             onClick={() => {
@@ -506,10 +531,10 @@
                                                 const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
                                                 window.open(twitterUrl, '_blank', 'width=550,height=420');
                                             }}
-                                            className="hover:opacity-70 transition-opacity"
+                                            className="hover:opacity-70 transition-opacity p-2"
                                             title="Share on X"
                                         >
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                             </svg>
                                         </button>
