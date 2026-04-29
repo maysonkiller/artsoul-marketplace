@@ -193,6 +193,27 @@ async function getArtworksByCreator(creatorId) {
     return data;
 }
 
+async function getArtworksByOwner(ownerAddress) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .select(`
+            *,
+            creator:profiles!creator_id(*)
+        `)
+        .eq('owner_address', ownerAddress)
+        .neq('creator_id', ownerAddress)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching owned artworks:', error);
+        throw error;
+    }
+
+    return data;
+}
+
 async function updateArtwork(artworkId, updates) {
     const supabase = await initSupabase();
 
@@ -546,6 +567,7 @@ window.ArtSoulDB = {
     getAllArtworks,
     getArtwork,
     getArtworksByCreator,
+    getArtworksByOwner,
     updateArtwork,
     deleteArtwork,
     // Storage

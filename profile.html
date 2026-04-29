@@ -317,8 +317,7 @@
                         artworks = await window.ArtSoulDB.getArtworksByCreator(profile.wallet_address);
                     } else if (selectedGallery === 'collected') {
                         // Load artworks owned by this user (bought at auctions)
-                        // TODO: implement getArtworksByOwner when we have ownership tracking
-                        artworks = [];
+                        artworks = await window.ArtSoulDB.getArtworksByOwner(profile.wallet_address);
                     }
 
                     // Filter by status

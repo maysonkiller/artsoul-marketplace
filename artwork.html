@@ -236,7 +236,25 @@
                     }
 
                     await window.ArtSoulContracts.init(provider);
+
+                    // Get auction details to find the winner
+                    const auctionData = await window.ArtSoulContracts.getAuction(artwork.blockchain_id);
+
+                    // End auction on blockchain
                     await window.ArtSoulContracts.endAuction(artwork.blockchain_id);
+
+                    // Transfer ownership in database if there was a winner
+                    if (auctionData.highestBidder && auctionData.highestBidder !== '0x0000000000000000000000000000000000000000') {
+                        await window.ArtSoulDB.updateArtwork(artwork.id, {
+                            owner_address: auctionData.highestBidder.toLowerCase(),
+                            status: 'sold'
+                        });
+                    } else {
+                        // No bids - mark as auction failed
+                        await window.ArtSoulDB.updateArtwork(artwork.id, {
+                            status: 'draft'
+                        });
+                    }
 
                     alert('Auction ended!');
                     loadArtwork();
