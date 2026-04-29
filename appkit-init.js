@@ -378,6 +378,15 @@ async function initializeAppKit() {
                 console.log('🔐 Starting automatic authentication...');
                 if (!isAuthenticating) {
                     isAuthenticating = true;
+
+                    // Set timeout to reset flag after 30 seconds
+                    const authTimeout = setTimeout(() => {
+                        if (isAuthenticating) {
+                            console.warn('⚠️ Authentication timeout - resetting flag');
+                            isAuthenticating = false;
+                        }
+                    }, 30000);
+
                     try {
                         if (window.ensureAuthenticated) {
                             await window.ensureAuthenticated();
@@ -387,6 +396,7 @@ async function initializeAppKit() {
                         console.error('❌ Auto-authentication failed:', error);
                         // Continue anyway - user can try again later
                     } finally {
+                        clearTimeout(authTimeout);
                         isAuthenticating = false;
                     }
                 }

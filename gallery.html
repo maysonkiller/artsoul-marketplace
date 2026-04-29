@@ -363,8 +363,12 @@
                                     >
                                         {/* Image */}
                                         <div className="aspect-video overflow-hidden bg-black" style={{maxHeight: '200px'}}>
-                                            {artwork.file_url ? (
-                                                <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />
+                                            {artwork.file_url && window.ArtSoulSecurity?.isValidStorageUrl(artwork.file_url) ? (
+                                                <img
+                                                    src={artwork.file_url}
+                                                    alt={window.ArtSoulSecurity?.sanitizeText(artwork.title) || 'Artwork'}
+                                                    className="w-full h-full object-contain"
+                                                />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center" style={{
                                                     background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'linear-gradient(135deg, rgba(191, 0, 255, 0.2), rgba(0, 245, 255, 0.2))'

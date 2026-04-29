@@ -8,6 +8,32 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // Export for OAuth integration
 window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
 
+// Security: URL validation
+const ALLOWED_STORAGE_DOMAIN = 'bexigvqrunomwtjsxlej.supabase.co';
+
+function isValidStorageUrl(url) {
+    if (!url || typeof url !== 'string') return false;
+    try {
+        const urlObj = new URL(url);
+        return urlObj.hostname === ALLOWED_STORAGE_DOMAIN;
+    } catch {
+        return false;
+    }
+}
+
+function sanitizeText(text) {
+    if (!text || typeof text !== 'string') return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Export security functions
+window.ArtSoulSecurity = {
+    isValidStorageUrl,
+    sanitizeText
+};
+
 // Initialize Supabase client with auth support
 let supabaseClient = null;
 

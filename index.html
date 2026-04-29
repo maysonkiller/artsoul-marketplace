@@ -1709,20 +1709,53 @@
         function renderArtworks(artworks, containerId) {
             const container = document.getElementById(containerId);
             if (!artworks || artworks.length === 0) {
-                container.innerHTML = '<p class="text-center opacity-50">No artworks yet</p>';
+                container.textContent = 'No artworks yet';
+                container.className = 'text-center opacity-50';
                 return;
             }
 
-            container.innerHTML = artworks.map(art => `
-                <div class="artwork-card" onclick="viewArtwork('${art.id}')">
-                    <img src="${art.file_url}" alt="${art.title}" class="artwork-image">
-                    <div class="artwork-info">
-                        <h4 class="font-medium mb-1">${art.title}</h4>
-                        <p class="text-sm opacity-70 mb-2">${art.description || ''}</p>
-                        <p class="text-sm font-medium">${art.creator_estimated_value} ETH</p>
-                    </div>
-                </div>
-            `).join('');
+            // Clear container safely
+            container.innerHTML = '';
+
+            // Create elements safely without innerHTML
+            artworks.forEach(art => {
+                // Validate URL
+                if (!window.ArtSoulSecurity?.isValidStorageUrl(art.file_url)) {
+                    console.warn('Invalid artwork URL:', art.id);
+                    return;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'artwork-card';
+                card.onclick = () => viewArtwork(art.id);
+
+                const img = document.createElement('img');
+                img.src = art.file_url;
+                img.alt = window.ArtSoulSecurity?.sanitizeText(art.title) || 'Artwork';
+                img.className = 'artwork-image';
+
+                const info = document.createElement('div');
+                info.className = 'artwork-info';
+
+                const title = document.createElement('h4');
+                title.className = 'font-medium mb-1';
+                title.textContent = art.title;
+
+                const desc = document.createElement('p');
+                desc.className = 'text-sm opacity-70 mb-2';
+                desc.textContent = art.description || '';
+
+                const price = document.createElement('p');
+                price.className = 'text-sm font-medium';
+                price.textContent = `${art.creator_estimated_value} ETH`;
+
+                info.appendChild(title);
+                info.appendChild(desc);
+                info.appendChild(price);
+                card.appendChild(img);
+                card.appendChild(info);
+                container.appendChild(card);
+            });
         }
 
         function viewArtwork(id) {
@@ -1755,65 +1788,140 @@
                 }
 
                 // Always show 12 slots
-                const slots = [];
+                gallery.innerHTML = ''; // Clear first
+
                 for (let i = 0; i < 12; i++) {
                     if (artworks && artworks[i]) {
                         const art = artworks[i];
-                        slots.push(`
-                            <a href="artwork.html?id=${art.id}" class="card rounded-xl overflow-hidden">
-                                <div class="aspect-square overflow-hidden bg-black">
-                                    ${art.file_url
-                                        ? `<img src="${art.file_url}" alt="${art.title}" class="w-full h-full object-contain" />`
-                                        : `<div class="w-full h-full flex items-center justify-center" style="background: #010101;">
-                                             <p class="text-2xl font-light opacity-30">No Image</p>
-                                           </div>`
-                                    }
-                                </div>
-                                <div class="p-4">
-                                    <h3 class="font-semibold text-lg mb-1 truncate">${art.title}</h3>
-                                    <p class="text-sm opacity-70 mb-2 line-clamp-2">${art.description || ''}</p>
-                                    <p class="text-sm font-bold">${art.creator_value || '0'} ETH</p>
-                                </div>
-                            </a>
-                        `);
+
+                        // Validate URL
+                        if (!window.ArtSoulSecurity?.isValidStorageUrl(art.file_url)) {
+                            console.warn('Invalid artwork URL:', art.id);
+                            continue;
+                        }
+
+                        const card = document.createElement('a');
+                        card.href = `artwork.html?id=${art.id}`;
+                        card.className = 'card rounded-xl overflow-hidden';
+
+                        const imageContainer = document.createElement('div');
+                        imageContainer.className = 'aspect-square overflow-hidden bg-black';
+
+                        if (art.file_url) {
+                            const img = document.createElement('img');
+                            img.src = art.file_url;
+                            img.alt = window.ArtSoulSecurity?.sanitizeText(art.title) || 'Artwork';
+                            img.className = 'w-full h-full object-contain';
+                            imageContainer.appendChild(img);
+                        } else {
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'w-full h-full flex items-center justify-center';
+                            placeholder.style.background = '#010101';
+                            const text = document.createElement('p');
+                            text.className = 'text-2xl font-light opacity-30';
+                            text.textContent = 'No Image';
+                            placeholder.appendChild(text);
+                            imageContainer.appendChild(placeholder);
+                        }
+
+                        const info = document.createElement('div');
+                        info.className = 'p-4';
+
+                        const title = document.createElement('h3');
+                        title.className = 'font-semibold text-lg mb-1 truncate';
+                        title.textContent = art.title;
+
+                        const desc = document.createElement('p');
+                        desc.className = 'text-sm opacity-70 mb-2 line-clamp-2';
+                        desc.textContent = art.description || '';
+
+                        const price = document.createElement('p');
+                        price.className = 'text-sm font-bold';
+                        price.textContent = `${art.creator_value || '0'} ETH`;
+
+                        info.appendChild(title);
+                        info.appendChild(desc);
+                        info.appendChild(price);
+                        card.appendChild(imageContainer);
+                        card.appendChild(info);
+                        gallery.appendChild(card);
                     } else {
                         // Coming Soon placeholder
-                        slots.push(`
-                            <div class="card rounded-xl overflow-hidden opacity-50">
-                                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                                    <p class="text-2xl font-light opacity-30">Coming Soon</p>
-                                </div>
-                                <div class="p-4">
-                                    <h3 class="font-semibold text-lg mb-1">Coming Soon</h3>
-                                    <p class="text-sm opacity-70 mb-2">New artwork will appear here</p>
-                                    <p class="text-sm font-bold">- ETH</p>
-                                </div>
-                            </div>
-                        `);
+                        const card = document.createElement('div');
+                        card.className = 'card rounded-xl overflow-hidden opacity-50';
+
+                        const imageContainer = document.createElement('div');
+                        imageContainer.className = 'aspect-square flex items-center justify-center';
+                        imageContainer.style.background = '#010101';
+
+                        const imageText = document.createElement('p');
+                        imageText.className = 'text-2xl font-light opacity-30';
+                        imageText.textContent = 'Coming Soon';
+                        imageContainer.appendChild(imageText);
+
+                        const info = document.createElement('div');
+                        info.className = 'p-4';
+
+                        const title = document.createElement('h3');
+                        title.className = 'font-semibold text-lg mb-1';
+                        title.textContent = 'Coming Soon';
+
+                        const desc = document.createElement('p');
+                        desc.className = 'text-sm opacity-70 mb-2';
+                        desc.textContent = 'New artwork will appear here';
+
+                        const price = document.createElement('p');
+                        price.className = 'text-sm font-bold';
+                        price.textContent = '- ETH';
+
+                        info.appendChild(title);
+                        info.appendChild(desc);
+                        info.appendChild(price);
+                        card.appendChild(imageContainer);
+                        card.appendChild(info);
+                        gallery.appendChild(card);
                     }
                 }
-
-                gallery.innerHTML = slots.join('');
 
             } catch (error) {
                 console.error('Failed to load artworks:', error);
                 // Show 12 Coming Soon slots on error
-                const slots = [];
+                gallery.innerHTML = '';
                 for (let i = 0; i < 12; i++) {
-                    slots.push(`
-                        <div class="card rounded-xl overflow-hidden opacity-50">
-                            <div class="aspect-square flex items-center justify-center" style="background: #010101;">
-                                <p class="text-2xl font-light opacity-30">Coming Soon</p>
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-semibold text-lg mb-1">Coming Soon</h3>
-                                <p class="text-sm opacity-70 mb-2">New artwork will appear here</p>
-                                <p class="text-sm font-bold">- ETH</p>
-                            </div>
-                        </div>
-                    `);
+                    const card = document.createElement('div');
+                    card.className = 'card rounded-xl overflow-hidden opacity-50';
+
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'aspect-square flex items-center justify-center';
+                    imageContainer.style.background = '#010101';
+
+                    const imageText = document.createElement('p');
+                    imageText.className = 'text-2xl font-light opacity-30';
+                    imageText.textContent = 'Coming Soon';
+                    imageContainer.appendChild(imageText);
+
+                    const info = document.createElement('div');
+                    info.className = 'p-4';
+
+                    const title = document.createElement('h3');
+                    title.className = 'font-semibold text-lg mb-1';
+                    title.textContent = 'Coming Soon';
+
+                    const desc = document.createElement('p');
+                    desc.className = 'text-sm opacity-70 mb-2';
+                    desc.textContent = 'New artwork will appear here';
+
+                    const price = document.createElement('p');
+                    price.className = 'text-sm font-bold';
+                    price.textContent = '- ETH';
+
+                    info.appendChild(title);
+                    info.appendChild(desc);
+                    info.appendChild(price);
+                    card.appendChild(imageContainer);
+                    card.appendChild(info);
+                    gallery.appendChild(card);
                 }
-                gallery.innerHTML = slots.join('');
             }
         }
 

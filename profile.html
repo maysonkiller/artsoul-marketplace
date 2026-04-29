@@ -464,6 +464,18 @@
                         return;
                     }
 
+                    // Verify ownership
+                    const walletAddress = window.getCurrentWalletAddress?.();
+                    if (!walletAddress) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    if (artwork.creator_id?.toLowerCase() !== walletAddress.toLowerCase()) {
+                        alert('You can only delete your own artworks');
+                        return;
+                    }
+
                     // Initialize contracts
                     if (!window.ArtSoulContracts.marketplaceContract) {
                         await window.ArtSoulContracts.init(provider);
@@ -476,7 +488,7 @@
                     // Delete from Supabase
                     await window.ArtSoulDB.deleteArtwork(artwork.id);
 
-                    alert('✅ Artwork deleted successfully!');
+                    alert('Artwork deleted successfully!');
                     loadMyArtworks(); // Reload artworks
                 } catch (error) {
                     console.error('Delete failed:', error);
@@ -499,6 +511,18 @@
                     const provider = await window.web3Modal?.getWalletProvider();
                     if (!provider) {
                         alert('Please connect your wallet');
+                        return;
+                    }
+
+                    // Verify ownership
+                    const walletAddress = window.getCurrentWalletAddress?.();
+                    if (!walletAddress) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    if (artwork.creator_id?.toLowerCase() !== walletAddress.toLowerCase()) {
+                        alert('You can only relist your own artworks');
                         return;
                     }
 

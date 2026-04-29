@@ -506,11 +506,15 @@
                         <div className="grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-0">
                             {/* Artwork Image */}
                             <div className="w-full h-screen sticky top-0 bg-black flex items-center justify-center">
-                                <img
-                                    src={artwork.file_url}
-                                    alt={artwork.title}
-                                    className="w-full h-full object-contain"
-                                />
+                                {artwork.file_url && window.ArtSoulSecurity?.isValidStorageUrl(artwork.file_url) ? (
+                                    <img
+                                        src={artwork.file_url}
+                                        alt={window.ArtSoulSecurity?.sanitizeText(artwork.title) || 'Artwork'}
+                                        className="w-full h-full object-contain"
+                                    />
+                                ) : (
+                                    <div className="text-2xl opacity-50">Invalid image URL</div>
+                                )}
                             </div>
 
                             {/* Artwork Info */}
