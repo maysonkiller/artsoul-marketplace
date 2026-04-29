@@ -32,6 +32,9 @@
                     if (!window.location.pathname.includes('profile.html')) {
                         localStorage.setItem('artsoul_first_time', 'true');
                         window.location.href = 'profile.html';
+                    } else {
+                        // On profile page without profile - show wallet info
+                        this.renderWalletInfo(walletAddress);
                     }
                     return;
                 }
@@ -39,6 +42,8 @@
                 this.render();
             } catch (error) {
                 console.error('❌ Failed to load profile:', error);
+                // Show connect button on error
+                this.renderConnectButton();
             }
         }
 
@@ -561,6 +566,44 @@
                 >
                     Connect Wallet
                 </button>
+            `;
+        }
+
+        /**
+         * Render wallet info when connected but no profile
+         */
+        renderWalletInfo(walletAddress) {
+            const container = document.getElementById('avatarButton');
+            if (!container) return;
+
+            const shortAddress = `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`;
+
+            container.innerHTML = `
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.5rem;
+                    background: rgba(169, 221, 211, 0.1);
+                    border: 1px solid currentColor;
+                    font-size: 0.875rem;
+                ">
+                    <span>${shortAddress}</span>
+                    <button
+                        onclick="window.web3Modal?.open()"
+                        style="
+                            padding: 0.25rem 0.5rem;
+                            border-radius: 0.25rem;
+                            background: rgba(169, 221, 211, 0.2);
+                            border: none;
+                            cursor: pointer;
+                            font-size: 0.75rem;
+                        "
+                    >
+                        Change
+                    </button>
+                </div>
             `;
         }
     }
