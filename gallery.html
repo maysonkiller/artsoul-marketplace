@@ -367,7 +367,14 @@
                                             {artwork.file_url && window.ArtSoulSecurity?.isValidStorageUrl(artwork.file_url) ? (
                                                 <>
                                                     {/* Video Preview */}
-                                                    {artwork.file_type && (artwork.file_type.toLowerCase() === 'video' || ['mp4', 'webm', 'mov'].includes(artwork.file_type.toLowerCase())) ? (
+                                                    {(() => {
+                                                        const fileType = artwork.file_type?.toLowerCase() || '';
+                                                        const url = artwork.file_url?.toLowerCase() || '';
+                                                        const isVideo = fileType === 'video' ||
+                                                                       ['mp4', 'webm', 'mov'].includes(fileType) ||
+                                                                       (!fileType && (url.includes('.mp4') || url.includes('.webm') || url.includes('.mov')));
+                                                        return isVideo;
+                                                    })() ? (
                                                         <>
                                                             <video
                                                                 src={artwork.file_url}
@@ -380,7 +387,14 @@
                                                                 <span>Video</span>
                                                             </div>
                                                         </>
-                                                    ) : artwork.file_type && (artwork.file_type.toLowerCase() === 'audio' || artwork.file_type.toLowerCase() === 'music' || ['mp3', 'wav', 'ogg'].includes(artwork.file_type.toLowerCase())) ? (
+                                                    ) : (() => {
+                                                        const fileType = artwork.file_type?.toLowerCase() || '';
+                                                        const url = artwork.file_url?.toLowerCase() || '';
+                                                        const isAudio = fileType === 'audio' || fileType === 'music' ||
+                                                                       ['mp3', 'wav', 'ogg'].includes(fileType) ||
+                                                                       (!fileType && (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')));
+                                                        return isAudio;
+                                                    })() ? (
                                                         <>
                                                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/30 to-cyan-900/30">
                                                                 <div className="text-8xl">🎵</div>

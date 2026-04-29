@@ -1735,8 +1735,20 @@
                 imgContainer.style.cssText = 'position: relative; width: 100%; aspect-ratio: 1;';
 
                 const fileType = art.file_type?.toLowerCase() || '';
-                const isVideo = fileType === 'video' || ['mp4', 'webm', 'mov', 'ogg'].includes(fileType);
-                const isAudio = fileType === 'audio' || fileType === 'music' || ['mp3', 'wav', 'ogg'].includes(fileType);
+
+                // Fallback: detect file type from URL if file_type is not set
+                let detectedType = fileType;
+                if (!detectedType && art.file_url) {
+                    const url = art.file_url.toLowerCase();
+                    if (url.includes('.mp4') || url.includes('.webm') || url.includes('.mov') || url.includes('.ogg')) {
+                        detectedType = 'video';
+                    } else if (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')) {
+                        detectedType = 'music';
+                    }
+                }
+
+                const isVideo = detectedType === 'video' || ['mp4', 'webm', 'mov', 'ogg'].includes(detectedType);
+                const isAudio = detectedType === 'audio' || detectedType === 'music' || ['mp3', 'wav', 'ogg'].includes(detectedType);
 
                 if (isVideo) {
                     const video = document.createElement('video');
