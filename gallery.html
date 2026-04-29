@@ -363,13 +363,28 @@
                                         }}
                                     >
                                         {/* Image */}
-                                        <div className="aspect-square overflow-hidden bg-black">
+                                        <div className="aspect-square overflow-hidden bg-black relative">
                                             {artwork.file_url && window.ArtSoulSecurity?.isValidStorageUrl(artwork.file_url) ? (
-                                                <img
-                                                    src={artwork.file_url}
-                                                    alt={window.ArtSoulSecurity?.sanitizeText(artwork.title) || 'Artwork'}
-                                                    className="w-full h-full object-contain"
-                                                />
+                                                <>
+                                                    <img
+                                                        src={artwork.file_url}
+                                                        alt={window.ArtSoulSecurity?.sanitizeText(artwork.title) || 'Artwork'}
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                    {/* Media Type Indicator */}
+                                                    {artwork.file_type && (artwork.file_type.toLowerCase() === 'video' || ['mp4', 'webm', 'mov'].includes(artwork.file_type.toLowerCase())) && (
+                                                        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
+                                                            <span>▶️</span>
+                                                            <span>Video</span>
+                                                        </div>
+                                                    )}
+                                                    {artwork.file_type && (artwork.file_type.toLowerCase() === 'audio' || ['mp3', 'wav', 'ogg'].includes(artwork.file_type.toLowerCase())) && (
+                                                        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
+                                                            <span>🎵</span>
+                                                            <span>Audio</span>
+                                                        </div>
+                                                    )}
+                                                </>
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center" style={{
                                                     background: isClassic ? 'rgba(232, 227, 213, 0.05)' : 'linear-gradient(135deg, rgba(191, 0, 255, 0.2), rgba(0, 245, 255, 0.2))'

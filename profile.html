@@ -913,9 +913,24 @@
                                         }`}
                                     >
                                         {/* Artwork Image */}
-                                        <div className="aspect-square cursor-pointer bg-black" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
+                                        <div className="aspect-square cursor-pointer bg-black relative" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
                                             {artwork.file_url ? (
-                                                <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />
+                                                <>
+                                                    <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />
+                                                    {/* Media Type Indicator */}
+                                                    {artwork.file_type && (artwork.file_type.toLowerCase() === 'video' || ['mp4', 'webm', 'mov'].includes(artwork.file_type.toLowerCase())) && (
+                                                        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
+                                                            <span>▶️</span>
+                                                            <span>Video</span>
+                                                        </div>
+                                                    )}
+                                                    {artwork.file_type && (artwork.file_type.toLowerCase() === 'audio' || ['mp3', 'wav', 'ogg'].includes(artwork.file_type.toLowerCase())) && (
+                                                        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
+                                                            <span>🎵</span>
+                                                            <span>Audio</span>
+                                                        </div>
+                                                    )}
+                                                </>
                                             ) : (
                                                 <div className={`w-full h-full flex items-center justify-center ${
                                                     isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
