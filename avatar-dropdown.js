@@ -17,9 +17,12 @@
         async init(walletAddress) {
             // If no wallet connected, show connect button
             if (!walletAddress) {
+                console.log('👤 No wallet address, showing connect button');
                 this.renderConnectButton();
                 return;
             }
+
+            console.log('👤 Initializing avatar dropdown for wallet:', walletAddress);
 
             try {
                 // Load profile from Supabase
@@ -28,16 +31,19 @@
                 // If no profile, show wallet info instead of redirecting
                 // Profile is optional - users can use the app with just wallet connection
                 if (!this.profile) {
-                    console.log('👤 No profile found, showing wallet info');
+                    console.log('👤 No profile found for wallet:', walletAddress);
+                    console.log('👤 Showing wallet info without profile');
                     this.renderWalletInfo(walletAddress);
                     return;
                 }
 
+                console.log('👤 Profile loaded:', this.profile.username || 'Anonymous');
                 this.render();
             } catch (error) {
                 console.error('❌ Failed to load profile:', error);
-                // Show connect button on error
-                this.renderConnectButton();
+                console.log('👤 Falling back to wallet info due to error');
+                // Show wallet info on error instead of connect button
+                this.renderWalletInfo(walletAddress);
             }
         }
 
@@ -185,12 +191,13 @@
                                 height: 40px;
                                 border-radius: 9999px;
                                 object-fit: cover;
+                                flex-shrink: 0;
                             "
                             onerror="this.src='${this.getDefaultAvatar()}'"
                         />
 
-                        <!-- Username & Address -->
-                        <div style="text-align: left;">
+                        <!-- Username & Address (hidden on mobile) -->
+                        <div class="avatar-info" style="text-align: left;">
                             <div style="font-weight: 600; font-size: 0.875rem;">${username}</div>
                             <div style="font-size: 0.75rem; opacity: 0.6; font-family: monospace;">${shortAddress}</div>
                         </div>
@@ -201,7 +208,7 @@
                             height="16"
                             viewBox="0 0 16 16"
                             fill="currentColor"
-                            style="transition: transform 0.3s;"
+                            style="transition: transform 0.3s; flex-shrink: 0;"
                             class="dropdown-arrow"
                         >
                             <path d="M4 6l4 4 4-4"/>
@@ -610,11 +617,12 @@
                                 height: 40px;
                                 border-radius: 9999px;
                                 object-fit: cover;
+                                flex-shrink: 0;
                             "
                         />
 
-                        <!-- Address -->
-                        <div style="text-align: left;">
+                        <!-- Address (hidden on mobile) -->
+                        <div class="avatar-info" style="text-align: left;">
                             <div style="font-weight: 600; font-size: 0.875rem;">Wallet Connected</div>
                             <div style="font-size: 0.75rem; opacity: 0.6; font-family: monospace;">${shortAddress}</div>
                         </div>
@@ -625,7 +633,7 @@
                             height="16"
                             viewBox="0 0 16 16"
                             fill="currentColor"
-                            style="transition: transform 0.3s;"
+                            style="transition: transform 0.3s; flex-shrink: 0;"
                             class="dropdown-arrow"
                         >
                             <path d="M4 6l4 4 4-4"/>
@@ -702,10 +710,10 @@
                                         color: inherit;
                                     "
                                 >
-                                    <span style="font-size: 1.25rem;">🏠</span>
                                     <span>Home</span>
                                 </a>
                             ` : ''}
+
                             ${!isProfilePage ? `
                                 <a
                                     href="profile.html"
@@ -722,30 +730,10 @@
                                         color: inherit;
                                     "
                                 >
-                                    <span style="font-size: 1.25rem;">👤</span>
                                     <span>My Profile</span>
                                 </a>
                             ` : ''}
-                            ${!isGalleryPage ? `
-                                <a
-                                    href="gallery.html"
-                                    class="dropdown-item"
-                                    style="
-                                        display: flex;
-                                        align-items: center;
-                                        gap: 0.75rem;
-                                        padding: 0.75rem;
-                                        border-radius: 0.5rem;
-                                        cursor: pointer;
-                                        transition: all 0.2s;
-                                        text-decoration: none;
-                                        color: inherit;
-                                    "
-                                >
-                                    <span style="font-size: 1.25rem;">🖼️</span>
-                                    <span>Gallery</span>
-                                </a>
-                            ` : ''}
+
                             ${!isUploadPage ? `
                                 <a
                                     href="upload.html"
@@ -762,10 +750,30 @@
                                         color: inherit;
                                     "
                                 >
-                                    <span style="font-size: 1.25rem;">⬆️</span>
-                                    <span>Upload</span>
+                                    <span>Upload Artwork</span>
                                 </a>
                             ` : ''}
+
+                            ${!isGalleryPage ? `
+                                <a
+                                    href="gallery.html"
+                                    class="dropdown-item"
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.75rem;
+                                        padding: 0.75rem;
+                                        border-radius: 0.5rem;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-decoration: none;
+                                        color: inherit;
+                                    "
+                                >
+                                    <span>Gallery</span>
+                                </a>
+                            ` : ''}
+
                             ${!isDocsPage ? `
                                 <a
                                     href="docs.html"
@@ -782,36 +790,33 @@
                                         color: inherit;
                                     "
                                 >
-                                    <span style="font-size: 1.25rem;">📚</span>
                                     <span>Docs</span>
                                 </a>
                             ` : ''}
+
+                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
+
+                            <button
+                                onclick="window.resetWalletConnection()"
+                                class="dropdown-item"
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.75rem;
+                                    padding: 0.75rem;
+                                    border-radius: 0.5rem;
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                    width: 100%;
+                                    border: none;
+                                    background: transparent;
+                                    color: inherit;
+                                    text-align: left;
+                                "
+                            >
+                                <span>Disconnect</span>
+                            </button>
                         </div>
-
-                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
-
-                        <!-- Disconnect Button -->
-                        <button
-                            onclick="window.resetWalletConnection()"
-                            class="dropdown-item"
-                            style="
-                                display: flex;
-                                align-items: center;
-                                gap: 0.75rem;
-                                padding: 0.75rem;
-                                border-radius: 0.5rem;
-                                cursor: pointer;
-                                transition: all 0.2s;
-                                width: 100%;
-                                border: none;
-                                background: transparent;
-                                color: inherit;
-                                text-align: left;
-                            "
-                        >
-                            <span style="font-size: 1.25rem;">🚪</span>
-                            <span>Disconnect</span>
-                        </button>
                     </div>
                 </div>
             `;
@@ -833,6 +838,21 @@
 
     // Export singleton
     window.AvatarDropdown = new AvatarDropdown();
+
+    // Add mobile-responsive CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Hide username/address text on mobile, show only avatar and arrow */
+        @media (max-width: 640px) {
+            .avatar-info {
+                display: none !important;
+            }
+            .avatar-button {
+                gap: 0.5rem !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 
     console.log('📦 Avatar Dropdown module loaded');
 })();

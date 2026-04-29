@@ -1730,10 +1730,43 @@
                 card.className = 'artwork-card';
                 card.onclick = () => viewArtwork(art.id);
 
-                const img = document.createElement('img');
-                img.src = art.file_url;
-                img.alt = window.ArtSoulSecurity?.sanitizeText(art.title) || 'Artwork';
-                img.className = 'artwork-image';
+                // Image container with media type detection
+                const imgContainer = document.createElement('div');
+                imgContainer.style.cssText = 'position: relative; width: 100%; aspect-ratio: 1;';
+
+                const fileType = art.file_type?.toLowerCase() || '';
+                const isVideo = fileType === 'video' || ['mp4', 'webm', 'mov', 'ogg'].includes(fileType);
+                const isAudio = fileType === 'audio' || ['mp3', 'wav', 'ogg'].includes(fileType);
+
+                if (isVideo) {
+                    const video = document.createElement('video');
+                    video.src = art.file_url;
+                    video.className = 'artwork-image';
+                    video.setAttribute('preload', 'metadata');
+                    video.muted = true;
+                    imgContainer.appendChild(video);
+
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem;';
+                    badge.innerHTML = '<span>▶️</span><span>Video</span>';
+                    imgContainer.appendChild(badge);
+                } else if (isAudio) {
+                    const audioPreview = document.createElement('div');
+                    audioPreview.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(6, 182, 212, 0.3));';
+                    audioPreview.innerHTML = '<div style="font-size: 5rem;">🎵</div>';
+                    imgContainer.appendChild(audioPreview);
+
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem;';
+                    badge.innerHTML = '<span>🎵</span><span>Audio</span>';
+                    imgContainer.appendChild(badge);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = art.file_url;
+                    img.alt = window.ArtSoulSecurity?.sanitizeText(art.title) || 'Artwork';
+                    img.className = 'artwork-image';
+                    imgContainer.appendChild(img);
+                }
 
                 const info = document.createElement('div');
                 info.className = 'artwork-info';
@@ -1753,7 +1786,7 @@
                 info.appendChild(title);
                 info.appendChild(desc);
                 info.appendChild(price);
-                card.appendChild(img);
+                card.appendChild(imgContainer);
                 card.appendChild(info);
                 container.appendChild(card);
             });

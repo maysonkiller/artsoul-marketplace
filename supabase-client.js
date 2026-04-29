@@ -100,6 +100,20 @@ async function getProfile(walletAddress) {
 async function updateProfile(walletAddress, updates) {
     const supabase = await initSupabase();
 
+    // Check if username is being updated and if it's already taken by another wallet
+    if (updates.username) {
+        const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('wallet_address')
+            .eq('username', updates.username)
+            .single();
+
+        // If username exists and belongs to a different wallet, throw error
+        if (existingProfile && existingProfile.wallet_address !== walletAddress) {
+            throw new Error('Username already taken');
+        }
+    }
+
     // Use upsert to create profile if it doesn't exist
     const profileData = {
         wallet_address: walletAddress,
