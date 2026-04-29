@@ -1735,46 +1735,85 @@
             if (!gallery) return;
 
             try {
-                const artworks = await window.ArtSoulDB.getAllArtworks();
+                let artworks = await window.ArtSoulDB.getAllArtworks();
 
-                if (!artworks || artworks.length === 0) {
-                    gallery.innerHTML = `
-                        <div class="col-span-full text-center py-12">
-                            <p class="text-xl opacity-50 mb-4">No artworks yet</p>
-                            <a href="upload.html" class="btn-main">Upload First Artwork</a>
-                        </div>
-                    `;
-                    return;
+                // Sort: first by sold status and highest price, then by newest
+                if (artworks && artworks.length > 0) {
+                    artworks.sort((a, b) => {
+                        // Sold artworks first
+                        if (a.status === 'sold' && b.status !== 'sold') return -1;
+                        if (a.status !== 'sold' && b.status === 'sold') return 1;
+
+                        // Among sold, sort by price (highest first)
+                        if (a.status === 'sold' && b.status === 'sold') {
+                            return (parseFloat(b.creator_value) || 0) - (parseFloat(a.creator_value) || 0);
+                        }
+
+                        // Otherwise sort by newest
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    });
                 }
 
-                // Show up to 12 artworks
-                const displayArtworks = artworks.slice(0, 12);
+                // Always show 12 slots
+                const slots = [];
+                for (let i = 0; i < 12; i++) {
+                    if (artworks && artworks[i]) {
+                        const art = artworks[i];
+                        slots.push(`
+                            <a href="artwork.html?id=${art.id}" class="card rounded-xl overflow-hidden">
+                                <div class="aspect-square overflow-hidden">
+                                    ${art.file_url
+                                        ? `<img src="${art.file_url}" alt="${art.title}" class="w-full h-full object-cover" />`
+                                        : `<div class="w-full h-full flex items-center justify-center" style="background: #010101;">
+                                             <p class="text-2xl font-light opacity-30">No Image</p>
+                                           </div>`
+                                    }
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-lg mb-1 truncate">${art.title}</h3>
+                                    <p class="text-sm opacity-70 mb-2 line-clamp-2">${art.description || ''}</p>
+                                    <p class="text-sm font-bold">${art.creator_value || '0'} ETH</p>
+                                </div>
+                            </a>
+                        `);
+                    } else {
+                        // Coming Soon placeholder
+                        slots.push(`
+                            <div class="card rounded-xl overflow-hidden opacity-50">
+                                <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                                    <p class="text-2xl font-light opacity-30">Coming Soon</p>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-lg mb-1">Coming Soon</h3>
+                                    <p class="text-sm opacity-70 mb-2">New artwork will appear here</p>
+                                    <p class="text-sm font-bold">- ETH</p>
+                                </div>
+                            </div>
+                        `);
+                    }
+                }
 
-                gallery.innerHTML = displayArtworks.map(art => `
-                    <a href="artwork.html?id=${art.id}" class="card rounded-xl overflow-hidden">
-                        <div class="aspect-square overflow-hidden">
-                            ${art.file_url
-                                ? `<img src="${art.file_url}" alt="${art.title}" class="w-full h-full object-cover" />`
-                                : `<div class="w-full h-full flex items-center justify-center" style="background: #010101;">
-                                     <p class="text-2xl font-light opacity-30">No Image</p>
-                                   </div>`
-                            }
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-lg mb-1 truncate">${art.title}</h3>
-                            <p class="text-sm opacity-70 mb-2 line-clamp-2">${art.description || ''}</p>
-                            <p class="text-sm font-bold">${art.creator_value || '0'} ETH</p>
-                        </div>
-                    </a>
-                `).join('');
+                gallery.innerHTML = slots.join('');
 
             } catch (error) {
                 console.error('Failed to load artworks:', error);
-                gallery.innerHTML = `
-                    <div class="col-span-full text-center py-12">
-                        <p class="text-xl opacity-50">Failed to load artworks</p>
-                    </div>
-                `;
+                // Show 12 Coming Soon slots on error
+                const slots = [];
+                for (let i = 0; i < 12; i++) {
+                    slots.push(`
+                        <div class="card rounded-xl overflow-hidden opacity-50">
+                            <div class="aspect-square flex items-center justify-center" style="background: #010101;">
+                                <p class="text-2xl font-light opacity-30">Coming Soon</p>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-lg mb-1">Coming Soon</h3>
+                                <p class="text-sm opacity-70 mb-2">New artwork will appear here</p>
+                                <p class="text-sm font-bold">- ETH</p>
+                            </div>
+                        </div>
+                    `);
+                }
+                gallery.innerHTML = slots.join('');
             }
         }
 

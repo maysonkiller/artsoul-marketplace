@@ -208,10 +208,15 @@ async function getArtworksByOwner(ownerAddress) {
 
     if (error) {
         console.error('Error fetching owned artworks:', error);
+        // Return empty array if owner_address column doesn't exist yet
+        if (error.code === '42703') {
+            console.warn('owner_address column not found - run supabase-ownership-migration.sql');
+            return [];
+        }
         throw error;
     }
 
-    return data;
+    return data || [];
 }
 
 async function updateArtwork(artworkId, updates) {
