@@ -29,58 +29,45 @@
     <script type="module" src="appkit-init.js"></script>
     <script type="module" src="contracts-integration.js"></script>
     <style>
-        /* Future mode text glow effect */
-        .future h1,
-        .future h3,
-        .future .font-bold {
-            animation: textGlow 3s ease-in-out infinite;
+        :root {
+            --bg-classic: #010101;
+            --text-classic: #a9ddd3;
+            --accent-classic: #a9ddd3;
+            --accent-future: #00f5ff;
+            --neon-purple: #bf00ff;
         }
 
-        @keyframes textGlow {
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body.classic {
+            background: var(--bg-classic);
+            color: var(--text-classic);
+        }
+
+        body.future {
+            background: #000000;
+            color: var(--accent-future);
+        }
+
+        /* Logo animations */
+        @keyframes logoLevitate {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes logoBorderGlow {
             0%, 100% {
-                text-shadow: 0 0 10px rgba(0, 245, 255, 0.5), 0 0 20px rgba(0, 245, 255, 0.3);
+                box-shadow: 0 0 20px rgba(0, 245, 255, 0.8), 0 0 40px rgba(191, 0, 255, 0.6);
+                border-color: rgba(0, 245, 255, 0.6);
             }
             50% {
-                text-shadow: 0 0 20px rgba(191, 0, 255, 0.6), 0 0 40px rgba(191, 0, 255, 0.4), 0 0 60px rgba(0, 245, 255, 0.3);
-            }
-        }
-
-        /* Future mode button glow */
-        .future .btn-main,
-        .future .btn-secondary {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .future .btn-main::before,
-        .future .btn-secondary::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(0, 245, 255, 0.3), transparent);
-            animation: buttonScan 3s linear infinite;
-        }
-
-        @keyframes buttonScan {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Avatar button glow in future mode */
-        .future .avatar-button {
-            box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
-            animation: avatarPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes avatarPulse {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(191, 0, 255, 0.6), 0 0 40px rgba(0, 245, 255, 0.4);
+                box-shadow: 0 0 30px rgba(191, 0, 255, 0.8), 0 0 60px rgba(0, 245, 255, 0.6);
+                border-color: rgba(191, 0, 255, 0.6);
             }
         }
     </style>

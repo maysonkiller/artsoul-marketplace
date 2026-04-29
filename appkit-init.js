@@ -120,34 +120,8 @@ window.updateNavButtons = function updateNavButtons(state) {
  * Update network badge with current network and balance
  */
 window.updateNetworkBadge = async function updateNetworkBadge(state) {
-    const networkBadgeContainer = document.getElementById('networkBadge');
-    if (!networkBadgeContainer) return;
-
-    if (state?.address && state?.chainId) {
-        const network = networkMap[state.chainId] || { name: 'Unknown', currency: 'ETH' };
-        currentNetwork = network;
-
-        // Fetch balance using AppKit provider
-        if (modal?.getWalletProvider) {
-            try {
-                const provider = await modal.getWalletProvider();
-                if (provider && provider.request) {
-                    try {
-                        const balance = await provider.request({ method: 'eth_getBalance', params: [state.address, 'latest'] });
-                        currentBalance = (parseInt(balance, 16) / 1e18).toFixed(4);
-                    } catch (error) {
-                        currentBalance = '0.00';
-                    }
-                }
-            } catch (error) {
-                console.warn('Failed to get balance:', error);
-            }
-        }
-        renderNetworkBadge();
-    } else {
-        // Clear badge when disconnected
-        networkBadgeContainer.innerHTML = '';
-    }
+    // Network badge removed - balance now shown in dropdown menu
+    return;
 }
 
 /**
@@ -439,17 +413,10 @@ async function initializeAppKit() {
             }
         });
 
-        // Subscribe to chain changes to close modal and update UI
+        // Subscribe to chain changes to update UI (removed auto-close)
         modal.subscribeState((state) => {
             if (state.selectedNetworkId) {
                 console.log('🔄 Network changed to:', state.selectedNetworkId);
-
-                // Close the modal after network change
-                setTimeout(() => {
-                    if (modal.getState().open) {
-                        modal.close();
-                    }
-                }, 500);
 
                 // Update network display
                 if (window.currentWalletAddress) {

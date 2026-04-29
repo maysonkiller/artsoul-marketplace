@@ -39,9 +39,9 @@
         }
 
         /**
-         * Get current network info
+         * Get current network info with balance
          */
-        getCurrentNetworkInfo() {
+        async getCurrentNetworkInfo() {
             // Try to get network from web3Modal state
             let chainId = null;
             if (window.web3Modal) {
@@ -62,19 +62,39 @@
                 84532: {
                     name: 'Base Sepolia',
                     icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMiIgZmlsbD0iIzAwNTJGRiIvPjxwYXRoIGQ9Ik0xMiAyMEMxNi40MTgzIDIwIDIwIDE2LjQxODMgMjAgMTJDMjAgNy41ODE3MiAxNi40MTgzIDQgMTIgNEM3LjU4MTcyIDQgNCA3LjU4MTcyIDQgMTJDNCA5LjM0NzE1IDUuMDUzNTcgNi45NDI4MSA2Ljc4NTcxIDUuMjE0MjlDOC41MTc4NiAzLjQ4NTc2IDEwLjkyMjIgMi40MzIxNCAxMy41NzUgMi40MzIxNEMxNi4yMjc4IDIuNDMyMTQgMTguNjMyMiAzLjQ4NTc2IDIwLjM2NDMgNS4yMTQyOUMyMi4wOTY0IDYuOTQyODEgMjMuMTUgOS4zNDcxNSAyMy4xNSAxMkMyMy4xNSAxNC42NTI5IDIyLjA5NjQgMTcuMDU3MiAyMC4zNjQzIDE4Ljc4NTdDMTguNjMyMiAyMC41MTQyIDE2LjIyNzggMjEuNTY3OSAxMy41NzUgMjEuNTY3OUMxMC45MjIyIDIxLjU2NzkgOC41MTc4NiAyMC41MTQyIDYuNzg1NzEgMTguNzg1N0M1LjA1MzU3IDE3LjA1NzIgNCAxNC42NTI5IDQgMTJaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==',
-                    color: '#0052FF'
+                    color: '#0052FF',
+                    currency: 'ETH'
                 },
                 11155111: {
                     name: 'Ethereum Sepolia',
                     icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMiIgZmlsbD0iIzYyN0VFQSIvPjxwYXRoIGQ9Ik0xMiA0TDYgMTJMMTIgMTZMMTggMTJMMTIgNFoiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEyIDE3TDYgMTNMMTIgMjBMMTggMTNMMTIgMTdaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==',
-                    color: '#627EEA'
+                    color: '#627EEA',
+                    currency: 'ETH'
                 },
                 2025: {
                     name: 'Rialo',
                     icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiMwMDAwMDAiLz4KPHBhdGggZD0iTTEyLjUgOC4yQzEyLjIgOC4xOCAxMS44NSA3Ljk1IDExLjY1IDcuNjVDMTEuMzUgNy4yIDExLjI1IDYuNSAxMS41NSA2QzExLjk1IDUuMyAxMi41IDUuMTUgMTMuMDUgNS4yQzEzLjUgNS4yIDE0LjUgNS4yMiAxNS4xIDUuMjJDMTUuMzUgNS4yMiAxNS41NSA1LjI0IDE1Ljc1IDUuMkMxNi4yIDUuMTIgMTYuNiA0Ljg1IDE2Ljg1IDQuNUMxNy4zIDMuODUgMTcuMTUgMi45IDE2LjU1IDIuNUMxNi4yIDIuMjUgMTUuOCAyLjE1IDE1LjQgMi4xMkMxNS4yIDIuMSAxNSAyLjA4IDE0Ljg1IDIuMDJDMTQuMyAxLjggMTMuOSAxLjMgMTMuNzUgMC44QzEzLjY1IDAuNTUgMTMuNjUgMC4yOCAxMy42IDAuMDJDMTMuNDUgLTAuNSAxMyAtMC45IDEyLjUgLTFDMTIuMzUgLTEuMDUgMTIuMiAtMS4wOCAxMi4wNSAtMS4wOEMxMC41IC0xLjEgOCAtMS4xNSA3LjUgLTEuMTVDNi44IC0xLjE3IDYuMTUgLTAuNjUgNiAwLjAyQzUuOCAwLjcgNi4xNSAxLjQ1IDYuOCAxLjhDNy4xIDEuOTUgNy4zIDEuOTggNy42IDEuOTdDOC41IDEuOTggOC40NSAyIDguOTUgMi4wMkM5LjU1IDEuOTggMTAuMiAyLjMgMTAuNSAyLjlDMTEuMTUgNC4yIDEwLjIgNS4yIDkgNS4xMkM3LjUgNS4xNSA2LjggNS4xMyA0LjUgNS4xM0M0LjEgNS4xNCAzLjg1IDUuMSAzLjUgNS4yMkMyLjUgNS41IDIgNi41IDIuMiA3LjRDMi40IDggMi45IDguNDUgMy41IDguNkM0LjMgOC43IDUuNSA4LjY1IDcuNSA4LjY4QzggOC42OCA4LjMgOC42OCA4LjUgOC42OEM4LjY1IDguNjggOC44IDguNyA4Ljk1IDguNzVDOS44IDguOTUgMTAuMzUgOS43NSAxMC4zIDEwLjZDMTAuMyAxMS4yIDEwLjMgMTMuNSAxMC4zIDE0LjVDMTAuMyAxNC44NSAxMC4zNSAxNS4yIDEwLjU1IDE1LjU1QzExIDE2LjUgMTIuMiAxNi44NSAxMyAxNi4zQzEzLjYgMTUuOSAxMy43NSAxNS4yIDEzLjcgMTQuNEMxMy43IDEzLjYgMTMuNyAxMi4yIDEzLjcgMTEuNUMxMy44IDEwLjIgMTMgOS4zIDEyLjUgOS4yVjguMloiIGZpbGw9IiNBOURERDMiLz4KPC9zdmc+Cg==',
-                    color: '#A9DDD3'
+                    color: '#A9DDD3',
+                    currency: 'RIA'
                 }
             };
+
+            // Get balance
+            let balance = '0.0000';
+            if (chainId && window.currentWalletAddress) {
+                try {
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (provider && provider.request) {
+                        const balanceHex = await provider.request({
+                            method: 'eth_getBalance',
+                            params: [window.currentWalletAddress, 'latest']
+                        });
+                        balance = (parseInt(balanceHex, 16) / 1e18).toFixed(4);
+                    }
+                } catch (error) {
+                    console.warn('Failed to get balance:', error);
+                }
+            }
 
             // Return network info
             if (!chainId) {
@@ -87,16 +107,16 @@
                         }
                     }, 500);
                 }
-                return { name: 'Connecting...', icon: '⏳', color: '#888888' };
+                return { name: 'Connecting...', icon: '', color: '#888888', currency: 'ETH', balance: '0.0000' };
             }
 
             const network = networks[chainId];
             if (!network) {
                 // Unsupported network
-                return { name: 'Unsupported', icon: '⚠️', color: '#ff6b6b' };
+                return { name: 'Unsupported', icon: '', color: '#ff6b6b', currency: 'ETH', balance: '0.0000' };
             }
 
-            return network;
+            return { ...network, balance };
         }
 
         /**
@@ -116,7 +136,7 @@
         /**
          * Render avatar dropdown
          */
-        render() {
+        async render() {
             const navButtons = document.getElementById('navButtons');
             if (!navButtons) return;
 
@@ -126,8 +146,8 @@
             const walletAddress = this.profile?.wallet_address || '';
             const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
 
-            // Get current network info
-            const networkInfo = this.getCurrentNetworkInfo();
+            // Get current network info with balance
+            const networkInfo = await this.getCurrentNetworkInfo();
 
             // Create avatar dropdown HTML
             navButtons.innerHTML = `
@@ -223,7 +243,10 @@
                             "
                         >
                             <img src="${networkInfo.icon}" alt="${networkInfo.name}" style="width: 20px; height: 20px; border-radius: 50%;" onerror="this.style.display='none'" />
-                            <span>${networkInfo.name}</span>
+                            <div style="flex: 1;">
+                                <div><span>${networkInfo.name}</span></div>
+                                <div style="font-size: 0.75rem; opacity: 0.7; font-family: monospace;">${networkInfo.balance} ${networkInfo.currency}</div>
+                            </div>
                         </button>
 
                         <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
