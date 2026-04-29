@@ -144,11 +144,14 @@
                         window.NetworkBadge.init();
                     }
 
-                    // Wait for wallet connection
-                    if (window.web3Modal) {
+                    // Initialize avatar dropdown (will show connect button if not connected)
+                    if (window.avatarDropdown) {
                         const state = window.web3Modal.getState();
-                        if (state?.address && window.avatarDropdown) {
+                        if (state?.address) {
                             await window.avatarDropdown.init(state.address);
+                        } else {
+                            // Show connect button
+                            await window.avatarDropdown.init(null);
                         }
                     }
                 };
@@ -157,8 +160,8 @@
 
                 // Listen for wallet connection changes
                 const unsubscribe = window.web3Modal?.subscribeState((state) => {
-                    if (state?.address && window.avatarDropdown) {
-                        window.avatarDropdown.init(state.address);
+                    if (window.avatarDropdown) {
+                        window.avatarDropdown.init(state?.address || null);
                     }
                 });
 
