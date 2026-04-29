@@ -275,7 +275,18 @@
                     loadArtwork(); // Reload to show new bid
                 } catch (error) {
                     console.error('Bid failed:', error);
-                    alert('Failed to place bid: ' + (error.message || 'Unknown error'));
+
+                    let errorMessage = 'Failed to place bid: ';
+
+                    if (error.code === 'INSUFFICIENT_FUNDS' || error.message?.includes('insufficient funds')) {
+                        errorMessage = 'Insufficient funds!\n\nYou need more ETH to place this bid.\nPlease add funds to your wallet or try a lower bid amount.';
+                    } else if (error.message?.includes('user rejected') || error.message?.includes('User rejected')) {
+                        errorMessage = 'Transaction was rejected';
+                    } else {
+                        errorMessage += error.message || 'Unknown error';
+                    }
+
+                    alert(errorMessage);
                 }
             }
 
