@@ -31,7 +31,6 @@
     <script type="module" src="appkit-init.js"></script>
     <script type="module" src="ipfs-client.js"></script>
     <script type="module" src="contracts-integration.js"></script>
-    <script src="claude-ai-analysis.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -478,22 +477,7 @@
                 const metadataUpload = await window.IPFSClient.uploadMetadata(metadata);
                 console.log('📤 Metadata uploaded:', metadataUpload.ipfsHash);
 
-                // Step 5: AI Analysis (Claude)
-                uploadBtn.textContent = 'Analyzing artwork with AI...';
-                let aiAnalysis = null;
-                try {
-                    aiAnalysis = await window.ClaudeAIAnalysis.analyzeFromUpload(
-                        selectedFile,
-                        title,
-                        description,
-                        parseFloat(price)
-                    );
-                    console.log('🤖 AI Analysis:', aiAnalysis);
-                } catch (error) {
-                    console.warn('⚠️ AI analysis failed, continuing without it:', error);
-                }
-
-                // Step 6: Initialize contracts
+                // Step 5: Initialize contracts
                 uploadBtn.textContent = 'Connecting to blockchain...';
                 if (!window.ArtSoulContracts.marketplaceContract) {
                     const provider = await window.web3Modal?.getWalletProvider();
@@ -501,7 +485,7 @@
                     await window.ArtSoulContracts.init(provider);
                 }
 
-                // Step 7: Upload to smart contract
+                // Step 6: Upload to smart contract
                 uploadBtn.textContent = 'Creating on blockchain...';
                 const result = await window.ArtSoulContracts.uploadArtwork(
                     fileUpload.ipfsHash,
@@ -537,28 +521,16 @@
                     ipfs_hash: fileUpload.ipfsHash,
                     metadata_uri: metadataUpload.url,
                     creator_value: parseFloat(price),
-                    system_value: aiAnalysis?.systemValue || null,
-                    ai_analysis: aiAnalysis?.fullAnalysis || null,
                     status: 'draft',
                     tx_hash: result.txHash
                 });
 
                 // Success!
-                let successMessage = `✅ Artwork uploaded successfully!\n\nArtwork ID: ${result.artworkId}\nTransaction: ${result.txHash}`;
+                alert(`Artwork uploaded successfully!\n\nArtwork ID: ${result.artworkId}\nTransaction: ${result.txHash}\n\nRedirecting to gallery...`);
 
-                if (aiAnalysis && !aiAnalysis.isMock) {
-                    successMessage += `\n\n🤖 Claude AI Analysis:\nSystem Value: ${aiAnalysis.systemValue} ETH\nConfidence: ${aiAnalysis.confidence}\n${aiAnalysis.reasoning}`;
-                } else if (aiAnalysis?.isMock) {
-                    successMessage += `\n\n⚠️ AI Analysis Unavailable:\nSystem Value: ${aiAnalysis.systemValue} ETH (simulated)\n\nTo enable real Claude AI analysis:\nwindow.ClaudeAIAnalysis.setApiKey('sk-ant-your-key-here')`;
-                }
-
-                successMessage += '\n\nRedirecting to artwork page...';
-
-                alert(successMessage);
-
-                // Redirect to artwork page
+                // Redirect to gallery page
                 setTimeout(() => {
-                    window.location.href = `artwork.html?id=${result.artworkId}`;
+                    window.location.href = 'gallery.html';
                 }, 2000);
 
             } catch (error) {
