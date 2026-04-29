@@ -405,16 +405,31 @@ async function initializeAppKit() {
                 console.log('🔌 Wallet disconnected (was connected before)');
                 lastProcessedAddress = null;
                 window.currentWalletAddress = null;
-                localStorage.removeItem('artsoul_wallet');
 
-                // Sign out from Supabase if authenticated
+                // Clear all authentication data
+                localStorage.removeItem('artsoul_wallet');
+                localStorage.removeItem('artsoul_first_time');
+
+                // Sign out from Supabase
                 try {
-                    const isAuth = await window.SupabaseAuth?.isAuthenticated();
-                    if (isAuth) {
+                    if (window.SupabaseAuth) {
                         await window.SupabaseAuth.signOut();
+                        console.log('✅ Signed out from Supabase');
                     }
                 } catch (error) {
                     console.error('⚠️ Supabase signout failed:', error);
+                }
+
+                // Clear Supabase session from localStorage
+                try {
+                    const keys = Object.keys(localStorage);
+                    keys.forEach(key => {
+                        if (key.startsWith('sb-') || key.includes('supabase')) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                } catch (error) {
+                    console.error('⚠️ Failed to clear Supabase storage:', error);
                 }
 
                 // Update UI
