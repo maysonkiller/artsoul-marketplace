@@ -289,15 +289,35 @@
                     // Try to load profile without authentication first
                     let profileData = await window.ArtSoulDB.getProfile(walletAddress);
                     if (!profileData) {
-                        profileData = {
-                            wallet_address: walletAddress,
-                            username: '',
-                            bio: '',
-                            avatar_url: '',
-                            twitter_handle: '',
-                            discord_username: ''
-                        };
-                        setEditMode(true);
+                        // Auto-create basic profile on first connection
+                        try {
+                            const isAuth = await window.ensureAuthenticated();
+                            if (isAuth) {
+                                profileData = await window.ArtSoulDB.createProfile(walletAddress, {
+                                    username: `User ${walletAddress.slice(0, 6)}`,
+                                    bio: '',
+                                    avatar_url: '',
+                                    twitter_handle: '',
+                                    discord_username: ''
+                                });
+                                console.log('✅ Auto-created profile for new user');
+                            }
+                        } catch (createError) {
+                            console.error('Failed to auto-create profile:', createError);
+                        }
+
+                        // If still no profile, show empty form
+                        if (!profileData) {
+                            profileData = {
+                                wallet_address: walletAddress,
+                                username: '',
+                                bio: '',
+                                avatar_url: '',
+                                twitter_handle: '',
+                                discord_username: ''
+                            };
+                            setEditMode(true);
+                        }
                     }
                     setProfile(profileData);
                 } catch (error) {
