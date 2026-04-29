@@ -188,17 +188,17 @@
         const { useState, useEffect, useRef } = React;
 
         const GALLERY_TYPES = [
-            { id: 'nft', label: 'NFT', icon: '', fileType: 'image' },
-            { id: 'video', label: 'Video', icon: '', fileType: 'video' },
-            { id: 'music', label: 'Music', icon: '', fileType: 'music' },
-            { id: 'gif', label: 'GIF', icon: '', fileType: 'gif' },
+            { id: 'created', label: 'Created', icon: '', description: 'Artworks you created' },
+            { id: 'auction', label: 'On Auction', icon: '', description: 'Currently on auction' },
+            { id: 'sold', label: 'Sold', icon: '', description: 'Successfully sold' },
+            { id: 'collected', label: 'Collected', icon: '', description: 'Artworks you own' },
         ];
 
         function ProfilePage() {
             const [theme, setTheme] = useState(() => window.ThemeSync?.getTheme() || 'classic');
             const [profile, setProfile] = useState(null);
             const [editMode, setEditMode] = useState(false);
-            const [selectedGallery, setSelectedGallery] = useState('nft');
+            const [selectedGallery, setSelectedGallery] = useState('created');
             const [myArtworks, setMyArtworks] = useState([]);
             const [loading, setLoading] = useState(true);
             const fileInputRef = useRef(null);
@@ -304,14 +304,29 @@
                 if (!profile?.id) return;
 
                 try {
-                    const artworks = await window.ArtSoulDB.getArtworksByCreator(profile.id);
-                    const filtered = artworks.filter(art => {
-                        if (selectedGallery === 'nft') return art.file_type === 'image';
-                        if (selectedGallery === 'video') return art.file_type === 'video';
-                        if (selectedGallery === 'music') return art.file_type === 'music';
-                        if (selectedGallery === 'gif') return art.file_type === 'gif';
-                        return false;
-                    });
+                    const walletAddress = profile.wallet_address;
+
+                    // Load all artworks for this user
+                    const createdArtworks = await window.ArtSoulDB.getArtworksByCreator(walletAddress);
+                    const collectedArtworks = await window.ArtSoulDB.getArtworksByOwner(walletAddress);
+
+                    // Filter based on selected gallery
+                    let filtered = [];
+
+                    if (selectedGallery === 'created') {
+                        // All artworks created by user
+                        filtered = createdArtworks;
+                    } else if (selectedGallery === 'auction') {
+                        // Created artworks currently on auction
+                        filtered = createdArtworks.filter(art => art.status === 'auction');
+                    } else if (selectedGallery === 'sold') {
+                        // Created artworks that were sold
+                        filtered = createdArtworks.filter(art => art.status === 'sold');
+                    } else if (selectedGallery === 'collected') {
+                        // Artworks owned but not created by user
+                        filtered = collectedArtworks;
+                    }
+
                     setMyArtworks(filtered);
                 } catch (error) {
                     console.error('Error loading artworks:', error);
