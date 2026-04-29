@@ -100,10 +100,19 @@ async function getProfile(walletAddress) {
 async function updateProfile(walletAddress, updates) {
     const supabase = await initSupabase();
 
+    // Use upsert to create profile if it doesn't exist
+    const profileData = {
+        wallet_address: walletAddress,
+        ...updates,
+        updated_at: new Date().toISOString()
+    };
+
     const { data, error } = await supabase
         .from('profiles')
-        .update(updates)
-        .eq('wallet_address', walletAddress)
+        .upsert(profileData, {
+            onConflict: 'wallet_address',
+            ignoreDuplicates: false
+        })
         .select()
         .single();
 
