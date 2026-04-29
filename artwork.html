@@ -219,7 +219,7 @@
                     await window.ArtSoulContracts.init(provider);
                     await window.ArtSoulContracts.placeBid(artwork.blockchain_id, bidAmount);
 
-                    alert('✅ Bid placed successfully!');
+                    alert('Bid placed successfully!');
                     loadArtwork(); // Reload to show new bid
                 } catch (error) {
                     console.error('Bid failed:', error);
@@ -368,7 +368,7 @@
                                 </a>
                                 <div className="flex items-center gap-3">
                                     <div id="networkBadge"></div>
-                                    <div id="navButtons"></div>
+                                    <div id="avatarButton"></div>
                                 </div>
                             </div>
                         </div>
@@ -419,7 +419,7 @@
                                 {/* Auction Info */}
                                 {auction && (
                                     <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                        <h3 className="text-2xl font-bold mb-4">🔥 Live Auction</h3>
+                                        <h3 className="text-2xl font-bold mb-4">Live Auction</h3>
 
                                         <div className="space-y-3">
                                             <div className="flex justify-between">
@@ -471,17 +471,13 @@
                                     </div>
                                 )}
 
-                                {/* Triple Valuation */}
+                                {/* Valuation */}
                                 <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                    <h3 className="text-xl font-bold mb-4">Triple Valuation</h3>
+                                    <h3 className="text-xl font-bold mb-4">Valuation</h3>
                                     <div className="space-y-3">
                                         <div className="flex justify-between">
                                             <span className="opacity-70">Creator Value:</span>
                                             <span className="font-bold">{artwork.creator_value || '0'} ETH</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="opacity-70">System Value (AI):</span>
-                                            <span className="font-bold">{artwork.system_value ? `${artwork.system_value} ETH` : 'Analyzing...'}</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span className="opacity-70">Community Value:</span>
@@ -506,7 +502,7 @@
                                                     : 'bg-green-600 hover:bg-green-500 text-white'
                                             }`}
                                         >
-                                            <div className="text-2xl mb-1">↑</div>
+                                            <div className="text-2xl mb-1">+</div>
                                             <div className="text-xs font-medium">Undervalued</div>
                                             <div className="text-xs opacity-70 mt-1">Worth more</div>
                                         </button>
@@ -519,7 +515,7 @@
                                                     : 'bg-cyan-600 hover:bg-cyan-500 text-white'
                                             }`}
                                         >
-                                            <div className="text-2xl mb-1">→</div>
+                                            <div className="text-2xl mb-1">=</div>
                                             <div className="text-xs font-medium">Fair Price</div>
                                             <div className="text-xs opacity-70 mt-1">Just right</div>
                                         </button>
@@ -532,7 +528,7 @@
                                                     : 'bg-red-600 hover:bg-red-500 text-white'
                                             }`}
                                         >
-                                            <div className="text-2xl mb-1">↓</div>
+                                            <div className="text-2xl mb-1">-</div>
                                             <div className="text-xs font-medium">Overvalued</div>
                                             <div className="text-xs opacity-70 mt-1">Worth less</div>
                                         </button>
