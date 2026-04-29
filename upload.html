@@ -28,6 +28,8 @@
     <script type="module" src="supabase-auth.js"></script>
     <script type="module" src="supabase-client.js"></script>
     <script type="module" src="appkit-init.js"></script>
+    <script type="module" src="ipfs-client.js"></script>
+    <script type="module" src="contracts-integration.js"></script>
     <style>
         :root {
             --bg-classic: #010101;
@@ -380,8 +382,7 @@
 
     <script>
         let selectedFile = null;
-
-        // Theme is now handled by theme-sync.js
+        let uploading = false;
 
         function handleFileSelect(event) {
             const file = event.target.files[0];
@@ -391,11 +392,14 @@
             }
         }
 
-        function handleUpload() {
+        async function handleUpload() {
+            if (uploading) return;
+
             const title = document.getElementById('artTitle').value;
             const price = document.getElementById('artPrice').value;
             const description = document.getElementById('artDescription').value;
 
+            // Validation
             if (!selectedFile) {
                 alert('Please select a file to upload');
                 return;
@@ -406,7 +410,119 @@
                 return;
             }
 
-            alert(`Minting feature coming soon!\n\nYour artwork:\nTitle: ${title}\nPrice: ${price} ETH\nFile: ${selectedFile.name}\n\nThis will be integrated with smart contracts in the next update.`);
+            if (parseFloat(price) <= 0) {
+                alert('Price must be greater than 0');
+                return;
+            }
+
+            // Check wallet connection
+            const walletAddress = window.getCurrentWalletAddress?.();
+            if (!walletAddress) {
+                alert('Please connect your wallet first');
+                return;
+            }
+
+            // Check authentication
+            const isAuth = await window.SupabaseAuth?.isAuthenticated();
+            if (!isAuth) {
+                const authenticated = await window.ensureAuthenticated?.();
+                if (!authenticated) return;
+            }
+
+            uploading = true;
+            const uploadBtn = document.querySelector('.btn-main');
+            const originalText = uploadBtn.textContent;
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Uploading...';
+
+            try {
+                // Step 1: Generate file hash for duplicate detection
+                uploadBtn.textContent = 'Generating file hash...';
+                const fileHash = await window.IPFSClient.generateFileHash(selectedFile);
+                console.log('📝 File hash:', fileHash);
+
+                // Step 2: Upload file to IPFS (currently Supabase)
+                uploadBtn.textContent = 'Uploading file...';
+                const fileUpload = await window.IPFSClient.uploadFile(selectedFile);
+                console.log('📤 File uploaded:', fileUpload.ipfsHash);
+
+                // Step 3: Create metadata
+                uploadBtn.textContent = 'Creating metadata...';
+                const metadata = window.IPFSClient.createMetadata({
+                    title: title,
+                    description: description,
+                    imageUrl: fileUpload.url,
+                    creator: walletAddress,
+                    creatorValue: price
+                });
+
+                // Step 4: Upload metadata to IPFS
+                const metadataUpload = await window.IPFSClient.uploadMetadata(metadata);
+                console.log('📤 Metadata uploaded:', metadataUpload.ipfsHash);
+
+                // Step 5: Initialize contracts
+                uploadBtn.textContent = 'Connecting to blockchain...';
+                if (!window.ArtSoulContracts.marketplaceContract) {
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) throw new Error('No wallet provider');
+                    await window.ArtSoulContracts.init(provider);
+                }
+
+                // Step 6: Upload to smart contract
+                uploadBtn.textContent = 'Creating on blockchain...';
+                const result = await window.ArtSoulContracts.uploadArtwork(
+                    fileUpload.ipfsHash,
+                    metadataUpload.url,
+                    fileHash,
+                    price
+                );
+
+                console.log('✅ Artwork created! ID:', result.artworkId);
+
+                // Step 7: Save to Supabase for indexing
+                uploadBtn.textContent = 'Saving to database...';
+                await window.ArtSoulDB.createArtwork({
+                    id: result.artworkId,
+                    creator_id: walletAddress,
+                    title: title,
+                    description: description,
+                    file_url: fileUpload.url,
+                    file_type: selectedFile.type,
+                    ipfs_hash: fileUpload.ipfsHash,
+                    metadata_uri: metadataUpload.url,
+                    creator_value: parseFloat(price),
+                    status: 'draft',
+                    tx_hash: result.txHash
+                });
+
+                // Success!
+                alert(`✅ Artwork uploaded successfully!\n\nArtwork ID: ${result.artworkId}\nTransaction: ${result.txHash}\n\nYou can now create an auction in your profile.`);
+
+                // Redirect to profile
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('❌ Upload failed:', error);
+
+                let errorMessage = 'Upload failed: ';
+                if (error.message?.includes('user rejected')) {
+                    errorMessage += 'Transaction was rejected';
+                } else if (error.message?.includes('Duplicate artwork')) {
+                    errorMessage += 'This file has already been uploaded';
+                } else if (error.message?.includes('Unsupported network')) {
+                    errorMessage += 'Please switch to Base Sepolia network';
+                } else {
+                    errorMessage += error.message || 'Unknown error';
+                }
+
+                alert(errorMessage);
+            } finally {
+                uploading = false;
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = originalText;
+            }
         }
     </script>
 
