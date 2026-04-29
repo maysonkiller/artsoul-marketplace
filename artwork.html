@@ -118,6 +118,40 @@
             }, []);
 
             useEffect(() => {
+                // Initialize avatar dropdown and network badge
+                const initUI = async () => {
+                    // Wait for appkit to be ready
+                    if (window.web3Modal) {
+                        const state = window.web3Modal.getState();
+                        if (state?.address) {
+                            // Initialize avatar dropdown
+                            if (window.avatarDropdown) {
+                                await window.avatarDropdown.init(state.address);
+                            }
+                        }
+                    }
+
+                    // Initialize network badge
+                    if (window.NetworkBadge) {
+                        window.NetworkBadge.init();
+                    }
+                };
+
+                initUI();
+
+                // Listen for wallet connection changes
+                const unsubscribe = window.web3Modal?.subscribeState((state) => {
+                    if (state?.address && window.avatarDropdown) {
+                        window.avatarDropdown.init(state.address);
+                    }
+                });
+
+                return () => {
+                    if (unsubscribe) unsubscribe();
+                };
+            }, []);
+
+            useEffect(() => {
                 if (artworkId && !artwork) {
                     loadArtwork();
                 }
