@@ -59,35 +59,20 @@ let lastProcessedAddress = null;
 /**
  * Update navigation buttons based on wallet connection state
  * Shows "Get Started" when disconnected
- * Shows "My Profile" + wallet address when connected
+ * Shows Avatar Dropdown when connected
  */
 window.updateNavButtons = function updateNavButtons(state) {
     const navButtons = document.getElementById('navButtons');
     if (!navButtons) return;
 
-    // Check if we're on profile page
-    const isProfilePage = window.location.pathname.includes('profile.html');
-
     if (state?.address) {
-        // Connected: Show buttons based on page
-        const shortAddress = `${state.address.slice(0, 6)}...${state.address.slice(-4)}`;
-
-        if (isProfilePage) {
-            // Profile page: only wallet address and disconnect
-            navButtons.innerHTML = `
-                <button onclick="window.web3Modal?.open()" class="btn-main">
-                    ${shortAddress}
-                </button>
-                <button onclick="window.resetWalletConnection()" class="btn-secondary" style="padding: 0.5rem 1rem;">
-                    Disconnect
-                </button>
-            `;
+        // Connected: Show Avatar Dropdown
+        if (window.AvatarDropdown) {
+            window.AvatarDropdown.init(state.address);
         } else {
-            // Other pages: include My Profile button
+            // Fallback if avatar-dropdown.js not loaded
+            const shortAddress = `${state.address.slice(0, 6)}...${state.address.slice(-4)}`;
             navButtons.innerHTML = `
-                <a href="profile.html" class="btn-main" style="background: transparent; border: 1px solid currentColor; color: inherit;">
-                    👤 My Profile
-                </a>
                 <button onclick="window.web3Modal?.open()" class="btn-main">
                     ${shortAddress}
                 </button>
