@@ -492,6 +492,24 @@ function subscribeToAuction(auctionId, callback) {
 async function saveVote(voteData) {
     const supabase = await initSupabase();
 
+    // Validate vote_type
+    const validVoteTypes = ['undervalued', 'fair', 'overvalued'];
+    if (!validVoteTypes.includes(voteData.vote_type)) {
+        throw new Error('Invalid vote type. Must be: undervalued, fair, or overvalued');
+    }
+
+    // Validate artwork_id is UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!voteData.artwork_id || !uuidRegex.test(voteData.artwork_id)) {
+        throw new Error('Invalid artwork ID format');
+    }
+
+    // Validate voter_address is Ethereum address
+    const addressRegex = /^0x[a-fA-F0-9]{40}$/;
+    if (!voteData.voter_address || !addressRegex.test(voteData.voter_address)) {
+        throw new Error('Invalid voter address format');
+    }
+
     // Check if user already voted
     const { data: existingVote } = await supabase
         .from('votes')
