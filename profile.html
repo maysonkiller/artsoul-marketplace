@@ -929,7 +929,7 @@
                                                                 <span>Video</span>
                                                             </div>
                                                         </>
-                                                    ) : artwork.file_type && (artwork.file_type.toLowerCase() === 'audio' || ['mp3', 'wav', 'ogg'].includes(artwork.file_type.toLowerCase())) ? (
+                                                    ) : artwork.file_type && (artwork.file_type.toLowerCase() === 'audio' || artwork.file_type.toLowerCase() === 'music' || ['mp3', 'wav', 'ogg'].includes(artwork.file_type.toLowerCase())) ? (
                                                         <>
                                                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/30 to-cyan-900/30">
                                                                 <div className="text-8xl">🎵</div>

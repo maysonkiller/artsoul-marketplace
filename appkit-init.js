@@ -447,10 +447,18 @@ async function initializeAppKit() {
         // Subscribe to chain changes to update UI and close modal after selection
         let lastSelectedNetwork = null;
         let networkChangeTimeout = null;
+        let wasModalOpen = false;
 
         modal.subscribeState((state) => {
+            // Track if modal is open
+            if (state.open) {
+                wasModalOpen = true;
+            }
+
+            // Only auto-close if network changed AND modal was opened by user
             if (state.selectedNetworkId && state.selectedNetworkId !== lastSelectedNetwork) {
                 console.log('🔄 Network changed to:', state.selectedNetworkId);
+                const previousNetwork = lastSelectedNetwork;
                 lastSelectedNetwork = state.selectedNetworkId;
 
                 // Clear any existing timeout
@@ -458,13 +466,16 @@ async function initializeAppKit() {
                     clearTimeout(networkChangeTimeout);
                 }
 
-                // Close modal after a short delay to ensure network switch is complete
-                networkChangeTimeout = setTimeout(() => {
-                    if (modal.getState().open) {
-                        console.log('✅ Closing modal after network change');
-                        modal.close();
-                    }
-                }, 1000);
+                // Only close modal if it was opened by user and network actually changed
+                if (wasModalOpen && previousNetwork !== null && modal.getState().open) {
+                    networkChangeTimeout = setTimeout(() => {
+                        if (modal.getState().open) {
+                            console.log('✅ Closing modal after network change');
+                            modal.close();
+                            wasModalOpen = false;
+                        }
+                    }, 1000);
+                }
 
                 // Update network display
                 if (window.currentWalletAddress) {
@@ -480,6 +491,11 @@ async function initializeAppKit() {
                         }, 100);
                     }
                 }
+            }
+
+            // Reset flag when modal closes
+            if (!state.open) {
+                wasModalOpen = false;
             }
         });
 

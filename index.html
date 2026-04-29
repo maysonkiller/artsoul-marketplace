@@ -1736,7 +1736,7 @@
 
                 const fileType = art.file_type?.toLowerCase() || '';
                 const isVideo = fileType === 'video' || ['mp4', 'webm', 'mov', 'ogg'].includes(fileType);
-                const isAudio = fileType === 'audio' || ['mp3', 'wav', 'ogg'].includes(fileType);
+                const isAudio = fileType === 'audio' || fileType === 'music' || ['mp3', 'wav', 'ogg'].includes(fileType);
 
                 if (isVideo) {
                     const video = document.createElement('video');
