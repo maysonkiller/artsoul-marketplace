@@ -628,13 +628,13 @@
 
         /* Theme toggle styles moved to unified-styles.css */
 
-        /* Gallery Grid - 6 in one row, 2 rows total (12 cards) */
+        /* Gallery Grid - smaller cards, 12 total */
         .gallery {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 1rem;
-            max-width: 1200px;
+            gap: 0.75rem;
+            max-width: 1400px;
             margin: 0 auto 200px;
         }
 
@@ -1761,9 +1761,9 @@
                         const art = artworks[i];
                         slots.push(`
                             <a href="artwork.html?id=${art.id}" class="card rounded-xl overflow-hidden">
-                                <div class="aspect-square overflow-hidden">
+                                <div class="aspect-square overflow-hidden bg-black">
                                     ${art.file_url
-                                        ? `<img src="${art.file_url}" alt="${art.title}" class="w-full h-full object-cover" />`
+                                        ? `<img src="${art.file_url}" alt="${art.title}" class="w-full h-full object-contain" />`
                                         : `<div class="w-full h-full flex items-center justify-center" style="background: #010101;">
                                              <p class="text-2xl font-light opacity-30">No Image</p>
                                            </div>`
