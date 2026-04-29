@@ -420,12 +420,10 @@ async function initializeAppKit() {
                 console.log('🔄 Network changed to:', state.selectedNetworkId);
                 lastSelectedNetwork = state.selectedNetworkId;
 
-                // Close modal after network selection (with small delay)
-                setTimeout(() => {
-                    if (modal.getState().open) {
-                        modal.close();
-                    }
-                }, 300);
+                // Close modal immediately after network selection
+                if (modal.getState().open) {
+                    modal.close();
+                }
 
                 // Update network display
                 if (window.currentWalletAddress) {
