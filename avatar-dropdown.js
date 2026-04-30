@@ -615,7 +615,7 @@
 
                         <!-- Address -->
                         <div style="text-align: left;">
-                            <div style="font-weight: 600; font-size: 0.875rem;">Wallet Connected</div>
+                            <div style="font-weight: 600; font-size: 0.875rem;">Anonymous</div>
                             <div style="font-size: 0.75rem; opacity: 0.6; font-family: monospace;">${shortAddress}</div>
                         </div>
 
