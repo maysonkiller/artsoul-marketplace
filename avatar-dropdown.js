@@ -17,58 +17,27 @@
         async init(walletAddress) {
             // If no wallet connected, show connect button
             if (!walletAddress) {
-                console.log('👤 No wallet address, showing connect button');
                 this.renderConnectButton();
                 return;
             }
 
-            console.log('👤 Initializing avatar dropdown for wallet:', walletAddress);
-
             try {
-                // Wait for ArtSoulDB to be available
-                if (!window.ArtSoulDB) {
-                    await new Promise((resolve) => {
-                        window.addEventListener('artsouldb-ready', resolve, { once: true });
-                        // Timeout after 5 seconds
-                        setTimeout(resolve, 5000);
-                    });
-                }
-
-                if (!window.ArtSoulDB) {
-                    throw new Error('ArtSoulDB module failed to load');
-                }
-
                 // Load profile from Supabase
                 this.profile = await window.ArtSoulDB.getProfile(walletAddress);
 
-                // If no profile, create a basic one automatically
+                // If no profile, show wallet info instead of redirecting
+                // Profile is optional - users can use the app with just wallet connection
                 if (!this.profile) {
-                    console.log('👤 No profile found for wallet:', walletAddress);
-                    console.log('👤 Creating basic profile automatically...');
-
-                    try {
-                        // Create basic profile with wallet address
-                        this.profile = await window.ArtSoulDB.updateProfile(walletAddress, {
-                            username: `User${walletAddress.slice(2, 8)}`,
-                            bio: '',
-                            avatar_url: null
-                        });
-                        console.log('✅ Basic profile created:', this.profile);
-                    } catch (createError) {
-                        console.error('❌ Failed to create profile:', createError);
-                        // If profile creation fails, show wallet info
-                        this.renderWalletInfo(walletAddress);
-                        return;
-                    }
+                    console.log('👤 No profile found, showing wallet info');
+                    this.renderWalletInfo(walletAddress);
+                    return;
                 }
 
-                console.log('👤 Profile loaded:', this.profile.username || 'Anonymous');
                 this.render();
             } catch (error) {
                 console.error('❌ Failed to load profile:', error);
-                console.log('👤 Falling back to wallet info due to error');
-                // Show wallet info on error instead of connect button
-                this.renderWalletInfo(walletAddress);
+                // Show connect button on error
+                this.renderConnectButton();
             }
         }
 
@@ -216,13 +185,12 @@
                                 height: 40px;
                                 border-radius: 9999px;
                                 object-fit: cover;
-                                flex-shrink: 0;
                             "
                             onerror="this.src='${this.getDefaultAvatar()}'"
                         />
 
-                        <!-- Username & Address (hidden on mobile) -->
-                        <div class="avatar-info" style="text-align: left;">
+                        <!-- Username & Address -->
+                        <div style="text-align: left;">
                             <div style="font-weight: 600; font-size: 0.875rem;">${username}</div>
                             <div style="font-size: 0.75rem; opacity: 0.6; font-family: monospace;">${shortAddress}</div>
                         </div>
@@ -233,7 +201,7 @@
                             height="16"
                             viewBox="0 0 16 16"
                             fill="currentColor"
-                            style="transition: transform 0.3s; flex-shrink: 0;"
+                            style="transition: transform 0.3s;"
                             class="dropdown-arrow"
                         >
                             <path d="M4 6l4 4 4-4"/>
@@ -551,28 +519,16 @@
         }
 
         /**
-         * Get default avatar (first letter of username or user icon)
+         * Get default avatar (first letter of username or generic icon)
          */
         getDefaultAvatar() {
-            // If we have a profile with username, use first letter
-            if (this.profile?.username) {
-                const letter = this.profile.username[0].toUpperCase();
-                const svg = `data:image/svg+xml,${encodeURIComponent(`
-                    <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="40" height="40" fill="#00f5ff"/>
-                        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-                              font-family="Arial" font-size="20" fill="#000">${letter}</text>
-                    </svg>
-                `)}`;
-                return svg;
-            }
-
-            // Otherwise show a generic user icon
+            // Generate a simple SVG avatar
+            const letter = this.profile?.username?.[0]?.toUpperCase() || '?';
             const svg = `data:image/svg+xml,${encodeURIComponent(`
                 <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
                     <rect width="40" height="40" fill="#00f5ff"/>
-                    <circle cx="20" cy="15" r="7" fill="#000"/>
-                    <path d="M 8 35 Q 8 25 20 25 Q 32 25 32 35" fill="#000"/>
+                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+                          font-family="Arial" font-size="20" fill="#000">${letter}</text>
                 </svg>
             `)}`;
             return svg;
@@ -654,12 +610,11 @@
                                 height: 40px;
                                 border-radius: 9999px;
                                 object-fit: cover;
-                                flex-shrink: 0;
                             "
                         />
 
-                        <!-- Address (hidden on mobile) -->
-                        <div class="avatar-info" style="text-align: left;">
+                        <!-- Address -->
+                        <div style="text-align: left;">
                             <div style="font-weight: 600; font-size: 0.875rem;">Wallet Connected</div>
                             <div style="font-size: 0.75rem; opacity: 0.6; font-family: monospace;">${shortAddress}</div>
                         </div>
@@ -670,7 +625,7 @@
                             height="16"
                             viewBox="0 0 16 16"
                             fill="currentColor"
-                            style="transition: transform 0.3s; flex-shrink: 0;"
+                            style="transition: transform 0.3s;"
                             class="dropdown-arrow"
                         >
                             <path d="M4 6l4 4 4-4"/>
@@ -747,10 +702,10 @@
                                         color: inherit;
                                     "
                                 >
+                                    <span style="font-size: 1.25rem;">🏠</span>
                                     <span>Home</span>
                                 </a>
                             ` : ''}
-
                             ${!isProfilePage ? `
                                 <a
                                     href="profile.html"
@@ -767,30 +722,10 @@
                                         color: inherit;
                                     "
                                 >
+                                    <span style="font-size: 1.25rem;">👤</span>
                                     <span>My Profile</span>
                                 </a>
                             ` : ''}
-
-                            ${!isUploadPage ? `
-                                <a
-                                    href="upload.html"
-                                    class="dropdown-item"
-                                    style="
-                                        display: flex;
-                                        align-items: center;
-                                        gap: 0.75rem;
-                                        padding: 0.75rem;
-                                        border-radius: 0.5rem;
-                                        cursor: pointer;
-                                        transition: all 0.2s;
-                                        text-decoration: none;
-                                        color: inherit;
-                                    "
-                                >
-                                    <span>Upload Artwork</span>
-                                </a>
-                            ` : ''}
-
                             ${!isGalleryPage ? `
                                 <a
                                     href="gallery.html"
@@ -807,10 +742,30 @@
                                         color: inherit;
                                     "
                                 >
+                                    <span style="font-size: 1.25rem;">🖼️</span>
                                     <span>Gallery</span>
                                 </a>
                             ` : ''}
-
+                            ${!isUploadPage ? `
+                                <a
+                                    href="upload.html"
+                                    class="dropdown-item"
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.75rem;
+                                        padding: 0.75rem;
+                                        border-radius: 0.5rem;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-decoration: none;
+                                        color: inherit;
+                                    "
+                                >
+                                    <span style="font-size: 1.25rem;">⬆️</span>
+                                    <span>Upload</span>
+                                </a>
+                            ` : ''}
                             ${!isDocsPage ? `
                                 <a
                                     href="docs.html"
@@ -827,33 +782,36 @@
                                         color: inherit;
                                     "
                                 >
+                                    <span style="font-size: 1.25rem;">📚</span>
                                     <span>Docs</span>
                                 </a>
                             ` : ''}
-
-                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
-
-                            <button
-                                onclick="window.resetWalletConnection()"
-                                class="dropdown-item"
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.75rem;
-                                    padding: 0.75rem;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
-                                    transition: all 0.2s;
-                                    width: 100%;
-                                    border: none;
-                                    background: transparent;
-                                    color: inherit;
-                                    text-align: left;
-                                "
-                            >
-                                <span>Disconnect</span>
-                            </button>
                         </div>
+
+                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0.25rem 0;"></div>
+
+                        <!-- Disconnect Button -->
+                        <button
+                            onclick="window.resetWalletConnection()"
+                            class="dropdown-item"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.75rem;
+                                padding: 0.75rem;
+                                border-radius: 0.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                width: 100%;
+                                border: none;
+                                background: transparent;
+                                color: inherit;
+                                text-align: left;
+                            "
+                        >
+                            <span style="font-size: 1.25rem;">🚪</span>
+                            <span>Disconnect</span>
+                        </button>
                     </div>
                 </div>
             `;
@@ -875,21 +833,6 @@
 
     // Export singleton
     window.AvatarDropdown = new AvatarDropdown();
-
-    // Add mobile-responsive CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Hide username/address text on mobile, show only avatar and arrow */
-        @media (max-width: 640px) {
-            .avatar-info {
-                display: none !important;
-            }
-            .avatar-button {
-                gap: 0.5rem !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
 
     console.log('📦 Avatar Dropdown module loaded');
 })();

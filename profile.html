@@ -281,18 +281,6 @@
                 }
 
                 try {
-                    // Wait for ArtSoulDB to be available
-                    if (!window.ArtSoulDB) {
-                        await new Promise((resolve) => {
-                            window.addEventListener('artsouldb-ready', resolve, { once: true });
-                            setTimeout(resolve, 5000);
-                        });
-                    }
-
-                    if (!window.ArtSoulDB) {
-                        throw new Error('ArtSoulDB module failed to load');
-                    }
-
                     // Try to load profile without authentication first
                     let profileData = await window.ArtSoulDB.getProfile(walletAddress);
                     if (!profileData) {
@@ -363,18 +351,6 @@
                 }
 
                 try {
-                    // Wait for ArtSoulDB to be available
-                    if (!window.ArtSoulDB) {
-                        await new Promise((resolve) => {
-                            window.addEventListener('artsouldb-ready', resolve, { once: true });
-                            setTimeout(resolve, 5000);
-                        });
-                    }
-
-                    if (!window.ArtSoulDB) {
-                        throw new Error('ArtSoulDB module failed to load');
-                    }
-
                     // Ensure authenticated before upload
                     const isAuth = await window.ensureAuthenticated();
                     if (!isAuth) return;
@@ -404,18 +380,6 @@
                 }
 
                 try {
-                    // Wait for ArtSoulDB to be available
-                    if (!window.ArtSoulDB) {
-                        await new Promise((resolve) => {
-                            window.addEventListener('artsouldb-ready', resolve, { once: true });
-                            setTimeout(resolve, 5000);
-                        });
-                    }
-
-                    if (!window.ArtSoulDB) {
-                        throw new Error('ArtSoulDB module failed to load');
-                    }
-
                     // Authenticate before saving (only once)
                     const isAuthenticated = await window.ensureAuthenticated?.();
                     if (!isAuthenticated) {
@@ -949,50 +913,9 @@
                                         }`}
                                     >
                                         {/* Artwork Image */}
-                                        <div className="aspect-square cursor-pointer bg-black relative" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
+                                        <div className="aspect-square cursor-pointer bg-black" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
                                             {artwork.file_url ? (
-                                                <>
-                                                    {(() => {
-                                                        const fileType = artwork.file_type?.toLowerCase() || '';
-                                                        const url = artwork.file_url?.toLowerCase() || '';
-                                                        const isVideo = fileType === 'video' ||
-                                                                       ['mp4', 'webm', 'mov'].includes(fileType) ||
-                                                                       (!fileType && (url.includes('.mp4') || url.includes('.webm') || url.includes('.mov')));
-                                                        return isVideo;
-                                                    })() ? (
-                                                        <>
-                                                            <video
-                                                                src={artwork.file_url}
-                                                                className="w-full h-full object-contain"
-                                                                preload="metadata"
-                                                                muted
-                                                            />
-                                                            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
-                                                                <span>▶️</span>
-                                                                <span>Video</span>
-                                                            </div>
-                                                        </>
-                                                    ) : (() => {
-                                                        const fileType = artwork.file_type?.toLowerCase() || '';
-                                                        const url = artwork.file_url?.toLowerCase() || '';
-                                                        const isAudio = fileType === 'audio' || fileType === 'music' ||
-                                                                       ['mp3', 'wav', 'ogg'].includes(fileType) ||
-                                                                       (!fileType && (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')));
-                                                        return isAudio;
-                                                    })() ? (
-                                                        <>
-                                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/30 to-cyan-900/30">
-                                                                <div className="text-8xl">🎵</div>
-                                                            </div>
-                                                            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
-                                                                <span>🎵</span>
-                                                                <span>Audio</span>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />
-                                                    )}
-                                                </>
+                                                <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />
                                             ) : (
                                                 <div className={`w-full h-full flex items-center justify-center ${
                                                     isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'
