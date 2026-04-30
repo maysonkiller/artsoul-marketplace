@@ -40,6 +40,12 @@ WITH CHECK (
 -- ARTWORKS TABLE - Add RLS Policies
 -- ============================================
 
+-- Drop old policies if they exist
+DROP POLICY IF EXISTS "Anyone can read artworks" ON artworks;
+DROP POLICY IF EXISTS "Authenticated users can create artworks" ON artworks;
+DROP POLICY IF EXISTS "Creators can update own artworks" ON artworks;
+DROP POLICY IF EXISTS "Creators can delete own draft artworks" ON artworks;
+
 -- Allow users to read all artworks (public marketplace)
 CREATE POLICY "Anyone can read artworks"
 ON artworks FOR SELECT
@@ -77,6 +83,12 @@ USING (
 -- VOTES TABLE - Add RLS Policies
 -- ============================================
 
+-- Drop old policies if they exist
+DROP POLICY IF EXISTS "Anyone can read votes" ON votes;
+DROP POLICY IF EXISTS "Users can create votes" ON votes;
+DROP POLICY IF EXISTS "Votes cannot be updated" ON votes;
+DROP POLICY IF EXISTS "Votes cannot be deleted" ON votes;
+
 -- Allow users to read all votes (public voting)
 CREATE POLICY "Anyone can read votes"
 ON votes FOR SELECT
@@ -102,6 +114,11 @@ USING (false);
 -- ============================================
 -- AUCTIONS TABLE - Add RLS Policies
 -- ============================================
+
+-- Drop old policies if they exist
+DROP POLICY IF EXISTS "Anyone can read auctions" ON auctions;
+DROP POLICY IF EXISTS "Creators can create auctions" ON auctions;
+DROP POLICY IF EXISTS "Creators can update own auctions" ON auctions;
 
 -- Allow users to read all auctions
 CREATE POLICY "Anyone can read auctions"
@@ -135,6 +152,11 @@ USING (
 -- ============================================
 -- BIDS TABLE - Add RLS Policies
 -- ============================================
+
+-- Drop old policies if they exist
+DROP POLICY IF EXISTS "Anyone can read bids" ON bids;
+DROP POLICY IF EXISTS "Users can create bids" ON bids;
+DROP POLICY IF EXISTS "Users can update own bids" ON bids;
 
 -- Allow users to read all bids
 CREATE POLICY "Anyone can read bids"
