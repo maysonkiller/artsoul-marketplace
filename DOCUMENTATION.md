@@ -6,7 +6,7 @@
 
 ---
 
-## 🎨 What is ArtSoul?
+## What is ArtSoul?
 
 ArtSoul is a next-generation NFT marketplace that revolutionizes digital art trading through innovative auction mechanics, community-driven valuation, and fair pricing mechanisms. Built on Base and Ethereum networks, ArtSoul empowers artists and collectors with transparent, secure, and efficient tools for creating, discovering, and trading digital art.
 
@@ -24,7 +24,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 🚀 Core Features
+## Core Features
 
 ### 1. Deposit-Based Auction System
 
@@ -37,11 +37,11 @@ This system protects artists from undervaluation while giving collectors confide
 6. If winner doesn't buy, artist can sell directly at price ≥ floor
 
 **Benefits:**
-- ✅ Prevents fake bids (deposit required)
-- ✅ Establishes fair market value
-- ✅ Protects artists from undervaluation
-- ✅ Gives collectors price confidence
-- ✅ Reduces gas costs (lazy minting)
+- Prevents fake bids (deposit required)
+- Establishes fair market value
+- Protects artists from undervaluation
+- Gives collectors price confidence
+- Reduces gas costs (lazy minting)
 
 ### 2. Community Voting System
 
@@ -80,10 +80,10 @@ This system protects artists from undervaluation while giving collectors confide
 ### 5. Multi-Format Support
 
 **Supported media types:**
-- 🖼️ Images (JPG, PNG, GIF, WebP)
-- 🎥 Videos (MP4, WebM, MOV)
-- 🎵 Music (MP3, WAV, AAC)
-- 🎬 Animated GIFs
+- Images (JPG, PNG, GIF, WebP)
+- Videos (MP4, WebM, MOV)
+- Music (MP3, WAV, AAC)
+- Animated GIFs
 
 ### 6. Dual Theme System
 
@@ -99,7 +99,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 💡 Why ArtSoul?
+## Why ArtSoul?
 
 ### For Artists
 
@@ -154,7 +154,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 🏗️ Technical Architecture
+## Technical Architecture
 
 ### Smart Contracts
 
@@ -214,46 +214,46 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 📊 Current Status
+## Current Status
 
-### ✅ Completed Features
+### Completed Features
 
 **Core Functionality:**
-- ✅ Wallet connection (MetaMask, WalletConnect)
-- ✅ User profiles with avatars
-- ✅ Multi-format artwork upload
-- ✅ IPFS integration
-- ✅ Community voting system
-- ✅ Gallery with filters
+- Wallet connection (MetaMask, WalletConnect)
+- User profiles with avatars
+- Multi-format artwork upload
+- IPFS integration
+- Community voting system
+- Gallery with filters
 
 **Auction V2 System:**
-- ✅ Smart contracts deployed (testnet)
-- ✅ Deposit-based bidding
-- ✅ Floor price mechanism
-- ✅ 24-hour winner window
-- ✅ Direct sales after auction
-- ✅ Three-role ownership tracking
+- Smart contracts deployed (testnet)
+- Deposit-based bidding
+- Floor price mechanism
+- 24-hour winner window
+- Direct sales after auction
+- Three-role ownership tracking
 
 **User Experience:**
-- ✅ Responsive design (mobile + desktop)
-- ✅ Dual theme system
-- ✅ Real-time updates
-- ✅ Social sharing
+- Responsive design (mobile + desktop)
+- Dual theme system
+- Real-time updates
+- Social sharing
 
 **Security:**
-- ✅ XSS protection
-- ✅ RLS policies
-- ✅ Input validation
-- ✅ Reentrancy guards
+- XSS protection
+- RLS policies
+- Input validation
+- Reentrancy guards
 
-### 🔄 In Progress
+### In Progress
 
-- ⏳ End-to-end testing on testnet
-- ⏳ UI updates for Auction V2
-- ⏳ Toast notifications
-- ⏳ Enhanced error handling
+- End-to-end testing on testnet
+- UI updates for Auction V2
+- Toast notifications
+- Enhanced error handling
 
-### 📅 Roadmap
+### Roadmap
 
 **Q2 2026 (Current)**
 - Complete testnet testing
@@ -274,7 +274,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 🌐 Deployed Contracts (Testnet)
+## Deployed Contracts (Testnet)
 
 ### Base Sepolia
 - **NFT Contract:** `0x21093aFBdB713c9bA75B74A306e65C93Ba190903`
@@ -288,7 +288,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 💰 Tokenomics & Fees
+## Tokenomics & Fees
 
 ### Platform Fees
 - **Platform Fee:** 2.5% on all sales
@@ -322,7 +322,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 🔒 Security & Compliance
+## Security & Compliance
 
 ### Smart Contract Security
 
@@ -334,8 +334,8 @@ This system protects artists from undervaluation while giving collectors confide
 - Event logging
 
 **Audit Status:**
-- Internal review: ✅ Complete
-- External audit: 📅 Scheduled (Q3 2026)
+- Internal review: Complete
+- External audit: Scheduled (Q3 2026)
 
 ### Data Privacy
 
@@ -364,27 +364,27 @@ This system protects artists from undervaluation while giving collectors confide
 ## 🎯 Competitive Advantages
 
 ### vs OpenSea
-- ✅ Floor price protection
-- ✅ Deposit-based bidding (no fake bids)
-- ✅ Community voting system
-- ✅ Lower fees (2.5% vs 2.5%)
-- ✅ Lazy minting built-in
+- Floor price protection
+- Deposit-based bidding (no fake bids)
+- Community voting system
+- Lower fees (2.5% vs 2.5%)
+- Lazy minting built-in
 
 ### vs Rarible
-- ✅ Better auction mechanics
-- ✅ Three-role ownership model
-- ✅ Cleaner UI/UX
-- ✅ Multi-chain from day 1
+- Better auction mechanics
+- Three-role ownership model
+- Cleaner UI/UX
+- Multi-chain from day 1
 
 ### vs Foundation
-- ✅ No invite required
-- ✅ Open to all artists
-- ✅ Community-driven discovery
-- ✅ More flexible pricing
+- No invite required
+- Open to all artists
+- Community-driven discovery
+- More flexible pricing
 
 ---
 
-## 📈 Market Opportunity
+## Market Opportunity
 
 ### NFT Market Size
 - **2025 Market:** $20B+
@@ -411,7 +411,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 🤝 Team & Contact
+## Team & Contact
 
 ### Core Team
 - **Founder/Developer:** Building innovative NFT solutions
@@ -432,7 +432,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 📄 Legal Disclaimer
+## Legal Disclaimer
 
 This documentation is for informational purposes only and does not constitute:
 - Investment advice
@@ -444,7 +444,7 @@ ArtSoul is an experimental platform in active development. Use at your own risk.
 
 ---
 
-## 🔮 Vision
+## Vision
 
 ArtSoul aims to become the premier destination for digital art trading by:
 

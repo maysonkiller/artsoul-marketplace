@@ -457,19 +457,40 @@
                         return;
                     }
 
+                    // Get current network before transaction
+                    const network = await provider.getNetwork();
+                    const initialChainId = Number(network.chainId);
+                    console.log('Initial network:', initialChainId);
+
                     // Create auction on blockchain
                     console.log('Creating auction for artwork:', artwork.blockchain_id);
-                    await window.ArtSoulContracts.createAuction(
-                        artwork.blockchain_id,
-                        artwork.creator_value.toString(),
-                        durationDays
-                    );
 
-                    // Update status in Supabase
-                    await window.ArtSoulDB.updateArtwork(artwork.id, { status: 'auction' });
+                    try {
+                        await window.ArtSoulContracts.createAuction(
+                            artwork.blockchain_id,
+                            artwork.creator_value.toString(),
+                            durationDays
+                        );
 
-                    alert('Auction created successfully!');
-                    loadMyArtworks(); // Reload artworks
+                        // Verify network didn't change during transaction
+                        const finalNetwork = await provider.getNetwork();
+                        const finalChainId = Number(finalNetwork.chainId);
+
+                        if (initialChainId !== finalChainId) {
+                            throw new Error(`Network changed during transaction. Please stay on the same network and try again.`);
+                        }
+
+                        // Update status in Supabase
+                        await window.ArtSoulDB.updateArtwork(artwork.id, { status: 'auction' });
+
+                        alert('Auction created successfully!');
+                        loadMyArtworks(); // Reload artworks
+                    } catch (txError) {
+                        if (txError.message.includes('network changed') || txError.code === 'NETWORK_ERROR') {
+                            throw new Error('Network was changed during transaction. Please stay on the same network and try again.');
+                        }
+                        throw txError;
+                    }
                 } catch (error) {
                     console.error('Create auction failed:', error);
                     alert('Failed to create auction: ' + (error.message || 'Unknown error'));

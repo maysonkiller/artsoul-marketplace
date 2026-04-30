@@ -1841,14 +1841,48 @@
                         card.className = 'card rounded-xl overflow-hidden';
 
                         const imageContainer = document.createElement('div');
-                        imageContainer.className = 'aspect-square overflow-hidden bg-black';
+                        imageContainer.className = 'aspect-square overflow-hidden bg-black relative';
 
                         if (art.file_url) {
-                            const img = document.createElement('img');
-                            img.src = art.file_url;
-                            img.alt = window.ArtSoulSecurity?.sanitizeText(art.title) || 'Artwork';
-                            img.className = 'w-full h-full object-contain';
-                            imageContainer.appendChild(img);
+                            const fileType = art.file_type?.toLowerCase() || '';
+
+                            // Check if video
+                            if (fileType === 'video' || ['mp4', 'webm', 'ogg', 'mov'].includes(fileType)) {
+                                const video = document.createElement('video');
+                                video.src = art.file_url;
+                                video.className = 'w-full h-full object-contain';
+                                video.controls = true;
+                                video.preload = 'metadata';
+                                imageContainer.appendChild(video);
+                            }
+                            // Check if audio
+                            else if (fileType === 'audio' || ['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(fileType)) {
+                                // Show placeholder image with audio player overlay
+                                const audioContainer = document.createElement('div');
+                                audioContainer.className = 'w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black';
+
+                                const musicIcon = document.createElement('div');
+                                musicIcon.className = 'text-6xl mb-4 opacity-50';
+                                musicIcon.textContent = '♪';
+
+                                const audio = document.createElement('audio');
+                                audio.src = art.file_url;
+                                audio.className = 'w-full px-4';
+                                audio.controls = true;
+                                audio.preload = 'metadata';
+
+                                audioContainer.appendChild(musicIcon);
+                                audioContainer.appendChild(audio);
+                                imageContainer.appendChild(audioContainer);
+                            }
+                            // Default: image
+                            else {
+                                const img = document.createElement('img');
+                                img.src = art.file_url;
+                                img.alt = window.ArtSoulSecurity?.sanitizeText(art.title) || 'Artwork';
+                                img.className = 'w-full h-full object-contain';
+                                imageContainer.appendChild(img);
+                            }
                         } else {
                             const placeholder = document.createElement('div');
                             placeholder.className = 'w-full h-full flex items-center justify-center';

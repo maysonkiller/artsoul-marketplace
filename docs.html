@@ -431,28 +431,52 @@
                     content: 'Rialo Playground is a testnet devnet network designed for developers to build and test blockchain applications without using real money. All transactions are free, making it perfect for development and testing.\n\nChain ID: 2025\nNative Currency: RIA\nRPC URL: https://playground.rialo.io/rpc\nBlock Explorer: https://playground.rialo.io\n\nFollow Rialo on X: https://x.com/RialoHQ'
                 },
                 {
-                    title: 'Getting Started',
-                    content: 'ArtSoul is a decentralized art marketplace where community determines value. Connect your wallet to start exploring, bidding, and uploading artwork.'
+                    title: 'What is ArtSoul?',
+                    content: 'ArtSoul is a next-generation NFT marketplace that revolutionizes digital art trading through innovative auction mechanics, community-driven valuation, and fair pricing mechanisms. Built on Base and Ethereum networks, ArtSoul empowers artists and collectors with transparent, secure, and efficient tools for creating, discovering, and trading digital art.'
                 },
                 {
-                    title: 'Triple Valuation System',
-                    content: 'Every artwork has three values: Creator Value (set by artist), Community Value (average from voters), and System Value (AI-based on 3-day auction data).'
+                    title: 'Auction V2 System',
+                    content: 'Unlike traditional NFT marketplaces where auctions directly sell the NFT, ArtSoul introduces a groundbreaking floor price discovery mechanism:\n\n- Auctions set the floor price, not the sale\n- 10% deposit system prevents fake bids\n- 24-hour winner purchase window ensures commitment\n- Three distinct roles: Creator (permanent), Auction Winner (honorary), Current Owner (transferable)\n- Direct sales after auction at prices ≥ floor price\n\nThis system protects artists from undervaluation while giving collectors confidence in fair market pricing.'
+                },
+                {
+                    title: 'Deposit-Based Bidding',
+                    content: 'How it works:\n1. Artist uploads artwork and sets starting price\n2. Auction runs for 3 days\n3. Bidders pay 10% deposit (previous bidder auto-refunded)\n4. Auction ends → highest bid becomes floor price\n5. Winner has 24 hours to complete purchase\n6. If winner doesn\'t buy, artist can sell directly at price ≥ floor\n\nBenefits: Prevents fake bids, establishes fair market value, protects artists from undervaluation, gives collectors price confidence, reduces gas costs through lazy minting.'
+                },
+                {
+                    title: 'Three-Role Ownership',
+                    content: 'Creator: Original artist, receives royalties on all future sales, can set artwork for direct sale.\n\nAuction Winner: Won the initial auction, honorary title that never changes, recognized as first supporter.\n\nCurrent Owner: Current NFT holder, can resell at any price ≥ floor, full ownership rights.'
+                },
+                {
+                    title: 'Community Voting',
+                    content: 'Democratic valuation system where users vote for artworks they believe in. Top 12 most-voted artworks are featured on the homepage. Transparent ranking system with one vote per wallet per artwork helps discover emerging artists.'
+                },
+                {
+                    title: 'Getting Started',
+                    content: 'Connect your wallet to start exploring, bidding, and uploading artwork. Complete your profile to unlock all features.'
                 },
                 {
                     title: 'Uploading Artwork',
-                    content: 'Connect your wallet, complete your profile, then navigate to Upload. Supported formats: Images, Videos, Music, GIFs. Set your initial price and description.'
+                    content: 'Connect your wallet, complete your profile, then navigate to Upload. Supported formats: Images (JPG, PNG, GIF, WebP), Videos (MP4, WebM, MOV), Music (MP3, WAV, AAC), Animated GIFs. Set your initial price and description.'
                 },
                 {
-                    title: 'Bidding & Auctions',
-                    content: 'Place bids on artworks you love. The 3-day auction system ensures fair pricing. Highest bidder wins when auction ends.'
+                    title: 'Lazy Minting',
+                    content: 'Gas-efficient approach where NFT is only minted when sold. Artists don\'t pay gas for uploads, reduces blockchain bloat, and is environmentally friendly. Only pay when artwork sells.'
                 },
                 {
-                    title: 'Social Integration',
-                    content: 'Link your X (Twitter), Discord, and VK accounts in your profile. Share artworks directly to social media with beautiful preview cards.'
+                    title: 'Platform Fees',
+                    content: 'Platform Fee: 2.5% on all sales\nCreator Royalty: 7.5% on secondary sales\nAuction Deposit: 10% of bid (refundable)\n\nGas optimization through lazy minting (no upfront gas), batch operations where possible, and Layer 2 support (Base network).'
+                },
+                {
+                    title: 'Security Features',
+                    content: 'Smart contracts use OpenZeppelin libraries, ReentrancyGuard on all payment functions, and access control. Frontend has XSS protection, Row Level Security (RLS) policies, input validation, and authenticated access only.'
                 },
                 {
                     title: 'Supported Networks',
                     content: 'Base, Ethereum, Rialo, Base Sepolia (testnet), Sepolia (testnet). Switch networks anytime via the Network Badge.'
+                },
+                {
+                    title: 'Social Integration',
+                    content: 'Link your X (Twitter), Discord, and VK accounts in your profile. Share artworks directly to social media with beautiful preview cards.'
                 }
             ];
 
