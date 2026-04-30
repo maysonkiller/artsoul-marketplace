@@ -541,13 +541,21 @@
          * Get default avatar (first letter of username or generic icon)
          */
         getDefaultAvatar() {
-            // Generate a simple SVG avatar
-            const letter = this.profile?.username?.[0]?.toUpperCase() || '?';
+            // Use ArtSoul logo as default avatar (same as header logo)
+            // Beautiful gradient with transparent background
             const svg = `data:image/svg+xml,${encodeURIComponent(`
-                <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="40" height="40" fill="#00f5ff"/>
-                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-                          font-family="Arial" font-size="20" fill="#000">${letter}</text>
+                <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#bf00ff;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Outer circle with gradient border -->
+                    <circle cx="20" cy="20" r="18" fill="none" stroke="url(#logoGradient)" stroke-width="2"/>
+                    <!-- Inner artistic "A" shape -->
+                    <path d="M20 8 L28 28 L24 28 L22 22 L18 22 L16 28 L12 28 Z M19 18 L21 18 L20 13 Z"
+                          fill="url(#logoGradient)"/>
                 </svg>
             `)}`;
             return svg;
