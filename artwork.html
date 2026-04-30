@@ -167,12 +167,40 @@
                 return (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-black p-8">
                         <div className="mb-8 text-center">
-                            <div className="text-6xl mb-4">🎵</div>
+                            <div className="relative w-48 h-48 mx-auto mb-6">
+                                <img
+                                    src="ARTSOULlogo.png"
+                                    alt="Music"
+                                    className="w-full h-full object-contain"
+                                    style={{
+                                        animation: 'spin 8s linear infinite, colorShift 4s ease-in-out infinite',
+                                        filter: 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4))'
+                                    }}
+                                />
+                                <style>{`
+                                    @keyframes spin {
+                                        from { transform: rotate(0deg); }
+                                        to { transform: rotate(360deg); }
+                                    }
+                                    @keyframes colorShift {
+                                        0%, 100% {
+                                            filter: drop-shadow(0 0 20px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 40px rgba(0, 245, 255, 0.4));
+                                        }
+                                        33% {
+                                            filter: drop-shadow(0 0 20px rgba(191, 0, 255, 0.8)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4));
+                                        }
+                                        66% {
+                                            filter: drop-shadow(0 0 20px rgba(255, 0, 191, 0.8)) drop-shadow(0 0 40px rgba(255, 0, 191, 0.4));
+                                        }
+                                    }
+                                `}</style>
+                            </div>
                             <div className="text-xl opacity-70">{sanitizedTitle}</div>
                         </div>
                         <audio
                             src={url}
                             controls
+                            autoPlay
                             className="w-full max-w-md"
                             style={{
                                 filter: 'invert(1) hue-rotate(180deg)',
