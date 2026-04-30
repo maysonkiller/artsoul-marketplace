@@ -709,7 +709,8 @@
 
                             {/* Artwork Info */}
                             <div className="space-y-6 px-4 lg:px-8 py-6 lg:py-12 overflow-y-auto">
-                                <div>
+                                {/* Title & Description */}
+                                <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
                                     <h1 className="text-4xl font-bold mb-2">{artwork.title}</h1>
                                     <p className="opacity-70">{artwork.description}</p>
                                 </div>
@@ -950,19 +951,19 @@
                                 )}
 
                                 {/* Community Voting */}
-                                <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                    <h3 className="text-xl font-bold mb-4">Community Voting</h3>
+                                <div className={`p-4 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
+                                    <h3 className="text-lg font-bold mb-3">Community Voting</h3>
 
-                                    <div className="space-y-4">
+                                    <div className="space-y-3">
                                         <div className="flex justify-between items-center">
-                                            <span className="opacity-70">Total Votes:</span>
-                                            <span className="text-2xl font-bold">{votes.length}</span>
+                                            <span className="text-sm opacity-70">Total Votes:</span>
+                                            <span className="text-xl font-bold">{votes.length}</span>
                                         </div>
 
                                         {userVote ? (
-                                            <div className="text-center py-4">
-                                                <p className="text-lg mb-2">✓ You voted for this artwork</p>
-                                                <p className="text-sm opacity-50">Votes cannot be changed</p>
+                                            <div className="text-center py-2">
+                                                <p className="text-sm mb-1">✓ You voted for this artwork</p>
+                                                <p className="text-xs opacity-50">Votes cannot be changed</p>
                                             </div>
                                         ) : (
                                             <button onClick={handleVote} className="btn-main w-full">
