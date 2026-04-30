@@ -523,7 +523,8 @@
                     metadata_uri: metadataUpload.url,
                     creator_value: parseFloat(price),
                     status: 'draft',
-                    tx_hash: result.txHash
+                    tx_hash: result.txHash,
+                    network: window.ArtSoulContracts.currentNetwork // Save which network NFT was created on
                 });
 
                 console.log('✅ Artwork saved to database with ID:', dbArtwork.id);
