@@ -202,6 +202,7 @@
             const [selectedGallery, setSelectedGallery] = useState('created');
             const [myArtworks, setMyArtworks] = useState([]);
             const [loading, setLoading] = useState(true);
+            const [isOwnProfile, setIsOwnProfile] = useState(true);
             const fileInputRef = useRef(null);
             const navButtonsRef = useRef(null);
             const networkBadgeRef = useRef(null);
@@ -274,11 +275,20 @@
             }
 
             async function loadProfile() {
-                const walletAddress = window.getCurrentWalletAddress?.();
+                // Check if viewing another user's profile
+                const urlParams = new URLSearchParams(window.location.search);
+                const viewAddress = urlParams.get('address');
+
+                const walletAddress = viewAddress || window.getCurrentWalletAddress?.();
                 if (!walletAddress) {
                     setLoading(false);
                     return;
                 }
+
+                // Determine if this is the current user's profile
+                const currentAddress = window.getCurrentWalletAddress?.();
+                const isOwn = currentAddress && currentAddress.toLowerCase() === walletAddress.toLowerCase();
+                setIsOwnProfile(isOwn);
 
                 try {
                     // Try to load profile without authentication first
@@ -292,9 +302,17 @@
                             twitter_handle: '',
                             discord_username: ''
                         };
-                        setEditMode(true);
+                        // Only allow edit mode for own profile
+                        if (isOwn) {
+                            setEditMode(true);
+                        }
                     }
                     setProfile(profileData);
+
+                    // Disable edit mode if viewing someone else's profile
+                    if (!isOwn) {
+                        setEditMode(false);
+                    }
                 } catch (error) {
                     console.error('Error loading profile:', error);
                 }
@@ -833,9 +851,11 @@
                                                 </button>
                                             </>
                                         ) : (
-                                            <button onClick={() => setEditMode(true)} className="btn-main">
-                                                Edit Profile
-                                            </button>
+                                            isOwnProfile && (
+                                                <button onClick={() => setEditMode(true)} className="btn-main">
+                                                    Edit Profile
+                                                </button>
+                                            )
                                         )}
                                     </div>
                                 </div>
@@ -963,54 +983,56 @@
                                             <div className="text-xs opacity-70 mb-3">{artwork.creator_value || '0'} ETH</div>
 
                                             {/* Action Buttons */}
-                                            <div className="flex gap-2">
-                                                {artwork.status === 'draft' && (
+                                            {isOwnProfile && (
+                                                <div className="flex gap-2">
+                                                    {artwork.status === 'draft' && (
+                                                        <button
+                                                            onClick={() => handleCreateAuction(artwork)}
+                                                            className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                                isClassic
+                                                                    ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
+                                                                    : 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30'
+                                                            }`}
+                                                        >
+                                                            Create Auction
+                                                        </button>
+                                                    )}
+                                                    {artwork.status === 'auction' && (
+                                                        <button
+                                                            onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}
+                                                            className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                                isClassic
+                                                                    ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
+                                                                    : 'bg-purple-900/30 hover:bg-purple-900/50 text-purple-400 border border-purple-500/30'
+                                                            }`}
+                                                        >
+                                                            View Auction
+                                                        </button>
+                                                    )}
+                                                    {artwork.status === 'sold' && (
+                                                        <button
+                                                            onClick={() => handleRelistArtwork(artwork)}
+                                                            className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                                isClassic
+                                                                    ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
+                                                                    : 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30'
+                                                            }`}
+                                                        >
+                                                            Relist
+                                                        </button>
+                                                    )}
                                                     <button
-                                                        onClick={() => handleCreateAuction(artwork)}
-                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                        onClick={() => handleDeleteArtwork(artwork)}
+                                                        className={`px-3 py-2 rounded text-xs font-medium transition-all ${
                                                             isClassic
-                                                                ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
-                                                                : 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30'
+                                                                ? 'bg-gray-700 hover:bg-red-600 text-white border border-gray-600'
+                                                                : 'bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-500/30'
                                                         }`}
-                                                    >
-                                                        Create Auction
-                                                    </button>
-                                                )}
-                                                {artwork.status === 'auction' && (
-                                                    <button
-                                                        onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}
-                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
-                                                            isClassic
-                                                                ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
-                                                                : 'bg-purple-900/30 hover:bg-purple-900/50 text-purple-400 border border-purple-500/30'
-                                                        }`}
-                                                    >
-                                                        View Auction
-                                                    </button>
-                                                )}
-                                                {artwork.status === 'sold' && (
-                                                    <button
-                                                        onClick={() => handleRelistArtwork(artwork)}
-                                                        className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
-                                                            isClassic
-                                                                ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600'
-                                                                : 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-500/30'
-                                                        }`}
-                                                    >
-                                                        Relist
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => handleDeleteArtwork(artwork)}
-                                                    className={`px-3 py-2 rounded text-xs font-medium transition-all ${
-                                                        isClassic
-                                                            ? 'bg-gray-700 hover:bg-red-600 text-white border border-gray-600'
-                                                            : 'bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-500/30'
-                                                    }`}
                                                 >
                                                     Delete
                                                 </button>
                                             </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

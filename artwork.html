@@ -891,9 +891,12 @@
                                 </div>
 
                                 {/* Back Button */}
-                                <a href="gallery.html" className="btn-secondary w-full block text-center">
-                                    Back to Gallery
-                                </a>
+                                <button
+                                    onClick={() => window.history.back()}
+                                    className="btn-secondary w-full"
+                                >
+                                    ← Back
+                                </button>
                             </div>
                         </div>
                     </main>
