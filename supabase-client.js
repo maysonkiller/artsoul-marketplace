@@ -580,53 +580,6 @@ async function saveVote(voteData) {
     return data;
 }
 
-    // Check if user already voted
-    const { data: existingVote } = await supabase
-        .from('votes')
-        .select('*')
-        .eq('artwork_id', voteData.artwork_id)
-        .eq('voter_address', voteData.voter_address)
-        .single();
-
-    if (existingVote) {
-        // Update existing vote
-        const { data, error } = await supabase
-            .from('votes')
-            .update({
-                vote_type: voteData.vote_type,
-                updated_at: new Date().toISOString()
-            })
-            .eq('id', existingVote.id)
-            .select()
-            .single();
-
-        if (error) {
-            console.error('Error updating vote:', error);
-            throw error;
-        }
-
-        return data;
-    } else {
-        // Create new vote
-        const { data, error } = await supabase
-            .from('votes')
-            .insert([{
-                artwork_id: voteData.artwork_id,
-                voter_address: voteData.voter_address,
-                vote_type: voteData.vote_type
-            }])
-            .select()
-            .single();
-
-        if (error) {
-            console.error('Error creating vote:', error);
-            throw error;
-        }
-
-        return data;
-    }
-}
-
 async function getVotes(artworkId) {
     const supabase = await initSupabase();
 
@@ -682,24 +635,26 @@ async function getVoteCount(artworkId) {
 async function getArtworksByVotes(limit = null) {
     const supabase = await initSupabase();
 
-    // Get all artworks with vote counts
-    const { data: artworks, error: artworksError } = await supabase
+    // Use LEFT JOIN with COUNT to get vote counts in a single query
+    // This is much more efficient than N+1 queries
+    const { data: artworks, error } = await supabase
         .from('artworks')
-        .select('*')
+        .select(`
+            *,
+            votes:votes(count)
+        `)
         .order('created_at', { ascending: false });
 
-    if (artworksError) {
-        console.error('Error fetching artworks:', artworksError);
-        throw artworksError;
+    if (error) {
+        console.error('Error fetching artworks with votes:', error);
+        throw error;
     }
 
-    // Get vote counts for each artwork
-    const artworksWithVotes = await Promise.all(
-        artworks.map(async (artwork) => {
-            const voteCount = await getVoteCount(artwork.id);
-            return { ...artwork, vote_count: voteCount };
-        })
-    );
+    // Transform the data to include vote_count
+    const artworksWithVotes = artworks.map(artwork => ({
+        ...artwork,
+        vote_count: artwork.votes?.[0]?.count || 0
+    }));
 
     // Sort by vote count (descending), then by created_at (ascending) for ties
     artworksWithVotes.sort((a, b) => {
