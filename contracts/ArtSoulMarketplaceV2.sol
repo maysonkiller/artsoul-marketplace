@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./ArtSoulNFT.sol";
 
 /**
- * @title ArtSoulMarketplace V2
+ * @title ArtSoulMarketplaceV2
  * @dev Manages artwork uploads, auctions (floor price setting), and direct sales
  *
  * NEW CONCEPT:
@@ -16,7 +16,7 @@ import "./ArtSoulNFT.sol";
  * - After auction, creator can sell directly at price >= floor
  * - Three roles: Creator, Auction Winner (honorary), Current Owner
  */
-contract ArtSoulMarketplace is ReentrancyGuard, Ownable {
+contract ArtSoulMarketplaceV2 is ReentrancyGuard, Ownable {
     ArtSoulNFT public nftContract;
 
     // Platform fee in basis points (250 = 2.5%)

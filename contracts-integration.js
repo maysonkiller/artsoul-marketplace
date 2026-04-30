@@ -6,13 +6,13 @@ import { ethers } from 'https://esm.sh/ethers@6.7.0';
 // Contract addresses (Testnets)
 const CONTRACTS = {
     baseSepolia: {
-        nft: '0x68055c742D2f91C2F6B5f277489aE961B466b2BD',
-        marketplace: '0xA927574ECdCc81349C112Cc49C2f71ab707a537E',
+        nft: '0x21093aFBdB713c9bA75B74A306e65C93Ba190903',
+        marketplace: '0x7d2C59c8779aC201671dd1fEF7Cbf0198f010692',
         chainId: 84532
     },
     sepolia: {
-        nft: '0x68055c742D2f91C2F6B5f277489aE961B466b2BD',
-        marketplace: '0xA927574ECdCc81349C112Cc49C2f71ab707a537E',
+        nft: '0x912F48378F7e1830de907a41Db06458f343407ee',
+        marketplace: '0x21093aFBdB713c9bA75B74A306e65C93Ba190903',
         chainId: 11155111
     }
 };

@@ -1,7 +1,7 @@
 // Deploy script for ArtSoulMarketplaceV2
 // Run: npx hardhat run scripts/deploy-v2.js --network baseSepolia
 
-const hre = require("hardhat");
+import hre from "hardhat";
 
 async function main() {
   console.log("🚀 Deploying ArtSoul Marketplace V2...");
