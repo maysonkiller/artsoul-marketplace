@@ -514,28 +514,10 @@ if (document.readyState === 'loading') {
                 }
             }
         }
-
-        // Initialize AppKit
         initializeAppKit();
-
-        // Check if wallet was already connected and update UI
-        const savedWallet = localStorage.getItem('artsoul_wallet');
-        if (savedWallet) {
-            console.log('🔄 Restoring wallet UI for:', savedWallet);
-            window.currentWalletAddress = savedWallet;
-            updateNavButtons({ address: savedWallet });
-        }
     });
 } else {
     initializeAppKit();
-
-    // Check if wallet was already connected and update UI
-    const savedWallet = localStorage.getItem('artsoul_wallet');
-    if (savedWallet) {
-        console.log('🔄 Restoring wallet UI for:', savedWallet);
-        window.currentWalletAddress = savedWallet;
-        updateNavButtons({ address: savedWallet });
-    }
 }
 
 console.log('📦 AppKit module loaded');
