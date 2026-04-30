@@ -489,6 +489,97 @@
                 }
             }
 
+            async function handleWinnerPurchase() {
+                if (!artwork.blockchain_id) {
+                    alert('Blockchain ID not found');
+                    return;
+                }
+
+                try {
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    await window.ArtSoulContracts.init(provider);
+
+                    // Check if user is the winner
+                    const walletAddress = window.currentWalletAddress;
+                    if (!walletAddress || walletAddress.toLowerCase() !== auction.auctionWinner.toLowerCase()) {
+                        alert('Only the auction winner can purchase');
+                        return;
+                    }
+
+                    // Purchase by winner
+                    const txHash = await window.ArtSoulContracts.purchaseByWinner(artwork.blockchain_id);
+                    console.log('Winner purchase tx:', txHash);
+
+                    // Update database
+                    const blockchainArtwork = await window.ArtSoulContracts.getArtwork(artwork.blockchain_id);
+                    await window.ArtSoulDB.recordWinnerPurchase(
+                        artworkId,
+                        walletAddress,
+                        blockchainArtwork.tokenId
+                    );
+
+                    alert('Purchase successful! NFT minted to your wallet.');
+                    loadArtwork();
+                } catch (error) {
+                    console.error('Winner purchase failed:', error);
+                    alert('Purchase failed: ' + (error.message || 'Unknown error'));
+                }
+            }
+
+            async function handleDirectPurchase() {
+                if (!artwork.blockchain_id) {
+                    alert('Blockchain ID not found');
+                    return;
+                }
+
+                if (!artwork.sale_price || parseFloat(artwork.sale_price) <= 0) {
+                    alert('Artwork not for sale');
+                    return;
+                }
+
+                try {
+                    const provider = await window.web3Modal?.getWalletProvider();
+                    if (!provider) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    await window.ArtSoulContracts.init(provider);
+
+                    const walletAddress = window.currentWalletAddress;
+                    if (!walletAddress) {
+                        alert('Please connect your wallet');
+                        return;
+                    }
+
+                    // Purchase directly
+                    const txHash = await window.ArtSoulContracts.purchaseDirectly(
+                        artwork.blockchain_id,
+                        artwork.sale_price
+                    );
+                    console.log('Direct purchase tx:', txHash);
+
+                    // Update database
+                    const blockchainArtwork = await window.ArtSoulContracts.getArtwork(artwork.blockchain_id);
+                    await window.ArtSoulDB.recordDirectPurchase(
+                        artworkId,
+                        walletAddress,
+                        blockchainArtwork.tokenId
+                    );
+
+                    alert('Purchase successful! NFT minted to your wallet.');
+                    loadArtwork();
+                } catch (error) {
+                    console.error('Direct purchase failed:', error);
+                    alert('Purchase failed: ' + (error.message || 'Unknown error'));
+                }
+            }
+
             if (loading) {
                 return (
                     <div className="min-h-screen flex items-center justify-center">
@@ -572,72 +663,100 @@
                                     <p className="opacity-70">{artwork.description}</p>
                                 </div>
 
-                                {/* Creator */}
+                                {/* Ownership Info - Three Roles */}
                                 <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                    <div className="flex items-center gap-6">
-                                        {/* Avatar and Creator Info */}
-                                        <a
-                                            href={`profile.html?address=${artwork.creator_id}`}
-                                            className="flex items-center gap-3 hover:opacity-80 transition-opacity flex-1 min-w-0"
-                                        >
-                                            <img
-                                                src={creatorProfile?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${artwork.creator_id}`}
-                                                alt="Creator"
-                                                className={`w-16 h-16 rounded-full border-2 flex-shrink-0 ${
-                                                    isClassic ? 'border-current' : 'border-cyan-400'
-                                                }`}
-                                                style={!isClassic ? {
-                                                    boxShadow: '0 0 20px rgba(0, 245, 255, 0.5)',
-                                                    animation: 'glow-pulse 2s ease-in-out infinite'
-                                                } : {}}
-                                            />
-                                            <div className="min-w-0 flex-1">
-                                                <div className="text-xs opacity-50 mb-1">Created by</div>
-                                                <div className="font-semibold text-lg truncate">
-                                                    {creatorProfile?.username || `${artwork.creator_id?.slice(0, 6)}...${artwork.creator_id?.slice(-4)}`}
+                                    <h3 className="text-xl font-bold mb-4">Ownership</h3>
+
+                                    <div className="space-y-4">
+                                        {/* Creator */}
+                                        <div className="flex items-center gap-3">
+                                            <a
+                                                href={`profile.html?address=${artwork.creator_id}`}
+                                                className="flex items-center gap-3 hover:opacity-80 transition-opacity flex-1 min-w-0"
+                                            >
+                                                <img
+                                                    src={creatorProfile?.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${artwork.creator_id}`}
+                                                    alt="Creator"
+                                                    className={`w-12 h-12 rounded-full border-2 flex-shrink-0 ${
+                                                        isClassic ? 'border-current' : 'border-cyan-400'
+                                                    }`}
+                                                />
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="text-xs opacity-50">Creator</div>
+                                                    <div className="font-semibold truncate">
+                                                        {creatorProfile?.username || `${artwork.creator_id?.slice(0, 6)}...${artwork.creator_id?.slice(-4)}`}
+                                                    </div>
                                                 </div>
-                                                <div className="text-xs opacity-50 font-mono truncate">
-                                                    {artwork.creator_id?.slice(0, 10)}...{artwork.creator_id?.slice(-8)}
+                                            </a>
+                                        </div>
+
+                                        {/* Auction Winner (if exists) */}
+                                        {artwork.auction_winner_address && artwork.auction_winner_address !== '0x0000000000000000000000000000000000000000' && (
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                    <div className={`w-12 h-12 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
+                                                        isClassic ? 'border-yellow-500 bg-yellow-500/20' : 'border-yellow-400 bg-yellow-400/20'
+                                                    }`}>
+                                                        <span className="text-xl">🏆</span>
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="text-xs opacity-50">Auction Winner</div>
+                                                        <div className="font-semibold font-mono text-sm truncate">
+                                                            {artwork.auction_winner_address.slice(0, 10)}...{artwork.auction_winner_address.slice(-8)}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        )}
 
-                                        {/* Share Button */}
-                                        <div className="ml-auto flex flex-col items-center gap-2 flex-shrink-0">
-                                            <button
-                                                onClick={() => {
-                                                    const text = `Check out "${artwork.title}" by ${creatorProfile?.username || 'artist'} on ArtSoul Marketplace!`;
-                                                    const url = window.location.href;
-                                                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-                                                    window.open(twitterUrl, '_blank', 'width=550,height=420');
-                                                }}
-                                                className={`hover:opacity-70 transition-all flex items-center justify-center rounded-lg ${
-                                                    isClassic ? 'bg-gray-700 hover:bg-gray-600' : 'bg-cyan-900/30 hover:bg-cyan-900/50'
-                                                }`}
-                                                style={!isClassic ? {
-                                                    width: '80px',
-                                                    height: '80px',
-                                                    boxShadow: '0 0 20px rgba(0, 245, 255, 0.3)',
-                                                    animation: 'glow-pulse 2s ease-in-out infinite'
-                                                } : {
-                                                    width: '80px',
-                                                    height: '80px'
-                                                }}
-                                                title="Share on X"
-                                            >
-                                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                                </svg>
-                                            </button>
-                                            <div className="text-xs opacity-50 text-center">Share on X</div>
-                                        </div>
+                                        {/* Current Owner (if sold) */}
+                                        {artwork.current_owner_address && artwork.current_owner_address !== '0x0000000000000000000000000000000000000000' && (
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                    <div className={`w-12 h-12 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
+                                                        isClassic ? 'border-green-500 bg-green-500/20' : 'border-green-400 bg-green-400/20'
+                                                    }`}>
+                                                        <span className="text-xl">👤</span>
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="text-xs opacity-50">Current Owner</div>
+                                                        <div className="font-semibold font-mono text-sm truncate">
+                                                            {artwork.current_owner_address.slice(0, 10)}...{artwork.current_owner_address.slice(-8)}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Share Button */}
+                                    <div className="mt-4 pt-4 border-t border-current/20">
+                                        <button
+                                            onClick={() => {
+                                                const text = `Check out "${artwork.title}" by ${creatorProfile?.username || 'artist'} on ArtSoul Marketplace!`;
+                                                const url = window.location.href;
+                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                                                window.open(twitterUrl, '_blank', 'width=550,height=420');
+                                            }}
+                                            className={`w-full py-3 rounded-lg hover:opacity-70 transition-all flex items-center justify-center gap-2 ${
+                                                isClassic ? 'bg-gray-700 hover:bg-gray-600' : 'bg-cyan-900/30 hover:bg-cyan-900/50'
+                                            }`}
+                                            title="Share on X"
+                                        >
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                            </svg>
+                                            <span>Share on X</span>
+                                        </button>
                                     </div>
                                 </div>
 
                                 {/* Auction Info */}
                                 {auction && (
                                     <div className={`p-6 rounded-xl ${isClassic ? 'bg-gray-800' : 'bg-cyan-900/20 border border-cyan-500/30'}`}>
-                                        <h3 className="text-2xl font-bold mb-4">Live Auction</h3>
+                                        <h3 className="text-2xl font-bold mb-4">
+                                            {auction.ended ? 'Auction Ended' : 'Live Auction'}
+                                        </h3>
 
                                         <div className="space-y-3">
                                             <div className="flex justify-between">
@@ -645,22 +764,48 @@
                                                 <span className="font-bold">{auction.startingPrice} ETH</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="opacity-70">Current Bid:</span>
-                                                <span className="font-bold text-2xl">{auction.highestBid === '0.0' ? 'No bids yet' : `${auction.highestBid} ETH`}</span>
+                                                <span className="opacity-70">
+                                                    {auction.ended ? 'Final Bid:' : 'Current Bid:'}
+                                                </span>
+                                                <span className="font-bold text-2xl">{auction.highestBid === '0.0' ? 'No bids' : `${auction.highestBid} ETH`}</span>
                                             </div>
                                             {auction.highestBidder !== '0x0000000000000000000000000000000000000000' && (
                                                 <div className="flex justify-between">
-                                                    <span className="opacity-70">Highest Bidder:</span>
+                                                    <span className="opacity-70">
+                                                        {auction.ended ? 'Winner:' : 'Highest Bidder:'}
+                                                    </span>
                                                     <span className="font-mono text-sm">{auction.highestBidder.slice(0, 10)}...</span>
                                                 </div>
                                             )}
-                                            <div className="flex justify-between">
-                                                <span className="opacity-70">Time Left:</span>
-                                                <span className="font-bold">{timeLeft}</span>
-                                            </div>
+                                            {!auction.ended && (
+                                                <div className="flex justify-between">
+                                                    <span className="opacity-70">Time Left:</span>
+                                                    <span className="font-bold">{timeLeft}</span>
+                                                </div>
+                                            )}
+                                            {auction.ended && auction.winnerDeadline > 0 && (
+                                                <div className="flex justify-between">
+                                                    <span className="opacity-70">Winner Deadline:</span>
+                                                    <span className="font-bold">
+                                                        {new Date(auction.winnerDeadline * 1000).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {artwork.floor_price && parseFloat(artwork.floor_price) > 0 && (
+                                                <div className="flex justify-between">
+                                                    <span className="opacity-70">Floor Price:</span>
+                                                    <span className="font-bold text-lg">{artwork.floor_price} ETH</span>
+                                                </div>
+                                            )}
+                                            {artwork.sale_price && parseFloat(artwork.sale_price) > 0 && (
+                                                <div className="flex justify-between">
+                                                    <span className="opacity-70">Sale Price:</span>
+                                                    <span className="font-bold text-xl text-green-400">{artwork.sale_price} ETH</span>
+                                                </div>
+                                            )}
                                         </div>
 
-                                        {/* Bid Input */}
+                                        {/* Bid Input (during auction) */}
                                         {!auction.ended && (
                                             <div className="mt-6 space-y-3">
                                                 <input
@@ -672,7 +817,7 @@
                                                     className={`w-full px-4 py-3 rounded-lg ${isClassic ? 'bg-gray-700 border border-gray-600' : 'bg-gray-800/50 border border-cyan-500/30'}`}
                                                 />
                                                 <button onClick={handlePlaceBid} className="btn-main w-full">
-                                                    Place Bid
+                                                    Place Bid (10% deposit required)
                                                 </button>
                                                 <div className="text-sm opacity-50 text-center">
                                                     Minimum: {auction.highestBid === '0.0' ? auction.startingPrice : (parseFloat(auction.highestBid) * 1.05).toFixed(4)} ETH
@@ -680,11 +825,36 @@
                                             </div>
                                         )}
 
-                                        {/* End Auction (for creator) */}
+                                        {/* End Auction Button (for anyone after time expires) */}
                                         {auction.ended === false && Date.now() / 1000 >= auction.endTime && (
                                             <button onClick={handleEndAuction} className="btn-secondary w-full mt-4">
                                                 End Auction
                                             </button>
+                                        )}
+
+                                        {/* Winner Purchase Button (24h window) */}
+                                        {auction.ended && auction.auctionWinner && !auction.winnerPurchased &&
+                                         auction.winnerDeadline > 0 && Date.now() / 1000 <= auction.winnerDeadline && (
+                                            <div className="mt-6 space-y-3">
+                                                <div className={`p-4 rounded-lg ${isClassic ? 'bg-yellow-500/20 border border-yellow-500' : 'bg-yellow-400/20 border border-yellow-400'}`}>
+                                                    <p className="text-sm font-semibold mb-2">🏆 Winner Purchase Window</p>
+                                                    <p className="text-xs opacity-70">
+                                                        You have 24 hours to complete your purchase at your winning bid price.
+                                                    </p>
+                                                </div>
+                                                <button onClick={handleWinnerPurchase} className="btn-main w-full">
+                                                    Complete Purchase ({auction.highestBid} ETH)
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Direct Purchase Button (after auction or if set for sale) */}
+                                        {artwork.sale_price && parseFloat(artwork.sale_price) > 0 && artwork.status === 'for_sale' && (
+                                            <div className="mt-6">
+                                                <button onClick={handleDirectPurchase} className="btn-main w-full">
+                                                    Buy Now - {artwork.sale_price} ETH
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                 )}

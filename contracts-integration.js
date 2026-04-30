@@ -26,22 +26,45 @@ const NFT_ABI = [
 ];
 
 const MARKETPLACE_ABI = [
+    // Artwork management
     "function uploadArtwork(string ipfsHash, string metadataURI, bytes32 fileHash, uint256 creatorValue) returns (uint256)",
+    "function deleteArtwork(uint256 artworkId)",
+    "function relistArtwork(uint256 artworkId, uint256 newPrice)",
+
+    // Auction V2 functions
     "function createAuction(uint256 artworkId)",
     "function placeBid(uint256 artworkId) payable",
     "function endAuction(uint256 artworkId)",
-    "function deleteArtwork(uint256 artworkId)",
-    "function relistArtwork(uint256 artworkId, uint256 newPrice)",
+    "function purchaseByWinner(uint256 artworkId) payable",
+    "function setForSale(uint256 artworkId, uint256 price)",
+    "function purchaseDirectly(uint256 artworkId) payable",
+    "function refundAllDeposits(uint256 artworkId)",
+    "function getAuctionBids(uint256 artworkId) view returns (tuple(address bidder, uint256 amount, uint256 deposit, bool refunded, uint256 timestamp)[])",
+
+    // Admin functions
     "function withdrawFees()",
     "function owner() view returns (address)",
     "function platformFeeBps() view returns (uint96)",
-    "function artworks(uint256) view returns (uint256 id, address creator, string ipfsHash, string metadataURI, bytes32 fileHash, uint256 creatorValue, uint256 communityValue, uint256 systemValue, uint8 status, uint256 tokenId, uint256 createdAt)",
-    "function auctions(uint256) view returns (uint256 artworkId, uint256 startTime, uint256 endTime, uint256 startingPrice, uint256 highestBid, address highestBidder, bool ended)",
+
+    // View functions
+    "function artworks(uint256) view returns (uint256 id, address creator, address auctionWinner, address currentOwner, string ipfsHash, string metadataURI, bytes32 fileHash, uint256 creatorValue, uint256 floorPrice, uint256 salePrice, uint256 communityValue, uint256 systemValue, uint8 status, uint256 tokenId, uint256 createdAt)",
+    "function auctions(uint256) view returns (uint256 artworkId, uint256 startTime, uint256 endTime, uint256 startingPrice, uint256 highestBid, address highestBidder, address auctionWinner, uint256 winnerDeadline, bool ended, bool winnerPurchased)",
     "function getCreatorArtworks(address creator) view returns (uint256[])",
+
+    // Constants
+    "function AUCTION_DURATION() view returns (uint256)",
+    "function WINNER_PURCHASE_WINDOW() view returns (uint256)",
+    "function DEPOSIT_BPS() view returns (uint256)",
+
+    // Events
     "event ArtworkUploaded(uint256 indexed artworkId, address indexed creator, string ipfsHash)",
     "event AuctionCreated(uint256 indexed artworkId, uint256 startingPrice, uint256 endTime)",
-    "event BidPlaced(uint256 indexed artworkId, address indexed bidder, uint256 amount)",
-    "event AuctionEnded(uint256 indexed artworkId, address winner, uint256 amount)"
+    "event BidPlaced(uint256 indexed artworkId, address indexed bidder, uint256 amount, uint256 deposit)",
+    "event AuctionEnded(uint256 indexed artworkId, address winner, uint256 winningBid, uint256 floorPrice)",
+    "event WinnerPurchased(uint256 indexed artworkId, address winner, uint256 tokenId)",
+    "event DirectPurchase(uint256 indexed artworkId, address buyer, uint256 price, uint256 tokenId)",
+    "event ForSale(uint256 indexed artworkId, uint256 price)",
+    "event DepositRefunded(uint256 indexed artworkId, address indexed bidder, uint256 amount)"
 ];
 
 class ArtSoulContracts {
@@ -194,12 +217,16 @@ class ArtSoulContracts {
             return {
                 id: artwork.id.toString(),
                 creator: artwork.creator,
+                auctionWinner: artwork.auctionWinner,
+                currentOwner: artwork.currentOwner,
                 ipfsHash: artwork.ipfsHash,
                 metadataURI: artwork.metadataURI,
                 creatorValue: ethers.formatEther(artwork.creatorValue),
+                floorPrice: ethers.formatEther(artwork.floorPrice),
+                salePrice: ethers.formatEther(artwork.salePrice),
                 communityValue: ethers.formatEther(artwork.communityValue),
                 systemValue: ethers.formatEther(artwork.systemValue),
-                status: Number(artwork.status), // 0=DRAFT, 1=AUCTION, 2=AUCTION_FAILED, 3=SOLD, 4=UNLISTED
+                status: Number(artwork.status), // 0=DRAFT, 1=AUCTION, 2=AUCTION_ENDED, 3=FOR_SALE, 4=SOLD, 5=UNLISTED
                 tokenId: artwork.tokenId.toString(),
                 createdAt: Number(artwork.createdAt)
             };
@@ -224,7 +251,10 @@ class ArtSoulContracts {
                 startingPrice: ethers.formatEther(auction.startingPrice),
                 highestBid: ethers.formatEther(auction.highestBid),
                 highestBidder: auction.highestBidder,
-                ended: auction.ended
+                auctionWinner: auction.auctionWinner,
+                winnerDeadline: Number(auction.winnerDeadline),
+                ended: auction.ended,
+                winnerPurchased: auction.winnerPurchased
             };
         } catch (error) {
             console.error('❌ Get auction failed:', error);
@@ -358,6 +388,162 @@ class ArtSoulContracts {
             };
         } catch (error) {
             console.error('❌ Withdraw failed:', error);
+            throw error;
+        }
+    }
+
+    // ============================================
+    // AUCTION V2 FUNCTIONS
+    // ============================================
+
+    /**
+     * Purchase artwork by auction winner (within 24h window)
+     */
+    async purchaseByWinner(artworkId) {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            // Get auction details to calculate payment
+            const auction = await this.getAuction(artworkId);
+            const highestBid = ethers.parseEther(auction.highestBid);
+
+            // Calculate deposit (10%)
+            const depositBps = await this.marketplaceContract.DEPOSIT_BPS();
+            const deposit = (highestBid * depositBps) / 10000n;
+
+            // Remaining payment = bid - deposit
+            const remainingPayment = highestBid - deposit;
+
+            console.log(`💰 Purchasing as winner...`);
+            console.log(`   Total bid: ${auction.highestBid} ETH`);
+            console.log(`   Deposit paid: ${ethers.formatEther(deposit)} ETH`);
+            console.log(`   Remaining: ${ethers.formatEther(remainingPayment)} ETH`);
+
+            const tx = await this.marketplaceContract.purchaseByWinner(artworkId, {
+                value: remainingPayment
+            });
+
+            console.log('⏳ Transaction sent:', tx.hash);
+            await tx.wait();
+            console.log('✅ Purchase complete!');
+
+            return tx.hash;
+        } catch (error) {
+            console.error('❌ Winner purchase failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Set artwork for direct sale after auction
+     */
+    async setForSale(artworkId, priceEth) {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            const price = ethers.parseEther(priceEth.toString());
+
+            console.log(`🏷️ Setting for sale at ${priceEth} ETH...`);
+
+            const tx = await this.marketplaceContract.setForSale(artworkId, price);
+            console.log('⏳ Transaction sent:', tx.hash);
+            await tx.wait();
+            console.log('✅ Artwork set for sale!');
+
+            return tx.hash;
+        } catch (error) {
+            console.error('❌ Set for sale failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Purchase artwork directly (after auction or if set for sale)
+     */
+    async purchaseDirectly(artworkId, priceEth) {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            const price = ethers.parseEther(priceEth.toString());
+
+            console.log(`💰 Purchasing directly for ${priceEth} ETH...`);
+
+            const tx = await this.marketplaceContract.purchaseDirectly(artworkId, {
+                value: price
+            });
+
+            console.log('⏳ Transaction sent:', tx.hash);
+            await tx.wait();
+            console.log('✅ Purchase complete!');
+
+            return tx.hash;
+        } catch (error) {
+            console.error('❌ Direct purchase failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Refund all deposits after auction ends
+     */
+    async refundAllDeposits(artworkId) {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            console.log('💸 Refunding all deposits...');
+
+            const tx = await this.marketplaceContract.refundAllDeposits(artworkId);
+            console.log('⏳ Transaction sent:', tx.hash);
+            await tx.wait();
+            console.log('✅ All deposits refunded!');
+
+            return tx.hash;
+        } catch (error) {
+            console.error('❌ Refund failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get all bids for an auction
+     */
+    async getAuctionBids(artworkId) {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            const bids = await this.marketplaceContract.getAuctionBids(artworkId);
+
+            return bids.map(bid => ({
+                bidder: bid.bidder,
+                amount: ethers.formatEther(bid.amount),
+                deposit: ethers.formatEther(bid.deposit),
+                refunded: bid.refunded,
+                timestamp: Number(bid.timestamp)
+            }));
+        } catch (error) {
+            console.error('❌ Get bids failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get auction constants
+     */
+    async getAuctionConstants() {
+        if (!this.marketplaceContract) throw new Error('Contracts not initialized');
+
+        try {
+            const duration = await this.marketplaceContract.AUCTION_DURATION();
+            const winnerWindow = await this.marketplaceContract.WINNER_PURCHASE_WINDOW();
+            const depositBps = await this.marketplaceContract.DEPOSIT_BPS();
+
+            return {
+                auctionDuration: Number(duration),
+                winnerPurchaseWindow: Number(winnerWindow),
+                depositPercentage: Number(depositBps) / 100
+            };
+        } catch (error) {
+            console.error('❌ Get constants failed:', error);
             throw error;
         }
     }

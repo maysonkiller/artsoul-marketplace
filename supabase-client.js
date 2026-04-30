@@ -669,6 +669,178 @@ async function getArtworksByVotes(limit = null) {
     return limit ? artworksWithVotes.slice(0, limit) : artworksWithVotes;
 }
 
+// ============================================
+// AUCTION V2 FUNCTIONS
+// ============================================
+
+/**
+ * Save bid to bids_history table (for V2 deposit system)
+ */
+async function saveBidHistory(bidData) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('bids_history')
+        .insert([{
+            auction_id: bidData.auction_id,
+            artwork_id: bidData.artwork_id,
+            bidder_address: bidData.bidder_address,
+            bid_amount: bidData.bid_amount,
+            deposit_amount: bidData.deposit_amount,
+            refunded: bidData.refunded || false
+        }])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error saving bid history:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+/**
+ * Get bid history for an auction
+ */
+async function getBidHistory(auctionId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('bids_history')
+        .select('*')
+        .eq('auction_id', auctionId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error getting bid history:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+/**
+ * Update artwork with auction winner and floor price
+ */
+async function setAuctionWinner(artworkId, winnerAddress, floorPrice, winnerDeadline) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .update({
+            auction_winner_address: winnerAddress,
+            floor_price: floorPrice,
+            winner_deadline: winnerDeadline,
+            status: 'auction_ended'
+        })
+        .eq('id', artworkId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error setting auction winner:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+/**
+ * Update artwork after winner purchase
+ */
+async function recordWinnerPurchase(artworkId, winnerAddress, tokenId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .update({
+            current_owner_address: winnerAddress,
+            token_id: tokenId,
+            status: 'sold'
+        })
+        .eq('id', artworkId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error recording winner purchase:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+/**
+ * Set artwork for direct sale
+ */
+async function setArtworkForSale(artworkId, salePrice) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .update({
+            sale_price: salePrice,
+            status: 'for_sale'
+        })
+        .eq('id', artworkId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error setting artwork for sale:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+/**
+ * Record direct purchase
+ */
+async function recordDirectPurchase(artworkId, buyerAddress, tokenId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('artworks')
+        .update({
+            current_owner_address: buyerAddress,
+            token_id: tokenId,
+            status: 'sold'
+        })
+        .eq('id', artworkId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error recording direct purchase:', error);
+        throw error;
+    }
+
+    return data;
+}
+
+/**
+ * Mark bid as refunded
+ */
+async function markBidRefunded(bidId) {
+    const supabase = await initSupabase();
+
+    const { data, error } = await supabase
+        .from('bids_history')
+        .update({ refunded: true })
+        .eq('id', bidId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error marking bid as refunded:', error);
+        throw error;
+    }
+
+    return data;
+}
+
 // Export functions
 window.ArtSoulDB = {
     initSupabase,
@@ -703,7 +875,15 @@ window.ArtSoulDB = {
     getVoteCount,
     getArtworksByVotes,
     // Real-time
-    subscribeToAuction
+    subscribeToAuction,
+    // Auction V2
+    saveBidHistory,
+    getBidHistory,
+    setAuctionWinner,
+    recordWinnerPurchase,
+    setArtworkForSale,
+    recordDirectPurchase,
+    markBidRefunded
 };
 
 console.log('📦 ArtSoul Database Client loaded');
