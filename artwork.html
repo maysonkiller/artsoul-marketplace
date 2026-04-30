@@ -382,6 +382,14 @@
                     return;
                 }
 
+                // Check if user is the creator
+                const walletAddress = window.getCurrentWalletAddress?.();
+                if (walletAddress && artwork.creator_id &&
+                    walletAddress.toLowerCase() === artwork.creator_id.toLowerCase()) {
+                    alert('Sorry, auction creators cannot bid on their own artworks');
+                    return;
+                }
+
                 const minBid = auction.highestBid === '0.0'
                     ? parseFloat(auction.startingPrice)
                     : parseFloat(auction.highestBid) * 1.05;
