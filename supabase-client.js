@@ -752,3 +752,6 @@ window.ArtSoulDB = {
 };
 
 console.log('📦 ArtSoul Database Client loaded');
+
+// Dispatch ready event
+window.dispatchEvent(new Event('artsouldb-ready'));

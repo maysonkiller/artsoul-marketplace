@@ -26,10 +26,12 @@
 
             try {
                 // Wait for ArtSoulDB to be available
-                let attempts = 0;
-                while (!window.ArtSoulDB && attempts < 50) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    attempts++;
+                if (!window.ArtSoulDB) {
+                    await new Promise((resolve) => {
+                        window.addEventListener('artsouldb-ready', resolve, { once: true });
+                        // Timeout after 5 seconds
+                        setTimeout(resolve, 5000);
+                    });
                 }
 
                 if (!window.ArtSoulDB) {
