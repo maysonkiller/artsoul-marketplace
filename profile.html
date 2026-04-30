@@ -281,6 +281,17 @@
                 }
 
                 try {
+                    // Wait for ArtSoulDB to be available
+                    let attempts = 0;
+                    while (!window.ArtSoulDB && attempts < 50) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+
+                    if (!window.ArtSoulDB) {
+                        throw new Error('ArtSoulDB module failed to load');
+                    }
+
                     // Try to load profile without authentication first
                     let profileData = await window.ArtSoulDB.getProfile(walletAddress);
                     if (!profileData) {
@@ -351,6 +362,17 @@
                 }
 
                 try {
+                    // Wait for ArtSoulDB to be available
+                    let attempts = 0;
+                    while (!window.ArtSoulDB && attempts < 50) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+
+                    if (!window.ArtSoulDB) {
+                        throw new Error('ArtSoulDB module failed to load');
+                    }
+
                     // Ensure authenticated before upload
                     const isAuth = await window.ensureAuthenticated();
                     if (!isAuth) return;
@@ -380,6 +402,17 @@
                 }
 
                 try {
+                    // Wait for ArtSoulDB to be available
+                    let attempts = 0;
+                    while (!window.ArtSoulDB && attempts < 50) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+
+                    if (!window.ArtSoulDB) {
+                        throw new Error('ArtSoulDB module failed to load');
+                    }
+
                     // Authenticate before saving (only once)
                     const isAuthenticated = await window.ensureAuthenticated?.();
                     if (!isAuthenticated) {

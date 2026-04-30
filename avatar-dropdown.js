@@ -25,6 +25,17 @@
             console.log('👤 Initializing avatar dropdown for wallet:', walletAddress);
 
             try {
+                // Wait for ArtSoulDB to be available
+                let attempts = 0;
+                while (!window.ArtSoulDB && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+
+                if (!window.ArtSoulDB) {
+                    throw new Error('ArtSoulDB module failed to load');
+                }
+
                 // Load profile from Supabase
                 this.profile = await window.ArtSoulDB.getProfile(walletAddress);
 
