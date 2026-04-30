@@ -551,16 +551,28 @@
         }
 
         /**
-         * Get default avatar (first letter of username or generic icon)
+         * Get default avatar (first letter of username or user icon)
          */
         getDefaultAvatar() {
-            // Generate a simple SVG avatar
-            const letter = this.profile?.username?.[0]?.toUpperCase() || '?';
+            // If we have a profile with username, use first letter
+            if (this.profile?.username) {
+                const letter = this.profile.username[0].toUpperCase();
+                const svg = `data:image/svg+xml,${encodeURIComponent(`
+                    <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" fill="#00f5ff"/>
+                        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+                              font-family="Arial" font-size="20" fill="#000">${letter}</text>
+                    </svg>
+                `)}`;
+                return svg;
+            }
+
+            // Otherwise show a generic user icon
             const svg = `data:image/svg+xml,${encodeURIComponent(`
                 <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
                     <rect width="40" height="40" fill="#00f5ff"/>
-                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-                          font-family="Arial" font-size="20" fill="#000">${letter}</text>
+                    <circle cx="20" cy="15" r="7" fill="#000"/>
+                    <path d="M 8 35 Q 8 25 20 25 Q 32 25 32 35" fill="#000"/>
                 </svg>
             `)}`;
             return svg;
