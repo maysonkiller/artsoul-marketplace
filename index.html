@@ -1757,6 +1757,8 @@
                     video.className = 'artwork-image';
                     video.setAttribute('preload', 'metadata');
                     video.muted = true;
+                    video.style.cssText = 'position: relative; z-index: 10;';
+                    video.onclick = (e) => e.stopPropagation();
                     imgContainer.appendChild(video);
                 } else if (isAudio) {
                     const audioPreview = document.createElement('div');

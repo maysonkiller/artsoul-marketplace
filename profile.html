@@ -975,6 +975,8 @@
                                                                 className="w-full h-full object-contain"
                                                                 preload="metadata"
                                                                 muted
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                style={{position: 'relative', zIndex: 10}}
                                                             />
                                                         );
                                                     } else if (isAudio) {
