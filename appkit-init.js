@@ -374,7 +374,7 @@ async function initializeAppKit() {
 
                 // Refresh avatar dropdown to update network indicator
                 if (window.AvatarDropdown) {
-                    window.AvatarDropdown.refresh(account.address);
+                    window.AvatarDropdown.refresh(normalizedAddress);
                 }
 
                 // Authenticate automatically on wallet connect
