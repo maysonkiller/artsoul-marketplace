@@ -127,17 +127,18 @@
         // Media Viewer Component - supports images, videos, audio, GIFs
         function MediaViewer({ url, fileType, title }) {
             const getMediaType = () => {
-                if (!fileType) return 'image';
-
-                const type = fileType.toLowerCase();
+                const type = fileType?.toLowerCase() || '';
+                const urlLower = url?.toLowerCase() || '';
 
                 // Video formats
-                if (type === 'video' || ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(type)) {
+                if (type === 'video' || ['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(type) ||
+                    urlLower.includes('.mp4') || urlLower.includes('.webm') || urlLower.includes('.mov')) {
                     return 'video';
                 }
 
                 // Audio formats
-                if (type === 'audio' || ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'flac'].includes(type)) {
+                if (type === 'audio' || type === 'music' || ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'flac'].includes(type) ||
+                    urlLower.includes('.mp3') || urlLower.includes('.wav') || urlLower.includes('.ogg') || urlLower.includes('.aac')) {
                     return 'audio';
                 }
 

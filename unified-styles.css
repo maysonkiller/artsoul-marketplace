@@ -27,6 +27,21 @@
     }
 }
 
+@keyframes colorShift {
+    0%, 100% {
+        filter: drop-shadow(0 0 10px rgba(0, 245, 255, 0.8));
+        border-color: rgba(0, 245, 255, 0.8);
+    }
+    33% {
+        filter: drop-shadow(0 0 10px rgba(191, 0, 255, 0.8));
+        border-color: rgba(191, 0, 255, 0.8);
+    }
+    66% {
+        filter: drop-shadow(0 0 10px rgba(255, 0, 191, 0.8));
+        border-color: rgba(255, 0, 191, 0.8);
+    }
+}
+
 /* Classic Mode Styles */
 .classic .btn-main {
     background: var(--text-classic);
