@@ -1756,9 +1756,15 @@
                     video.src = art.file_url;
                     video.className = 'artwork-image';
                     video.setAttribute('preload', 'metadata');
-                    video.muted = true;
+                    video.controls = true;
                     video.style.cssText = 'position: relative; z-index: 10;';
                     video.onclick = (e) => e.stopPropagation();
+
+                    // Add error handler for video
+                    video.onerror = () => {
+                        console.warn('Video failed to load:', art.file_url);
+                    };
+
                     imgContainer.appendChild(video);
                 } else if (isAudio) {
                     const audioPreview = document.createElement('div');
@@ -1766,7 +1772,15 @@
 
                     const logoImg = document.createElement('img');
                     logoImg.src = 'ARTSOULlogo.png';
+                    logoImg.alt = 'Music';
                     logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 3s linear infinite; margin-bottom: 1rem;';
+
+                    // Add error handler for logo
+                    logoImg.onerror = () => {
+                        console.warn('Logo failed to load');
+                        logoImg.style.display = 'none';
+                    };
+
                     audioPreview.appendChild(logoImg);
 
                     const audioPlayer = document.createElement('audio');
@@ -1775,6 +1789,12 @@
                     audioPlayer.crossOrigin = 'anonymous';
                     audioPlayer.style.cssText = 'width: 90%; max-width: 300px;';
                     audioPlayer.onclick = (e) => e.stopPropagation();
+
+                    // Add error handler for audio
+                    audioPlayer.onerror = () => {
+                        console.warn('Audio failed to load:', art.file_url);
+                    };
+
                     audioPreview.appendChild(audioPlayer);
 
                     imgContainer.appendChild(audioPreview);
