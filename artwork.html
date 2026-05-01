@@ -770,12 +770,18 @@
                                                         isClassic ? 'border-current' : 'border-cyan-400'
                                                     }`}
                                                     style={!isClassic ? {
-                                                        boxShadow: '0 0 10px rgba(0, 245, 255, 0.5)'
+                                                        boxShadow: '0 0 10px rgba(0, 245, 255, 0.5)',
+                                                        animation: 'colorShift 8s ease-in-out infinite'
                                                     } : {}}
                                                 />
                                                 <div className="min-w-0 flex-1">
                                                     <div className="text-xs opacity-50">Creator</div>
-                                                    <div className={`font-semibold truncate ${!isClassic ? 'text-cyan-400' : ''}`}>
+                                                    <div
+                                                        className={`font-semibold truncate ${!isClassic ? 'text-cyan-400' : ''}`}
+                                                        style={!isClassic ? {
+                                                            animation: 'colorShift 8s ease-in-out infinite'
+                                                        } : {}}
+                                                    >
                                                         {creatorProfile?.username || `${artwork.creator_id?.slice(0, 6)}...${artwork.creator_id?.slice(-4)}`}
                                                     </div>
                                                 </div>
@@ -802,14 +808,20 @@
                                                         isClassic ? 'border-yellow-500 bg-yellow-500/20' : 'border-purple-400 bg-purple-400/20'
                                                     }`}
                                                     style={!isClassic ? {
-                                                        boxShadow: '0 0 10px rgba(191, 0, 255, 0.5)'
+                                                        boxShadow: '0 0 10px rgba(191, 0, 255, 0.5)',
+                                                        animation: 'colorShift 8s ease-in-out infinite'
                                                     } : {}}
                                                     >
                                                         <span className="text-xl">🏆</span>
                                                     </div>
                                                     <div className="min-w-0 flex-1">
                                                         <div className="text-xs opacity-50">Auction Winner</div>
-                                                        <div className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-purple-400' : ''}`}>
+                                                        <div
+                                                            className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-purple-400' : ''}`}
+                                                            style={!isClassic ? {
+                                                                animation: 'colorShift 8s ease-in-out infinite'
+                                                            } : {}}
+                                                        >
                                                             {artwork.auction_winner_address.slice(0, 10)}...{artwork.auction_winner_address.slice(-8)}
                                                         </div>
                                                     </div>
@@ -837,14 +849,20 @@
                                                         isClassic ? 'border-green-500 bg-green-500/20' : 'border-green-400 bg-green-400/20'
                                                     }`}
                                                     style={!isClassic ? {
-                                                        boxShadow: '0 0 10px rgba(0, 255, 100, 0.5)'
+                                                        boxShadow: '0 0 10px rgba(0, 255, 100, 0.5)',
+                                                        animation: 'colorShift 8s ease-in-out infinite'
                                                     } : {}}
                                                     >
                                                         <span className="text-xl">👤</span>
                                                     </div>
                                                     <div className="min-w-0 flex-1">
                                                         <div className="text-xs opacity-50">Current Owner</div>
-                                                        <div className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-green-400' : ''}`}>
+                                                        <div
+                                                            className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-green-400' : ''}`}
+                                                            style={!isClassic ? {
+                                                                animation: 'colorShift 8s ease-in-out infinite'
+                                                            } : {}}
+                                                        >
                                                             {artwork.current_owner_address.slice(0, 10)}...{artwork.current_owner_address.slice(-8)}
                                                         </div>
                                                     </div>

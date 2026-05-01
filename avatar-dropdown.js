@@ -572,7 +572,14 @@
          * Render connect button when wallet not connected
          */
         renderConnectButton() {
-            const container = document.getElementById('avatarButton');
+            // Try avatarButton first (index.html, gallery.html, docs.html)
+            let container = document.getElementById('avatarButton');
+
+            // If not found, try navButtons (profile.html, artwork.html)
+            if (!container) {
+                container = document.getElementById('navButtons');
+            }
+
             if (!container) return;
 
             container.innerHTML = `
