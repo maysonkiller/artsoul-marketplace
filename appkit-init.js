@@ -102,9 +102,10 @@ window.updateNavButtons = function updateNavButtons(state) {
             `;
         }
 
-        // Store wallet address
-        localStorage.setItem('artsoul_wallet', state.address);
-        window.currentWalletAddress = state.address;
+        // Store wallet address (normalized to lowercase for consistent identity)
+        const normalizedAddress = state.address.toLowerCase();
+        localStorage.setItem('artsoul_wallet', normalizedAddress);
+        window.currentWalletAddress = normalizedAddress;
     } else {
         // Disconnected: Show Get Started button
         navButtons.innerHTML = `
@@ -362,12 +363,14 @@ async function initializeAppKit() {
                 }
                 lastProcessedAddress = account.address;
 
-                window.currentWalletAddress = account.address;
-                localStorage.setItem('artsoul_wallet', account.address);
+                // Normalize address to lowercase for consistent identity
+                const normalizedAddress = account.address.toLowerCase();
+                window.currentWalletAddress = normalizedAddress;
+                localStorage.setItem('artsoul_wallet', normalizedAddress);
 
                 // Update UI first
-                updateNavButtons({ address: account.address, chainId: account.chainId });
-                updateNetworkBadge({ address: account.address, chainId: account.chainId });
+                updateNavButtons({ address: normalizedAddress, chainId: account.chainId });
+                updateNetworkBadge({ address: normalizedAddress, chainId: account.chainId });
 
                 // Refresh avatar dropdown to update network indicator
                 if (window.AvatarDropdown) {
@@ -507,8 +510,9 @@ if (document.readyState === 'loading') {
                 console.log('✅ OAuth callback handled:', oauthResult.provider);
                 // Update UI with social login info
                 if (oauthResult.user.user_metadata?.wallet_address) {
-                    window.currentWalletAddress = oauthResult.user.user_metadata.wallet_address;
-                    localStorage.setItem('artsoul_wallet', window.currentWalletAddress);
+                    const normalizedAddress = oauthResult.user.user_metadata.wallet_address.toLowerCase();
+                    window.currentWalletAddress = normalizedAddress;
+                    localStorage.setItem('artsoul_wallet', normalizedAddress);
                 }
             }
         }

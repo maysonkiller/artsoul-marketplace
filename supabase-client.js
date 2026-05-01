@@ -59,10 +59,13 @@ async function initSupabase() {
 async function createProfile(walletAddress, profileData) {
     const supabase = await initSupabase();
 
+    // CRITICAL: Normalize wallet address to lowercase for consistent identity
+    const normalizedAddress = walletAddress.toLowerCase();
+
     const { data, error } = await supabase
         .from('profiles')
         .insert([{
-            wallet_address: walletAddress,
+            wallet_address: normalizedAddress,
             username: profileData.username,
             bio: profileData.bio,
             avatar_url: profileData.avatar_url,
@@ -83,10 +86,13 @@ async function createProfile(walletAddress, profileData) {
 async function getProfile(walletAddress) {
     const supabase = await initSupabase();
 
+    // CRITICAL: Normalize wallet address to lowercase for consistent identity
+    const normalizedAddress = walletAddress.toLowerCase();
+
     const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('wallet_address', walletAddress)
+        .eq('wallet_address', normalizedAddress)
         .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = not found
@@ -100,6 +106,9 @@ async function getProfile(walletAddress) {
 async function updateProfile(walletAddress, updates) {
     const supabase = await initSupabase();
 
+    // CRITICAL: Normalize wallet address to lowercase for consistent identity
+    const normalizedAddress = walletAddress.toLowerCase();
+
     // Check if username is being updated and if it's already taken by another wallet
     if (updates.username) {
         const { data: existingProfile } = await supabase
@@ -109,14 +118,14 @@ async function updateProfile(walletAddress, updates) {
             .single();
 
         // If username exists and belongs to a different wallet, throw error
-        if (existingProfile && existingProfile.wallet_address !== walletAddress) {
+        if (existingProfile && existingProfile.wallet_address.toLowerCase() !== normalizedAddress) {
             throw new Error('Username already taken');
         }
     }
 
     // Use upsert to create profile if it doesn't exist
     const profileData = {
-        wallet_address: walletAddress,
+        wallet_address: normalizedAddress,
         ...updates,
         updated_at: new Date().toISOString()
     };

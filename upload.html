@@ -514,7 +514,7 @@
 
                 const dbArtwork = await window.ArtSoulDB.createArtwork({
                     blockchain_id: result.artworkId,
-                    creator_id: walletAddress,
+                    creator_id: walletAddress.toLowerCase(), // Normalize to lowercase for consistent identity
                     title: title,
                     description: description,
                     file_url: fileUpload.url,
