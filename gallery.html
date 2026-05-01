@@ -392,16 +392,23 @@
                                                                        (!fileType && (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')));
                                                         return isAudio;
                                                     })() ? (
-                                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/30 to-cyan-900/30">
+                                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-purple-900/30 to-cyan-900/30" style={{position: 'relative'}}>
                                                             <img
                                                                 src="ARTSOULlogo.png"
                                                                 alt="Music"
                                                                 style={{
-                                                                    width: '60%',
-                                                                    height: '60%',
+                                                                    width: '50%',
+                                                                    height: '50%',
                                                                     objectFit: 'contain',
-                                                                    animation: 'spin 3s linear infinite'
+                                                                    animation: 'spin 3s linear infinite',
+                                                                    marginBottom: '1rem'
                                                                 }}
+                                                            />
+                                                            <audio
+                                                                src={artwork.file_url}
+                                                                controls
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                style={{width: '90%', maxWidth: '300px'}}
                                                             />
                                                         </div>
                                                     ) : (
