@@ -11,6 +11,17 @@
         }
 
         init() {
+            // Wait for DOM to be ready before creating container
+            if (document.body) {
+                this.createContainer();
+            } else {
+                document.addEventListener('DOMContentLoaded', () => {
+                    this.createContainer();
+                });
+            }
+        }
+
+        createContainer() {
             // Create modal container
             const container = document.createElement('div');
             container.id = 'modal-container';
