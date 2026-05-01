@@ -164,17 +164,101 @@
             }
 
             if (mediaType === 'audio') {
+                const [audioContext, setAudioContext] = React.useState(null);
+                const [analyser, setAnalyser] = React.useState(null);
+                const [isPlaying, setIsPlaying] = React.useState(false);
+                const audioRef = React.useRef(null);
+                const logoRef = React.useRef(null);
+                const animationRef = React.useRef(null);
+
+                React.useEffect(() => {
+                    return () => {
+                        if (animationRef.current) {
+                            cancelAnimationFrame(animationRef.current);
+                        }
+                        if (audioContext) {
+                            audioContext.close();
+                        }
+                    };
+                }, [audioContext]);
+
+                const setupAudioAnalyser = () => {
+                    if (!audioRef.current || audioContext) return;
+
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyserNode = ctx.createAnalyser();
+                    analyserNode.fftSize = 256;
+
+                    const source = ctx.createMediaElementSource(audioRef.current);
+                    source.connect(analyserNode);
+                    analyserNode.connect(ctx.destination);
+
+                    setAudioContext(ctx);
+                    setAnalyser(analyserNode);
+                };
+
+                const animateLogo = () => {
+                    if (!analyser || !logoRef.current) return;
+
+                    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(dataArray);
+
+                    // Calculate average frequency (bass detection)
+                    const bass = dataArray.slice(0, 10).reduce((a, b) => a + b, 0) / 10;
+                    const mid = dataArray.slice(10, 50).reduce((a, b) => a + b, 0) / 40;
+                    const high = dataArray.slice(50, 100).reduce((a, b) => a + b, 0) / 50;
+
+                    // Normalize values
+                    const bassIntensity = bass / 255;
+                    const midIntensity = mid / 255;
+                    const highIntensity = high / 255;
+
+                    // Dynamic rotation speed based on bass
+                    const rotationSpeed = 3 + (bassIntensity * 10);
+
+                    // Dynamic colors based on frequencies
+                    const cyan = Math.floor(bassIntensity * 255);
+                    const purple = Math.floor(midIntensity * 255);
+                    const pink = Math.floor(highIntensity * 255);
+
+                    // Apply dynamic styles
+                    logoRef.current.style.animation = `spin ${20 / rotationSpeed}s linear infinite`;
+                    logoRef.current.style.filter = `drop-shadow(0 0 ${20 + bassIntensity * 40}px rgba(${cyan}, 245, 255, ${0.6 + bassIntensity * 0.4})) drop-shadow(0 0 ${40 + midIntensity * 60}px rgba(${purple}, 0, 255, ${0.4 + midIntensity * 0.6}))`;
+                    logoRef.current.style.transform = `scale(${1 + bassIntensity * 0.2})`;
+
+                    animationRef.current = requestAnimationFrame(animateLogo);
+                };
+
+                const handlePlay = () => {
+                    if (!audioContext) {
+                        setupAudioAnalyser();
+                    }
+                    setIsPlaying(true);
+                    if (analyser) {
+                        animateLogo();
+                    }
+                };
+
+                const handlePause = () => {
+                    setIsPlaying(false);
+                    if (animationRef.current) {
+                        cancelAnimationFrame(animationRef.current);
+                    }
+                };
+
                 return (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-black p-8">
                         <div className="mb-8 text-center">
                             <div className="relative w-48 h-48 mx-auto mb-6">
                                 <img
+                                    ref={logoRef}
                                     src="ARTSOULlogo.png"
                                     alt="Music"
                                     className="w-full h-full object-contain"
                                     style={{
-                                        animation: 'spin 8s linear infinite, colorShift 4s ease-in-out infinite',
-                                        filter: 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4))'
+                                        animation: 'spin 8s linear infinite',
+                                        filter: 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4))',
+                                        transition: 'transform 0.1s ease-out'
                                     }}
                                 />
                                 <style>{`
@@ -182,25 +266,17 @@
                                         from { transform: rotate(0deg); }
                                         to { transform: rotate(360deg); }
                                     }
-                                    @keyframes colorShift {
-                                        0%, 100% {
-                                            filter: drop-shadow(0 0 20px rgba(0, 245, 255, 0.8)) drop-shadow(0 0 40px rgba(0, 245, 255, 0.4));
-                                        }
-                                        33% {
-                                            filter: drop-shadow(0 0 20px rgba(191, 0, 255, 0.8)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4));
-                                        }
-                                        66% {
-                                            filter: drop-shadow(0 0 20px rgba(255, 0, 191, 0.8)) drop-shadow(0 0 40px rgba(255, 0, 191, 0.4));
-                                        }
-                                    }
                                 `}</style>
                             </div>
                             <div className="text-xl opacity-70">{sanitizedTitle}</div>
                         </div>
                         <audio
+                            ref={audioRef}
                             src={url}
                             controls
-                            autoPlay
+                            onPlay={handlePlay}
+                            onPause={handlePause}
+                            onEnded={handlePause}
                             className="w-full max-w-md"
                             style={{
                                 filter: 'invert(1) hue-rotate(180deg)',
