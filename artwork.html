@@ -324,9 +324,9 @@
             useEffect(() => {
                 // Initialize avatar dropdown and network badge
                 const initUI = async () => {
-                    // Wait for scripts to load (check every 100ms, max 5 seconds)
+                    // Wait for scripts to load (check every 100ms, max 10 seconds)
                     let attempts = 0;
-                    const maxAttempts = 50;
+                    const maxAttempts = 100;
 
                     while (attempts < maxAttempts) {
                         if (window.AvatarDropdown && window.NetworkBadge && window.web3Modal) {
@@ -337,8 +337,7 @@
                     }
 
                     if (attempts >= maxAttempts) {
-                        console.warn('Scripts not loaded after 5 seconds');
-                        return;
+                        console.warn('Scripts not loaded after 10 seconds');
                     }
 
                     // Initialize network badge
@@ -348,11 +347,19 @@
 
                     // Initialize avatar dropdown (will show connect button if not connected)
                     if (window.AvatarDropdown) {
-                        const state = window.web3Modal.getState();
-                        if (state?.address) {
-                            await window.AvatarDropdown.init(state.address.toLowerCase());
-                        } else {
-                            // Show connect button
+                        try {
+                            const state = window.web3Modal?.getState();
+                            const walletAddress = state?.address || localStorage.getItem('artsoul_wallet');
+
+                            if (walletAddress) {
+                                await window.AvatarDropdown.init(walletAddress.toLowerCase());
+                            } else {
+                                // Show connect button
+                                await window.AvatarDropdown.init(null);
+                            }
+                        } catch (error) {
+                            console.error('Error initializing avatar dropdown:', error);
+                            // Fallback: show connect button
                             await window.AvatarDropdown.init(null);
                         }
                     }

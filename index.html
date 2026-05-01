@@ -1881,23 +1881,32 @@
                                 video.preload = 'metadata';
                                 imageContainer.appendChild(video);
                             }
-                            // Check if audio
-                            else if (fileType === 'audio' || ['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(fileType)) {
-                                // Show placeholder image with audio player overlay
+                            // Check if audio/music
+                            else if (fileType === 'audio' || fileType === 'music' || ['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(fileType)) {
+                                // Show spinning logo with audio player
                                 const audioContainer = document.createElement('div');
                                 audioContainer.className = 'w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black';
 
-                                const musicIcon = document.createElement('div');
-                                musicIcon.className = 'text-6xl mb-4 opacity-50';
-                                musicIcon.textContent = '♪';
+                                const logoImg = document.createElement('img');
+                                logoImg.src = 'ARTSOULlogo.png';
+                                logoImg.alt = 'Music';
+                                logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 3s linear infinite; margin-bottom: 1rem;';
+                                logoImg.onerror = function() {
+                                    console.warn('Failed to load logo for music preview');
+                                    this.style.display = 'none';
+                                };
 
                                 const audio = document.createElement('audio');
                                 audio.src = art.file_url;
                                 audio.className = 'w-full px-4';
                                 audio.controls = true;
+                                audio.crossOrigin = 'anonymous';
                                 audio.preload = 'metadata';
+                                audio.onerror = function() {
+                                    console.error('Failed to load audio:', art.file_url);
+                                };
 
-                                audioContainer.appendChild(musicIcon);
+                                audioContainer.appendChild(logoImg);
                                 audioContainer.appendChild(audio);
                                 imageContainer.appendChild(audioContainer);
                             }
