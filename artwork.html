@@ -851,7 +851,7 @@
                                                     } : {}}
                                                 />
                                                 <div className="min-w-0 flex-1">
-                                                    <div className="text-xs opacity-70">Creator</div>
+                                                    <div className={`text-xs ${isClassic ? 'opacity-70' : 'opacity-90'}`}>Creator</div>
                                                     <div
                                                         className={`font-semibold truncate ${!isClassic ? 'text-cyan-400' : ''}`}
                                                         style={!isClassic ? {
@@ -891,7 +891,7 @@
                                                         <span className="text-xl">🏆</span>
                                                     </div>
                                                     <div className="min-w-0 flex-1">
-                                                        <div className="text-xs opacity-50">Auction Winner</div>
+                                                        <div className={`text-xs ${isClassic ? 'opacity-70' : 'opacity-90'}`}>Auction Winner</div>
                                                         <div
                                                             className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-purple-400' : ''}`}
                                                             style={!isClassic ? {
@@ -932,7 +932,7 @@
                                                         <span className="text-xl">👤</span>
                                                     </div>
                                                     <div className="min-w-0 flex-1">
-                                                        <div className="text-xs opacity-50">Current Owner</div>
+                                                        <div className={`text-xs ${isClassic ? 'opacity-70' : 'opacity-90'}`}>Current Owner</div>
                                                         <div
                                                             className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-green-400' : ''}`}
                                                             style={!isClassic ? {

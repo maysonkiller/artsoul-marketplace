@@ -659,6 +659,10 @@
                                                 ? 'bg-gray-700 border-4 border-gray-600'
                                                 : 'bg-gradient-to-br from-purple-900 to-cyan-900 border-4 border-cyan-400 neon-border'
                                         }`}
+                                        style={!isClassic ? {
+                                            boxShadow: '0 0 20px rgba(0, 245, 255, 0.5)',
+                                            animation: 'colorShift 8s ease-in-out infinite'
+                                        } : {}}
                                         onClick={() => editMode && fileInputRef.current?.click()}
                                     >
                                         {profile?.avatar_url ? (
