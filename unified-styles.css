@@ -10,6 +10,27 @@
     --neon-purple: #bf00ff;
 }
 
+/* Roadmap Current Card Styles */
+.classic .roadmap-current-card {
+    background: rgba(169, 221, 211, 0.2);
+    border: 2px solid rgba(169, 221, 211, 0.6);
+}
+
+.classic .roadmap-current-dot {
+    background: #a9ddd3;
+}
+
+.future .roadmap-current-card {
+    background: rgba(0, 245, 255, 0.1);
+    border: 2px solid rgba(0, 245, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+}
+
+.future .roadmap-current-dot {
+    background: #00f5ff;
+    box-shadow: 0 0 10px rgba(0, 245, 255, 0.8);
+}
+
 /* Logo Animations */
 @keyframes logoLevitate {
     0%, 100% { transform: translateY(0px); }

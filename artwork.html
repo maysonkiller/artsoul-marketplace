@@ -350,7 +350,7 @@
                     if (window.AvatarDropdown) {
                         const state = window.web3Modal.getState();
                         if (state?.address) {
-                            await window.AvatarDropdown.init(state.address);
+                            await window.AvatarDropdown.init(state.address.toLowerCase());
                         } else {
                             // Show connect button
                             await window.AvatarDropdown.init(null);
@@ -363,7 +363,7 @@
                 // Listen for wallet connection changes
                 const unsubscribe = window.web3Modal?.subscribeState((state) => {
                     if (window.AvatarDropdown) {
-                        window.AvatarDropdown.init(state?.address || null);
+                        window.AvatarDropdown.init(state?.address ? state.address.toLowerCase() : null);
                     }
                 });
 
