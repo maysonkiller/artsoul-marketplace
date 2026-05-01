@@ -54,17 +54,17 @@ This system protects artists from undervaluation while giving collectors confide
 
 ### 3. Three-Role Ownership Model
 
-**Creator** (永久)
+**Creator** (Permanent)
 - Original artist
 - Receives royalties on all future sales
 - Can set artwork for direct sale
 
-**Auction Winner** (荣誉称号)
+**Auction Winner** (Honorary Title)
 - Won the initial auction
 - Honorary title that never changes
 - Recognized as first supporter
 
-**Current Owner** (可转让)
+**Current Owner** (Transferable)
 - Current NFT holder
 - Can resell at any price ≥ floor
 - Full ownership rights
@@ -361,7 +361,7 @@ This system protects artists from undervaluation while giving collectors confide
 
 ---
 
-## 🎯 Competitive Advantages
+## Competitive Advantages
 
 ### vs OpenSea
 - Floor price protection

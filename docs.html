@@ -477,6 +477,12 @@
                 {
                     title: 'Social Integration',
                     content: 'Link your X (Twitter), Discord, and VK accounts in your profile. Share artworks directly to social media with beautiful preview cards.'
+                },
+                {
+                    id: 'full-docs',
+                    title: 'Full Documentation',
+                    content: 'View the complete ArtSoul project documentation including technical architecture, smart contracts, tokenomics, roadmap, and more.',
+                    isButton: true
                 }
             ];
 
@@ -504,6 +510,18 @@
                                         <div className="flex flex-col md:flex-row gap-6 items-start">
                                             <p className="opacity-80 leading-relaxed flex-1" dangerouslySetInnerHTML={{__html: formattedContent}}></p>
                                             <img src="./1080x360.png" alt="Rialo Playground" className="w-full md:max-w-[40%] rounded-xl object-cover" />
+                                        </div>
+                                    ) : section.isButton ? (
+                                        <div>
+                                            <p className="opacity-80 leading-relaxed mb-4">{section.content}</p>
+                                            <a
+                                                href="DOCUMENTATION.md"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn-main inline-block"
+                                            >
+                                                View Full Documentation
+                                            </a>
                                         </div>
                                     ) : (
                                         <p className="opacity-80 leading-relaxed" dangerouslySetInnerHTML={{__html: formattedContent}}></p>
