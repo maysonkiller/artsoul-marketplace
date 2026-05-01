@@ -1770,6 +1770,7 @@
                     const audioPlayer = document.createElement('audio');
                     audioPlayer.src = art.file_url;
                     audioPlayer.controls = true;
+                    audioPlayer.crossOrigin = 'anonymous';
                     audioPlayer.style.cssText = 'width: 90%; max-width: 300px;';
                     audioPlayer.onclick = (e) => e.stopPropagation();
                     audioPreview.appendChild(audioPlayer);

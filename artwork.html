@@ -275,6 +275,7 @@
                             ref={audioRef}
                             src={url}
                             controls
+                            crossOrigin="anonymous"
                             onPlay={handlePlay}
                             onPause={handlePause}
                             onEnded={handlePause}
@@ -854,8 +855,12 @@
                                                 <div className="min-w-0 flex-1">
                                                     <div className={`text-xs ${isClassic ? 'opacity-70' : 'opacity-90'}`}>Creator</div>
                                                     <div
-                                                        className={`font-semibold truncate ${!isClassic ? 'text-cyan-400' : ''}`}
+                                                        className={`font-semibold truncate ${!isClassic ? '' : ''}`}
                                                         style={!isClassic ? {
+                                                            background: 'linear-gradient(90deg, #00f5ff, #bf00ff)',
+                                                            WebkitBackgroundClip: 'text',
+                                                            WebkitTextFillColor: 'transparent',
+                                                            backgroundClip: 'text',
                                                             animation: 'colorShift 8s ease-in-out infinite'
                                                         } : {}}
                                                     >
@@ -894,8 +899,12 @@
                                                     <div className="min-w-0 flex-1">
                                                         <div className={`text-xs ${isClassic ? 'opacity-70' : 'opacity-90'}`}>Auction Winner</div>
                                                         <div
-                                                            className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-purple-400' : ''}`}
+                                                            className={`font-semibold font-mono text-sm truncate ${!isClassic ? '' : ''}`}
                                                             style={!isClassic ? {
+                                                                background: 'linear-gradient(90deg, #bf00ff, #ff00bf)',
+                                                                WebkitBackgroundClip: 'text',
+                                                                WebkitTextFillColor: 'transparent',
+                                                                backgroundClip: 'text',
                                                                 animation: 'colorShift 8s ease-in-out infinite'
                                                             } : {}}
                                                         >
@@ -935,8 +944,12 @@
                                                     <div className="min-w-0 flex-1">
                                                         <div className={`text-xs ${isClassic ? 'opacity-70' : 'opacity-90'}`}>Current Owner</div>
                                                         <div
-                                                            className={`font-semibold font-mono text-sm truncate ${!isClassic ? 'text-green-400' : ''}`}
+                                                            className={`font-semibold font-mono text-sm truncate ${!isClassic ? '' : ''}`}
                                                             style={!isClassic ? {
+                                                                background: 'linear-gradient(90deg, #00ff64, #00f5ff)',
+                                                                WebkitBackgroundClip: 'text',
+                                                                WebkitTextFillColor: 'transparent',
+                                                                backgroundClip: 'text',
                                                                 animation: 'colorShift 8s ease-in-out infinite'
                                                             } : {}}
                                                         >
