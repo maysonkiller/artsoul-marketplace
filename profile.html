@@ -956,7 +956,42 @@
                                         {/* Artwork Image */}
                                         <div className="aspect-square cursor-pointer bg-black" onClick={() => window.location.href = `artwork.html?id=${artwork.id}`}>
                                             {artwork.file_url ? (
-                                                <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />
+                                                (() => {
+                                                    const fileType = artwork.file_type?.toLowerCase() || '';
+                                                    const url = artwork.file_url.toLowerCase();
+
+                                                    // Detect media type
+                                                    const isVideo = fileType === 'video' || url.includes('.mp4') || url.includes('.webm') || url.includes('.mov');
+                                                    const isAudio = fileType === 'audio' || fileType === 'music' || url.includes('.mp3') || url.includes('.wav');
+
+                                                    if (isVideo) {
+                                                        return (
+                                                            <video
+                                                                src={artwork.file_url}
+                                                                className="w-full h-full object-contain"
+                                                                preload="metadata"
+                                                                muted
+                                                            />
+                                                        );
+                                                    } else if (isAudio) {
+                                                        return (
+                                                            <div className="w-full h-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(6, 182, 212, 0.3))'}}>
+                                                                <img
+                                                                    src="ARTSOULlogo.png"
+                                                                    alt="Music"
+                                                                    style={{
+                                                                        width: '60%',
+                                                                        height: '60%',
+                                                                        objectFit: 'contain',
+                                                                        animation: 'spin 3s linear infinite'
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        );
+                                                    } else {
+                                                        return <img src={artwork.file_url} alt={artwork.title} className="w-full h-full object-contain" />;
+                                                    }
+                                                })()
                                             ) : (
                                                 <div className={`w-full h-full flex items-center justify-center ${
                                                     isClassic ? 'bg-gray-700' : 'bg-gradient-to-br from-purple-900/50 to-cyan-900/50'

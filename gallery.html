@@ -383,10 +383,6 @@
                                                                 preload="metadata"
                                                                 muted
                                                             />
-                                                            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
-                                                                <span>▶️</span>
-                                                                <span>Video</span>
-                                                            </div>
                                                         </>
                                                     ) : (() => {
                                                         const fileType = artwork.file_type?.toLowerCase() || '';
@@ -396,15 +392,18 @@
                                                                        (!fileType && (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')));
                                                         return isAudio;
                                                     })() ? (
-                                                        <>
-                                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/30 to-cyan-900/30">
-                                                                <div className="text-8xl">🎵</div>
-                                                            </div>
-                                                            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
-                                                                <span>🎵</span>
-                                                                <span>Audio</span>
-                                                            </div>
-                                                        </>
+                                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/30 to-cyan-900/30">
+                                                            <img
+                                                                src="ARTSOULlogo.png"
+                                                                alt="Music"
+                                                                style={{
+                                                                    width: '60%',
+                                                                    height: '60%',
+                                                                    objectFit: 'contain',
+                                                                    animation: 'spin 3s linear infinite'
+                                                                }}
+                                                            />
+                                                        </div>
                                                     ) : (
                                                         <img
                                                             src={artwork.file_url}
