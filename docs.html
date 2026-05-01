@@ -514,14 +514,14 @@
                                     ) : section.isButton ? (
                                         <div>
                                             <p className="opacity-80 leading-relaxed mb-4">{section.content}</p>
-                                            <a
-                                                href="DOCUMENTATION.md"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="btn-main inline-block"
-                                            >
-                                                View Full Documentation
-                                            </a>
+                                            <div className="text-center">
+                                                <a
+                                                    href="documentation.html"
+                                                    className="btn-main inline-block"
+                                                >
+                                                    View Full Documentation
+                                                </a>
+                                            </div>
                                         </div>
                                     ) : (
                                         <p className="opacity-80 leading-relaxed" dangerouslySetInnerHTML={{__html: formattedContent}}></p>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Documentation - ArtSoul</title>
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="unified-styles.css?v=2">
+    <link rel="stylesheet" href="button-effects.css?v=2">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        (function() {
+            const theme = localStorage.getItem('artsoul_theme') || 'classic';
+            document.documentElement.className = theme;
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.className = theme;
+                });
+            } else {
+                document.body.className = theme;
+            }
+        })();
+    </script>
+    <script src="theme-sync.js"></script>
+    <script src="modal-system.js"></script>
+    <script type="module" src="supabase-auth.js"></script>
+    <script type="module" src="supabase-client.js"></script>
+    <script src="avatar-dropdown.js"></script>
+    <script type="module" src="appkit-init.js"></script>
+    <style>
+        body.classic {
+            background: #010101;
+            color: #a9ddd3;
+        }
+        body.future {
+            background: #000000;
+            color: #00f5ff;
+        }
+        .doc-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.8;
+        }
+        .doc-content h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+        }
+        .doc-content h2 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid currentColor;
+            opacity: 0.9;
+        }
+        .doc-content h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .doc-content p {
+            margin-bottom: 1rem;
+            opacity: 0.85;
+        }
+        .doc-content ul, .doc-content ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.85;
+        }
+        .doc-content li {
+            margin-bottom: 0.5rem;
+        }
+        .doc-content strong {
+            font-weight: 600;
+            opacity: 1;
+        }
+        .doc-content code {
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .classic .doc-content code {
+            background: rgba(169, 221, 211, 0.1);
+        }
+        .future .doc-content code {
+            background: rgba(0, 245, 255, 0.1);
+        }
+        .doc-content hr {
+            margin: 3rem 0;
+            border: none;
+            border-top: 1px solid currentColor;
+            opacity: 0.3;
+        }
+        .doc-meta {
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="classic">
+    <div class="back-button">
+        <a href="docs.html" class="btn-secondary">← Back to Docs</a>
+    </div>
+
+    <div class="doc-content">
+        <h1>ArtSoul Marketplace - Project Documentation</h1>
+
+        <div class="doc-meta">
+            <p><strong>Version:</strong> 1.0</p>
+            <p><strong>Last Updated:</strong> May 1, 2026</p>
+            <p><strong>Status:</strong> Testnet Deployment</p>
+        </div>
+
+        <hr>
+
+        <h2>What is ArtSoul?</h2>
+        <p>ArtSoul is a next-generation NFT marketplace that revolutionizes digital art trading through innovative auction mechanics, community-driven valuation, and fair pricing mechanisms. Built on Base and Ethereum networks, ArtSoul empowers artists and collectors with transparent, secure, and efficient tools for creating, discovering, and trading digital art.</p>
+
+        <h3>Key Innovation: Auction V2 System</h3>
+        <p>Unlike traditional NFT marketplaces where auctions directly sell the NFT, ArtSoul introduces a groundbreaking <strong>floor price discovery mechanism</strong>:</p>
+        <ul>
+            <li><strong>Auctions set the floor price, not the sale</strong></li>
+            <li><strong>10% deposit system</strong> prevents fake bids</li>
+            <li><strong>24-hour winner purchase window</strong> ensures commitment</li>
+            <li><strong>Three distinct roles</strong>: Creator (permanent), Auction Winner (honorary), Current Owner (transferable)</li>
+            <li><strong>Direct sales after auction</strong> at prices ≥ floor price</li>
+        </ul>
+        <p>This system protects artists from undervaluation while giving collectors confidence in fair market pricing.</p>
+
+        <hr>
+
+        <h2>Core Features</h2>
+
+        <h3>1. Deposit-Based Auction System</h3>
+        <p><strong>How it works:</strong></p>
+        <ol>
+            <li>Artist uploads artwork and sets starting price</li>
+            <li>Auction runs for 3 days</li>
+            <li>Bidders pay 10% deposit (previous bidder auto-refunded)</li>
+            <li>Auction ends → highest bid becomes <strong>floor price</strong></li>
+            <li>Winner has 24 hours to complete purchase</li>
+            <li>If winner doesn't buy, artist can sell directly at price ≥ floor</li>
+        </ol>
+        <p><strong>Benefits:</strong></p>
+        <ul>
+            <li>Prevents fake bids (deposit required)</li>
+            <li>Establishes fair market value</li>
+            <li>Protects artists from undervaluation</li>
+            <li>Gives collectors price confidence</li>
+            <li>Reduces gas costs (lazy minting)</li>
+        </ul>
+
+        <h3>2. Community Voting System</h3>
+        <p><strong>Democratic valuation:</strong></p>
+        <ul>
+            <li>Users vote for artworks they believe in</li>
+            <li>Top 12 most-voted artworks featured on homepage</li>
+            <li>Transparent ranking system</li>
+            <li>One vote per wallet per artwork</li>
+            <li>Helps discover emerging artists</li>
+        </ul>
+
+        <h3>3. Three-Role Ownership Model</h3>
+        <p><strong>Creator</strong> (Permanent)</p>
+        <ul>
+            <li>Original artist</li>
+            <li>Receives royalties on all future sales</li>
+            <li>Can set artwork for direct sale</li>
+        </ul>
+        <p><strong>Auction Winner</strong> (Honorary Title)</p>
+        <ul>
+            <li>Won the initial auction</li>
+            <li>Honorary title that never changes</li>
+            <li>Recognized as first supporter</li>
+        </ul>
+        <p><strong>Current Owner</strong> (Transferable)</p>
+        <ul>
+            <li>Current NFT holder</li>
+            <li>Can resell at any price ≥ floor</li>
+            <li>Full ownership rights</li>
+        </ul>
+
+        <h3>4. Lazy Minting</h3>
+        <p><strong>Gas-efficient approach:</strong></p>
+        <ul>
+            <li>NFT only minted when sold</li>
+            <li>Artists don't pay gas for uploads</li>
+            <li>Reduces blockchain bloat</li>
+            <li>Environmentally friendly</li>
+        </ul>
+
+        <h3>5. Multi-Format Support</h3>
+        <p><strong>Supported media types:</strong></p>
+        <ul>
+            <li>Images (JPG, PNG, GIF, WebP)</li>
+            <li>Videos (MP4, WebM, MOV)</li>
+            <li>Music (MP3, WAV, AAC)</li>
+            <li>Animated GIFs</li>
+        </ul>
+
+        <h3>6. Dual Theme System</h3>
+        <p><strong>Classic Mode:</strong></p>
+        <ul>
+            <li>Elegant teal aesthetic</li>
+            <li>Professional appearance</li>
+            <li>Traditional art gallery feel</li>
+        </ul>
+        <p><strong>Future Mode:</strong></p>
+        <ul>
+            <li>Cyberpunk neon design</li>
+            <li>Animated gradients</li>
+            <li>Modern tech aesthetic</li>
+        </ul>
+
+        <hr>
+
+        <h2>Why ArtSoul?</h2>
+
+        <h3>For Artists</h3>
+        <p><strong>Fair Pricing</strong></p>
+        <ul>
+            <li>Auction establishes true market value</li>
+            <li>Floor price prevents undervaluation</li>
+            <li>7.5% royalties on all future sales</li>
+        </ul>
+        <p><strong>Zero Upfront Costs</strong></p>
+        <ul>
+            <li>No gas fees for uploads</li>
+            <li>Lazy minting saves money</li>
+            <li>Only pay when artwork sells</li>
+        </ul>
+        <p><strong>Community Support</strong></p>
+        <ul>
+            <li>Voting system boosts visibility</li>
+            <li>Top 12 homepage feature</li>
+            <li>Direct connection with collectors</li>
+        </ul>
+
+        <h3>For Collectors</h3>
+        <p><strong>Price Confidence</strong></p>
+        <ul>
+            <li>Floor price = proven market value</li>
+            <li>No overpaying risk</li>
+            <li>Transparent auction history</li>
+        </ul>
+        <p><strong>Investment Protection</strong></p>
+        <ul>
+            <li>Can't resell below floor</li>
+            <li>Maintains artwork value</li>
+            <li>Honorary "Auction Winner" status</li>
+        </ul>
+        <p><strong>Discovery Tools</strong></p>
+        <ul>
+            <li>Community voting highlights quality</li>
+            <li>Filter by type, status, price</li>
+            <li>Comprehensive artwork information</li>
+        </ul>
+
+        <h3>For Investors</h3>
+        <p><strong>Innovative Technology</strong></p>
+        <ul>
+            <li>Novel auction mechanism (patent-pending concept)</li>
+            <li>Solves real NFT market problems</li>
+            <li>Scalable architecture</li>
+        </ul>
+        <p><strong>Market Opportunity</strong></p>
+        <ul>
+            <li>NFT market: $20B+ (2025)</li>
+            <li>Growing artist adoption</li>
+            <li>Multi-chain strategy (Base + Ethereum)</li>
+        </ul>
+        <p><strong>Revenue Model</strong></p>
+        <ul>
+            <li>2.5% platform fee on all sales</li>
+            <li>Sustainable and proven</li>
+            <li>Low operational costs</li>
+        </ul>
+
+        <hr>
+
+        <h2>Technical Architecture</h2>
+
+        <h3>Smart Contracts</h3>
+        <p><strong>ArtSoulNFT.sol</strong> (ERC-721)</p>
+        <ul>
+            <li>Lazy minting implementation</li>
+            <li>Royalty support (ERC-2981)</li>
+            <li>Marketplace integration</li>
+            <li>Gas-optimized</li>
+        </ul>
+        <p><strong>ArtSoulMarketplaceV2.sol</strong></p>
+        <ul>
+            <li>Deposit-based bidding</li>
+            <li>Floor price mechanism</li>
+            <li>Three-role ownership</li>
+            <li>Reentrancy protection</li>
+            <li>Access control</li>
+        </ul>
+        <p><strong>Security Features:</strong></p>
+        <ul>
+            <li>OpenZeppelin contracts</li>
+            <li>Audited patterns</li>
+            <li>ReentrancyGuard</li>
+            <li>Ownable access control</li>
+        </ul>
+
+        <h3>Frontend Stack</h3>
+        <p><strong>Core Technologies:</strong></p>
+        <ul>
+            <li>React 18 (UI components)</li>
+            <li>Ethers.js v6 (blockchain interaction)</li>
+            <li>Reown AppKit (wallet connection)</li>
+            <li>Tailwind CSS (styling)</li>
+        </ul>
+        <p><strong>Infrastructure:</strong></p>
+        <ul>
+            <li>Supabase (database + auth)</li>
+            <li>IPFS (decentralized storage)</li>
+            <li>GitHub Pages (hosting)</li>
+        </ul>
+        <p><strong>Supported Wallets:</strong></p>
+        <ul>
+            <li>MetaMask</li>
+            <li>WalletConnect</li>
+            <li>Coinbase Wallet</li>
+            <li>Rainbow</li>
+            <li>Trust Wallet</li>
+        </ul>
+
+        <h3>Database Schema</h3>
+        <p><strong>Tables:</strong></p>
+        <ul>
+            <li><code>profiles</code> - User profiles and avatars</li>
+            <li><code>artworks</code> - Artwork metadata and status</li>
+            <li><code>auctions</code> - Auction state and history</li>
+            <li><code>bids_history</code> - Bid tracking with deposits</li>
+            <li><code>votes</code> - Community voting records</li>
+        </ul>
+        <p><strong>Security:</strong></p>
+        <ul>
+            <li>Row Level Security (RLS)</li>
+            <li>Authenticated access only</li>
+            <li>Input validation</li>
+            <li>XSS protection</li>
+        </ul>
+
+        <hr>
+
+        <h2>Current Status</h2>
+
+        <h3>Completed Features</h3>
+        <p><strong>Core Functionality:</strong></p>
+        <ul>
+            <li>Wallet connection (MetaMask, WalletConnect)</li>
+            <li>User profiles with avatars</li>
+            <li>Multi-format artwork upload</li>
+            <li>IPFS integration</li>
+            <li>Community voting system</li>
+            <li>Gallery with filters</li>
+        </ul>
+        <p><strong>Auction V2 System:</strong></p>
+        <ul>
+            <li>Smart contracts deployed (testnet)</li>
+            <li>Deposit-based bidding</li>
+            <li>Floor price mechanism</li>
+            <li>24-hour winner window</li>
+            <li>Direct sales after auction</li>
+            <li>Three-role ownership tracking</li>
+        </ul>
+        <p><strong>User Experience:</strong></p>
+        <ul>
+            <li>Responsive design (mobile + desktop)</li>
+            <li>Dual theme system</li>
+            <li>Real-time updates</li>
+            <li>Social sharing</li>
+        </ul>
+        <p><strong>Security:</strong></p>
+        <ul>
+            <li>XSS protection</li>
+            <li>RLS policies</li>
+            <li>Input validation</li>
+            <li>Reentrancy guards</li>
+        </ul>
+
+        <h3>In Progress</h3>
+        <ul>
+            <li>End-to-end testing on testnet</li>
+            <li>UI updates for Auction V2</li>
+            <li>Toast notifications</li>
+            <li>Enhanced error handling</li>
+        </ul>
+
+        <h3>Roadmap</h3>
+        <p><strong>Q2 2026 (Current)</strong></p>
+        <ul>
+            <li>Complete testnet testing</li>
+            <li>UI/UX improvements</li>
+            <li>Bug fixes and optimization</li>
+        </ul>
+        <p><strong>Q3-Q4 2026</strong></p>
+        <ul>
+            <li>Security audit</li>
+            <li>Mainnet deployment (Base)</li>
+            <li>Marketing campaign</li>
+            <li>Community building</li>
+        </ul>
+        <p><strong>Q1 2027</strong></p>
+        <ul>
+            <li>Ethereum mainnet deployment</li>
+            <li>Advanced analytics</li>
+            <li>Mobile app (iOS/Android)</li>
+            <li>API for third-party integrations</li>
+        </ul>
+
+        <hr>
+
+        <h2>Deployed Contracts (Testnet)</h2>
+
+        <h3>Base Sepolia</h3>
+        <ul>
+            <li><strong>NFT Contract:</strong> <code>0x21093aFBdB713c9bA75B74A306e65C93Ba190903</code></li>
+            <li><strong>Marketplace:</strong> <code>0x7d2C59c8779aC201671dd1fEF7Cbf0198f010692</code></li>
+            <li><strong>Explorer:</strong> https://sepolia.basescan.org</li>
+        </ul>
+
+        <h3>Ethereum Sepolia</h3>
+        <ul>
+            <li><strong>NFT Contract:</strong> <code>0x912F48378F7e1830de907a41Db06458f343407ee</code></li>
+            <li><strong>Marketplace:</strong> <code>0x21093aFBdB713c9bA75B74A306e65C93Ba190903</code></li>
+            <li><strong>Explorer:</strong> https://sepolia.etherscan.io</li>
+        </ul>
+
+        <hr>
+
+        <h2>Tokenomics & Fees</h2>
+
+        <h3>Platform Fees</h3>
+        <ul>
+            <li><strong>Platform Fee:</strong> 2.5% on all sales</li>
+            <li><strong>Creator Royalty:</strong> 7.5% on secondary sales</li>
+            <li><strong>Auction Deposit:</strong> 10% of bid (refundable)</li>
+        </ul>
+
+        <h3>Gas Optimization</h3>
+        <ul>
+            <li>Lazy minting (no upfront gas)</li>
+            <li>Batch operations where possible</li>
+            <li>Layer 2 support (Base network)</li>
+        </ul>
+
+        <h3>Revenue Projections</h3>
+        <p><strong>Conservative Scenario</strong> (Year 1)</p>
+        <ul>
+            <li>1,000 artworks sold</li>
+            <li>Average price: 0.1 ETH</li>
+            <li>Total volume: 100 ETH</li>
+            <li>Platform revenue: 2.5 ETH (~$5,000)</li>
+        </ul>
+        <p><strong>Moderate Scenario</strong> (Year 1)</p>
+        <ul>
+            <li>5,000 artworks sold</li>
+            <li>Average price: 0.2 ETH</li>
+            <li>Total volume: 1,000 ETH</li>
+            <li>Platform revenue: 25 ETH (~$50,000)</li>
+        </ul>
+        <p><strong>Optimistic Scenario</strong> (Year 1)</p>
+        <ul>
+            <li>20,000 artworks sold</li>
+            <li>Average price: 0.3 ETH</li>
+            <li>Total volume: 6,000 ETH</li>
+            <li>Platform revenue: 150 ETH (~$300,000)</li>
+        </ul>
+
+        <hr>
+
+        <h2>Security & Compliance</h2>
+
+        <h3>Smart Contract Security</h3>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>OpenZeppelin libraries</li>
+            <li>ReentrancyGuard on all payment functions</li>
+            <li>Access control (Ownable)</li>
+            <li>Input validation</li>
+            <li>Event logging</li>
+        </ul>
+        <p><strong>Audit Status:</strong></p>
+        <ul>
+            <li>Internal review: Complete</li>
+            <li>External audit: Scheduled (Q3 2026)</li>
+        </ul>
+
+        <h3>Data Privacy</h3>
+        <p><strong>User Data:</strong></p>
+        <ul>
+            <li>Wallet addresses (public)</li>
+            <li>Profile information (optional)</li>
+            <li>No KYC required</li>
+            <li>GDPR compliant</li>
+        </ul>
+        <p><strong>Storage:</strong></p>
+        <ul>
+            <li>Artwork files: IPFS (decentralized)</li>
+            <li>Metadata: Supabase (encrypted)</li>
+            <li>No sensitive data stored</li>
+        </ul>
+
+        <h3>Compliance</h3>
+        <p><strong>Regulatory Considerations:</strong></p>
+        <ul>
+            <li>NFTs as digital collectibles</li>
+            <li>No securities offering</li>
+            <li>Platform fee disclosure</li>
+            <li>Terms of service</li>
+            <li>Privacy policy</li>
+        </ul>
+
+        <hr>
+
+        <h2>Competitive Advantages</h2>
+
+        <h3>vs OpenSea</h3>
+        <ul>
+            <li>Floor price protection</li>
+            <li>Deposit-based bidding (no fake bids)</li>
+            <li>Community voting system</li>
+            <li>Lower fees (2.5% vs 2.5%)</li>
+            <li>Lazy minting built-in</li>
+        </ul>
+
+        <h3>vs Rarible</h3>
+        <ul>
+            <li>Better auction mechanics</li>
+            <li>Three-role ownership model</li>
+            <li>Cleaner UI/UX</li>
+            <li>Multi-chain from day 1</li>
+        </ul>
+
+        <h3>vs Foundation</h3>
+        <ul>
+            <li>No invite required</li>
+            <li>Open to all artists</li>
+            <li>Community-driven discovery</li>
+            <li>More flexible pricing</li>
+        </ul>
+
+        <hr>
+
+        <h2>Market Opportunity</h2>
+
+        <h3>NFT Market Size</h3>
+        <ul>
+            <li><strong>2025 Market:</strong> $20B+</li>
+            <li><strong>2026 Projection:</strong> $30B+</li>
+            <li><strong>CAGR:</strong> 35%+</li>
+        </ul>
+
+        <h3>Target Audience</h3>
+        <p><strong>Primary:</strong></p>
+        <ul>
+            <li>Digital artists (emerging & established)</li>
+            <li>NFT collectors</li>
+            <li>Crypto enthusiasts</li>
+        </ul>
+        <p><strong>Secondary:</strong></p>
+        <ul>
+            <li>Traditional artists entering Web3</li>
+            <li>Art investors</li>
+            <li>Gallery owners</li>
+        </ul>
+        <p><strong>Geographic Focus:</strong></p>
+        <ul>
+            <li>North America (40%)</li>
+            <li>Europe (30%)</li>
+            <li>Asia (20%)</li>
+            <li>Other (10%)</li>
+        </ul>
+
+        <hr>
+
+        <h2>Team & Contact</h2>
+
+        <h3>Core Team</h3>
+        <ul>
+            <li><strong>Founder/Developer:</strong> Building innovative NFT solutions</li>
+            <li><strong>Smart Contract Development:</strong> Solidity experts</li>
+            <li><strong>Frontend Development:</strong> React/Web3 specialists</li>
+            <li><strong>Design:</strong> UI/UX professionals</li>
+        </ul>
+
+        <h3>Links</h3>
+        <ul>
+            <li><strong>Website:</strong> https://maysonkiller.github.io/artsoul-marketplace/</li>
+            <li><strong>GitHub:</strong> https://github.com/maysonkiller/artsoul-marketplace</li>
+            <li><strong>Testnet Demo:</strong> Available now</li>
+            <li><strong>Documentation:</strong> This document</li>
+        </ul>
+
+        <h3>Contact</h3>
+        <ul>
+            <li><strong>Email:</strong> [Contact via GitHub]</li>
+            <li><strong>Twitter:</strong> [Coming soon]</li>
+            <li><strong>Discord:</strong> [Coming soon]</li>
+        </ul>
+
+        <hr>
+
+        <h2>Legal Disclaimer</h2>
+        <p>This documentation is for informational purposes only and does not constitute:</p>
+        <ul>
+            <li>Investment advice</li>
+            <li>Financial advice</li>
+            <li>Legal advice</li>
+            <li>Securities offering</li>
+        </ul>
+        <p>ArtSoul is an experimental platform in active development. Use at your own risk. Smart contracts are provided "as is" without warranties. Always do your own research (DYOR) before participating in any blockchain-based platform.</p>
+
+        <hr>
+
+        <h2>Vision</h2>
+        <p>ArtSoul aims to become the premier destination for digital art trading by:</p>
+        <ol>
+            <li><strong>Empowering Artists</strong> - Fair pricing, zero upfront costs, community support</li>
+            <li><strong>Protecting Collectors</strong> - Price confidence, investment protection, transparent history</li>
+            <li><strong>Building Community</strong> - Democratic valuation, social features, collaborative discovery</li>
+            <li><strong>Innovating Technology</strong> - Novel auction mechanics, gas optimization, multi-chain support</li>
+        </ol>
+        <p>We believe the future of art is digital, decentralized, and community-driven. ArtSoul is building that future.</p>
+
+        <hr>
+
+        <p style="text-align: center; font-size: 1.2rem; margin: 3rem 0;"><strong>Join us in revolutionizing digital art trading.</strong></p>
+        <p style="text-align: center; opacity: 0.6; font-style: italic;">Last updated: May 1, 2026</p>
+    </div>
+</body>
+</html>
