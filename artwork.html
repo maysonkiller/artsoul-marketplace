@@ -324,7 +324,7 @@
             useEffect(() => {
                 // Initialize avatar dropdown and network badge
                 const initUI = async () => {
-                    // Wait for scripts to load (check every 100ms, max 10 seconds)
+                    // Wait for scripts to load (check every 50ms, max 5 seconds)
                     let attempts = 0;
                     const maxAttempts = 100;
 
@@ -332,12 +332,12 @@
                         if (window.AvatarDropdown && window.NetworkBadge && window.web3Modal) {
                             break;
                         }
-                        await new Promise(resolve => setTimeout(resolve, 100));
+                        await new Promise(resolve => setTimeout(resolve, 50));
                         attempts++;
                     }
 
                     if (attempts >= maxAttempts) {
-                        console.warn('Scripts not loaded after 10 seconds');
+                        console.warn('Scripts not loaded after 5 seconds');
                     }
 
                     // Initialize network badge
