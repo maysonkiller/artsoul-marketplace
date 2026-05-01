@@ -477,7 +477,7 @@
                 const minutes = Math.floor((remaining % 3600) / 60);
                 const seconds = remaining % 60;
 
-                setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+                setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds.toString().padStart(2, '0')}s`);
             }
 
             async function handlePlaceBid() {
@@ -851,7 +851,7 @@
                                                     } : {}}
                                                 />
                                                 <div className="min-w-0 flex-1">
-                                                    <div className="text-xs opacity-50">Creator</div>
+                                                    <div className="text-xs opacity-70">Creator</div>
                                                     <div
                                                         className={`font-semibold truncate ${!isClassic ? 'text-cyan-400' : ''}`}
                                                         style={!isClassic ? {
