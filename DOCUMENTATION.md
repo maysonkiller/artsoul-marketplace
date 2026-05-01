@@ -426,9 +426,9 @@ This system protects artists from undervaluation while giving collectors confide
 - **Documentation:** This document
 
 ### Contact
-- **Email:** [Contact via GitHub]
-- **Twitter:** [Coming soon]
-- **Discord:** [Coming soon]
+- **Email:** maysonkiller@gmail.com
+- **Twitter:** [@maysonkiller23](https://x.com/maysonkiller23)
+- **Discord:** maysonkiller
 
 ---
 
