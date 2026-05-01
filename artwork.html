@@ -797,7 +797,7 @@
                                     animation: 'glow-pulse 3s ease-in-out infinite'
                                 } : {}}
                                 >
-                                    {artwork.file_url && window.ArtSoulSecurity?.isValidStorageUrl(artwork.file_url) ? (
+                                    {artwork.file_url ? (
                                         <MediaViewer
                                             url={artwork.file_url}
                                             fileType={artwork.file_type}
@@ -805,7 +805,7 @@
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-black">
-                                            <div className="text-2xl opacity-50">Invalid media URL</div>
+                                            <div className="text-2xl opacity-50">No media file</div>
                                         </div>
                                     )}
                                 </div>
