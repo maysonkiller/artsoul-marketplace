@@ -1779,7 +1779,7 @@
                     const logoImg = document.createElement('img');
                     logoImg.src = 'ARTSOULlogo.png';
                     logoImg.alt = 'Music';
-                    logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 8s linear infinite; margin-bottom: 1rem; transition: animation-duration 0.3s;';
+                    logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 3s linear infinite; animation-play-state: paused; margin-bottom: 1rem;';
 
                     // Add error handler for logo
                     logoImg.onerror = () => {
@@ -1799,15 +1799,15 @@
                     audioPlayer.addEventListener('click', (e) => e.stopPropagation());
                     audioPlayer.addEventListener('touchstart', (e) => e.stopPropagation());
 
-                    // Make logo spin faster when playing
+                    // Control logo spin with play state
                     audioPlayer.onplay = () => {
-                        logoImg.style.animation = 'spin 2s linear infinite';
+                        logoImg.style.animationPlayState = 'running';
                     };
                     audioPlayer.onpause = () => {
-                        logoImg.style.animation = 'spin 8s linear infinite';
+                        logoImg.style.animationPlayState = 'paused';
                     };
                     audioPlayer.onended = () => {
-                        logoImg.style.animation = 'spin 8s linear infinite';
+                        logoImg.style.animationPlayState = 'paused';
                     };
 
                     // Add error handler for audio

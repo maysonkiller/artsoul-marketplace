@@ -200,9 +200,9 @@
                     setAudioContext(ctx);
                     setAnalyser(analyserNode);
 
-                    // Start animation immediately after setup
-                    if (logoRef.current && !isClassic) {
-                        requestAnimationFrame(function animate() {
+                    // Start animation immediately after setup (works in both modes)
+                    if (logoRef.current) {
+                        const animate = () => {
                             if (!analyserNode || !logoRef.current) return;
 
                             const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
@@ -216,16 +216,20 @@
                             const midIntensity = mid / 255;
                             const highIntensity = high / 255;
 
-                            const rotationSpeed = 3 + (bassIntensity * 10);
-                            const cyan = Math.floor(bassIntensity * 255);
-                            const purple = Math.floor(midIntensity * 255);
+                            if (!isClassic) {
+                                // Future mode: reactive effects
+                                const rotationSpeed = 3 + (bassIntensity * 10);
+                                const cyan = Math.floor(bassIntensity * 255);
+                                const purple = Math.floor(midIntensity * 255);
 
-                            logoRef.current.style.animation = `spin ${20 / rotationSpeed}s linear infinite`;
-                            logoRef.current.style.filter = `drop-shadow(0 0 ${20 + bassIntensity * 60}px rgba(${cyan}, 245, 255, ${0.7 + bassIntensity * 0.3})) drop-shadow(0 0 ${40 + midIntensity * 80}px rgba(${purple}, 0, 255, ${0.5 + midIntensity * 0.5})) drop-shadow(0 0 ${60 + highIntensity * 100}px rgba(255, ${Math.floor(highIntensity * 100)}, 255, ${0.3 + highIntensity * 0.4}))`;
-                            logoRef.current.style.transform = `scale(${1 + bassIntensity * 0.3}) rotate(${bassIntensity * 10}deg)`;
+                                logoRef.current.style.animationDuration = `${20 / rotationSpeed}s`;
+                                logoRef.current.style.filter = `drop-shadow(0 0 ${20 + bassIntensity * 60}px rgba(${cyan}, 245, 255, ${0.7 + bassIntensity * 0.3})) drop-shadow(0 0 ${40 + midIntensity * 80}px rgba(${purple}, 0, 255, ${0.5 + midIntensity * 0.5})) drop-shadow(0 0 ${60 + highIntensity * 100}px rgba(255, ${Math.floor(highIntensity * 100)}, 255, ${0.3 + highIntensity * 0.4}))`;
+                                logoRef.current.style.transform = `scale(${1 + bassIntensity * 0.3})`;
+                            }
 
                             animationRef.current = requestAnimationFrame(animate);
-                        });
+                        };
+                        animate();
                     }
                 };
 
@@ -241,16 +245,9 @@
                     if (animationRef.current) {
                         cancelAnimationFrame(animationRef.current);
                     }
-                    // Reset to default state
+                    // Pause animation without resetting position
                     if (logoRef.current) {
-                        if (isClassic) {
-                            logoRef.current.style.animation = 'spin 8s linear infinite';
-                            logoRef.current.style.filter = 'drop-shadow(0 0 8px rgba(169, 221, 211, 0.4))';
-                        } else {
-                            logoRef.current.style.animation = 'spin 3s linear infinite';
-                            logoRef.current.style.filter = 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4))';
-                        }
-                        logoRef.current.style.transform = 'scale(1)';
+                        logoRef.current.style.animationPlayState = 'paused';
                     }
                 };
 
@@ -264,13 +261,12 @@
                                     alt="Music"
                                     className="w-full h-full object-contain"
                                     style={{
-                                        animation: isPlaying
-                                            ? (isClassic ? 'spin 3s linear infinite' : 'spin 3s linear infinite')
-                                            : 'none',
+                                        animation: 'spin 3s linear infinite',
+                                        animationPlayState: isPlaying ? 'running' : 'paused',
                                         filter: isClassic
                                             ? 'drop-shadow(0 0 8px rgba(169, 221, 211, 0.4))'
                                             : 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4))',
-                                        transition: 'all 0.1s ease-out'
+                                        transition: 'filter 0.1s ease-out, transform 0.1s ease-out'
                                     }}
                                 />
                                 <style>{`

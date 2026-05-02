@@ -409,9 +409,9 @@
                                                                     width: '50%',
                                                                     height: '50%',
                                                                     objectFit: 'contain',
-                                                                    animation: 'spin 8s linear infinite',
-                                                                    marginBottom: '1rem',
-                                                                    transition: 'animation-duration 0.3s'
+                                                                    animation: 'spin 3s linear infinite',
+                                                                    animationPlayState: 'paused',
+                                                                    marginBottom: '1rem'
                                                                 }}
                                                             />
                                                             <audio
@@ -422,15 +422,15 @@
                                                                 onTouchStart={(e) => e.stopPropagation()}
                                                                 onPlay={(e) => {
                                                                     const logo = document.getElementById(`music-logo-${artwork.id}`);
-                                                                    if (logo) logo.style.animation = 'spin 2s linear infinite';
+                                                                    if (logo) logo.style.animationPlayState = 'running';
                                                                 }}
                                                                 onPause={(e) => {
                                                                     const logo = document.getElementById(`music-logo-${artwork.id}`);
-                                                                    if (logo) logo.style.animation = 'spin 8s linear infinite';
+                                                                    if (logo) logo.style.animationPlayState = 'paused';
                                                                 }}
                                                                 onEnded={(e) => {
                                                                     const logo = document.getElementById(`music-logo-${artwork.id}`);
-                                                                    if (logo) logo.style.animation = 'spin 8s linear infinite';
+                                                                    if (logo) logo.style.animationPlayState = 'paused';
                                                                 }}
                                                                 style={{width: '90%', maxWidth: '300px'}}
                                                             />
