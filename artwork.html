@@ -217,15 +217,21 @@
                     // Dynamic rotation speed based on bass
                     const rotationSpeed = 3 + (bassIntensity * 10);
 
-                    // Dynamic colors based on frequencies
-                    const cyan = Math.floor(bassIntensity * 255);
-                    const purple = Math.floor(midIntensity * 255);
-                    const pink = Math.floor(highIntensity * 255);
+                    // Apply dynamic styles ONLY in Future mode
+                    if (!isClassic) {
+                        // Dynamic colors based on frequencies
+                        const cyan = Math.floor(bassIntensity * 255);
+                        const purple = Math.floor(midIntensity * 255);
 
-                    // Apply dynamic styles
-                    logoRef.current.style.animation = `spin ${20 / rotationSpeed}s linear infinite`;
-                    logoRef.current.style.filter = `drop-shadow(0 0 ${20 + bassIntensity * 40}px rgba(${cyan}, 245, 255, ${0.6 + bassIntensity * 0.4})) drop-shadow(0 0 ${40 + midIntensity * 60}px rgba(${purple}, 0, 255, ${0.4 + midIntensity * 0.6}))`;
-                    logoRef.current.style.transform = `scale(${1 + bassIntensity * 0.2})`;
+                        logoRef.current.style.animation = `spin ${20 / rotationSpeed}s linear infinite`;
+                        logoRef.current.style.filter = `drop-shadow(0 0 ${20 + bassIntensity * 60}px rgba(${cyan}, 245, 255, ${0.7 + bassIntensity * 0.3})) drop-shadow(0 0 ${40 + midIntensity * 80}px rgba(${purple}, 0, 255, ${0.5 + midIntensity * 0.5})) drop-shadow(0 0 ${60 + highIntensity * 100}px rgba(255, ${Math.floor(highIntensity * 100)}, 255, ${0.3 + highIntensity * 0.4}))`;
+                        logoRef.current.style.transform = `scale(${1 + bassIntensity * 0.3}) rotate(${bassIntensity * 10}deg)`;
+                    } else {
+                        // Classic mode: simple spin, no reactive effects
+                        logoRef.current.style.animation = 'spin 3s linear infinite';
+                        logoRef.current.style.filter = 'drop-shadow(0 0 8px rgba(169, 221, 211, 0.4))';
+                        logoRef.current.style.transform = 'scale(1)';
+                    }
 
                     animationRef.current = requestAnimationFrame(animateLogo);
                 };
@@ -257,9 +263,11 @@
                                     alt="Music"
                                     className="w-full h-full object-contain"
                                     style={{
-                                        animation: 'spin 8s linear infinite',
-                                        filter: 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4))',
-                                        transition: 'transform 0.1s ease-out'
+                                        animation: isClassic ? 'spin 8s linear infinite' : 'spin 3s linear infinite',
+                                        filter: isClassic
+                                            ? 'drop-shadow(0 0 8px rgba(169, 221, 211, 0.4))'
+                                            : 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.6)) drop-shadow(0 0 40px rgba(191, 0, 255, 0.4))',
+                                        transition: 'all 0.1s ease-out'
                                     }}
                                 />
                                 <style>{`

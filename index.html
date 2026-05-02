@@ -1773,7 +1773,7 @@
                     const logoImg = document.createElement('img');
                     logoImg.src = 'ARTSOULlogo.png';
                     logoImg.alt = 'Music';
-                    logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 3s linear infinite; margin-bottom: 1rem;';
+                    logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 8s linear infinite; margin-bottom: 1rem; transition: animation-duration 0.3s;';
 
                     // Add error handler for logo
                     logoImg.onerror = () => {
@@ -1789,6 +1789,17 @@
                     audioPlayer.crossOrigin = 'anonymous';
                     audioPlayer.style.cssText = 'width: 90%; max-width: 300px;';
                     audioPlayer.onclick = (e) => e.stopPropagation();
+
+                    // Make logo spin faster when playing
+                    audioPlayer.onplay = () => {
+                        logoImg.style.animation = 'spin 2s linear infinite';
+                    };
+                    audioPlayer.onpause = () => {
+                        logoImg.style.animation = 'spin 8s linear infinite';
+                    };
+                    audioPlayer.onended = () => {
+                        logoImg.style.animation = 'spin 8s linear infinite';
+                    };
 
                     // Add error handler for audio
                     audioPlayer.onerror = () => {
@@ -1894,7 +1905,7 @@
                                 const logoImg = document.createElement('img');
                                 logoImg.src = 'ARTSOULlogo.png';
                                 logoImg.alt = 'Music';
-                                logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 3s linear infinite; margin-bottom: 1rem;';
+                                logoImg.style.cssText = 'width: 50%; height: 50%; object-fit: contain; animation: spin 8s linear infinite; margin-bottom: 1rem; transition: animation-duration 0.3s;';
                                 logoImg.onerror = function() {
                                     console.warn('Failed to load logo for music preview');
                                     this.style.display = 'none';
@@ -1907,6 +1918,18 @@
                                 audio.crossOrigin = 'anonymous';
                                 audio.preload = 'metadata';
                                 audio.onclick = (e) => e.stopPropagation();
+
+                                // Make logo spin faster when playing
+                                audio.onplay = () => {
+                                    logoImg.style.animation = 'spin 2s linear infinite';
+                                };
+                                audio.onpause = () => {
+                                    logoImg.style.animation = 'spin 8s linear infinite';
+                                };
+                                audio.onended = () => {
+                                    logoImg.style.animation = 'spin 8s linear infinite';
+                                };
+
                                 audio.onerror = function() {
                                     console.error('Failed to load audio:', art.file_url);
                                 };
