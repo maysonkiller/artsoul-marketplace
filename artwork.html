@@ -172,6 +172,9 @@
                 const logoRef = React.useRef(null);
                 const animationRef = React.useRef(null);
 
+                // Get theme from localStorage
+                const isClassic = localStorage.getItem('artsoul_theme') !== 'future';
+
                 React.useEffect(() => {
                     return () => {
                         if (animationRef.current) {
