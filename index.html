@@ -1756,9 +1756,9 @@
                     video.src = art.file_url;
                     video.className = 'artwork-image';
                     video.setAttribute('preload', 'metadata');
-                    video.controls = true;
-                    video.style.cssText = 'position: relative; z-index: 10;';
-                    video.onclick = (e) => e.stopPropagation();
+                    video.setAttribute('playsinline', '');
+                    video.muted = true;
+                    video.style.cssText = 'pointer-events: none;';
 
                     // Add error handler for video
                     video.onerror = () => {
@@ -1787,8 +1787,11 @@
                     audioPlayer.src = art.file_url;
                     audioPlayer.controls = true;
                     audioPlayer.crossOrigin = 'anonymous';
-                    audioPlayer.style.cssText = 'width: 90%; max-width: 300px;';
-                    audioPlayer.onclick = (e) => e.stopPropagation();
+                    audioPlayer.style.cssText = 'width: 90%; max-width: 300px; position: relative; z-index: 10;';
+
+                    // Prevent card click when interacting with audio controls
+                    audioPlayer.addEventListener('click', (e) => e.stopPropagation());
+                    audioPlayer.addEventListener('touchstart', (e) => e.stopPropagation());
 
                     // Make logo spin faster when playing
                     audioPlayer.onplay = () => {
