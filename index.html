@@ -1879,6 +1879,10 @@
                                 video.className = 'w-full h-full object-contain';
                                 video.controls = true;
                                 video.preload = 'metadata';
+                                video.onclick = (e) => e.stopPropagation();
+                                video.onerror = () => {
+                                    console.warn('Video failed to load:', art.file_url);
+                                };
                                 imageContainer.appendChild(video);
                             }
                             // Check if audio/music
@@ -1902,6 +1906,7 @@
                                 audio.controls = true;
                                 audio.crossOrigin = 'anonymous';
                                 audio.preload = 'metadata';
+                                audio.onclick = (e) => e.stopPropagation();
                                 audio.onerror = function() {
                                     console.error('Failed to load audio:', art.file_url);
                                 };
